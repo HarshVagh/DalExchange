@@ -9,33 +9,30 @@ variables:
 
 backend_build:
   stage: build
-  image: mvn:3.9.7-sapmachine-17
+  image: maven:3.9.7-sapmachine-17
   before_script:
-    # - docker pull mvn:3.9.7-sapmachine-17
     - cd backend/
   script:
     - echo "Backend Build Started"
     - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
     - mvn clean install
     - echo "Backend Build Completed"
-  # after_script:
-    # - docker logout
+  after_script:
+    - docker logout
   tags:
     - dalfcs_docker_kvm
 
 backend_test:
   stage: test
-  image: mvn:3.9.7-sapmachine-17
+  image: maven:3.9.7-sapmachine-17
   before_script:
-    # - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-    # - docker pull mvn:3.9.7-sapmachine-17
     - cd backend/
   script:
     - echo "Backend tests Started"
     - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
     - mvn test
     - echo "Backend Tests Completed"
-  # after_script:
-    # - docker logout
+  after_script:
+    - docker logout
   tags:
     - dalfcs_docker_kvm
