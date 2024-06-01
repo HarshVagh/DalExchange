@@ -9,10 +9,8 @@ variables:
 
 backend_build:
   stage: build
-  # image: mvn:3.9.7-sapmachine-17
+  image: mvn:3.9.7-sapmachine-17
   before_script:
-    - echo $DOCKER_USERNAME
-    - echo $DOCKER_PASSWORD
     - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD docker.io
     - cd backend/
   script:
@@ -20,16 +18,14 @@ backend_build:
     - mvn clean install
     - echo "Backend Build Completed"
   after_script:
-    # - docker logout
+    - docker logout
   tags:
     - dalfcs_gitlab_docker_ci
 
 backend_test:
   stage: test
-  # image: mvn:3.9.7-sapmachine-17
+  image: mvn:3.9.7-sapmachine-17
   before_script:
-    - echo $DOCKER_USERNAME
-    - echo $DOCKER_PASSWORD
     - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD docker.io
     - cd backend/
   script:
@@ -37,6 +33,6 @@ backend_test:
     - mvn test
     - echo "Backend Tests Completed"
   after_script:
-    # - docker logout
+    - docker logout
   tags:
     - dalfcs_gitlab_docker_ci
