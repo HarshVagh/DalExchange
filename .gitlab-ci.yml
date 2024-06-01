@@ -3,6 +3,10 @@ stages:
   - test
   - deploy
 
+variables:
+  DOCKER_USERNAME: ""
+  DOCKER_PASSWORD:  ""
+
 backend_build:
   stage: build
   image: mvn:3.9.7-sapmachine-17
@@ -10,8 +14,13 @@ backend_build:
     - cd backend/
   script:
     - echo "Backend Build Started"
+    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
     - mvn clean install
     - echo "Backend Build Completed"
+  after_script:
+    - docker logout
+  tags:
+    - dalfcs_gitlab_docker_ci
 
 backend_test:
   stage: test
@@ -20,5 +29,10 @@ backend_test:
     - cd backend/
   script:
     - echo "Backend tests Started"
+    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
     - mvn test
     - echo "Backend Tests Completed"
+  after_script:
+    - docker logout
+  tags:
+    - dalfcs_gitlab_docker_ci
