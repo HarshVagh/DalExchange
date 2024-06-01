@@ -1,0 +1,20 @@
+stages:
+  - build
+  - test
+  - deploy
+
+backend_test:
+  stage: test
+  image: mvn:latest
+  before_script:
+    - cd backend/
+  script:
+    - mvn test
+
+backend_build:
+  stage: build
+  image: mvn:latest
+  before_script:
+    - cd backend/
+  script:
+    - mvn clean install
