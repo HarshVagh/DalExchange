@@ -20,7 +20,7 @@ backend_build:
   after_script:
     - docker logout
   tags:
-    - dalfcs_gitlab_docker_ci
+    - dalfcs_docker_autoscale
 
 backend_test:
   stage: test
@@ -35,4 +35,4 @@ backend_test:
   after_script:
     - docker logout
   tags:
-    - dalfcs_gitlab_docker_ci
+    - dalfcs_docker_autoscale
