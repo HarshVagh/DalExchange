@@ -11,7 +11,7 @@ backend_build:
   stage: build
   # image: mvn:3.9.7-sapmachine-17
   before_script:
-    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD docker.io
+    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
     - docker pull mvn:3.9.7-sapmachine-17
     - cd backend/
   script:
@@ -27,7 +27,7 @@ backend_test:
   stage: test
   #image: mvn:3.9.7-sapmachine-17
   before_script:
-    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD docker.io
+    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
     - docker pull mvn:3.9.7-sapmachine-17
     - cd backend/
   script:
