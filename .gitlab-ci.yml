@@ -11,6 +11,8 @@ backend_build:
   stage: build
   image: mvn:3.9.7-sapmachine-17
   before_script:
+    - echo $DOCKER_USERNAME
+    - echo $DOCKER_PASSWORD
     - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD docker.io
     - cd backend/
   script:
@@ -20,12 +22,14 @@ backend_build:
   after_script:
     - docker logout
   tags:
-    - dalfcs_docker_autoscale
+    - dalfcs_gitlab_docker_ci
 
 backend_test:
   stage: test
   image: mvn:3.9.7-sapmachine-17
   before_script:
+    - echo $DOCKER_USERNAME
+    - echo $DOCKER_PASSWORD
     - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD docker.io
     - cd backend/
   script:
@@ -35,4 +39,4 @@ backend_test:
   after_script:
     - docker logout
   tags:
-    - dalfcs_docker_autoscale
+    - dalfcs_gitlab_docker_ci
