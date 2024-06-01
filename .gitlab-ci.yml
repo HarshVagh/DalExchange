@@ -18,7 +18,7 @@ backend_build:
     - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
     - mvn clean install
     - echo "Backend Build Completed"
-  after_script:
+  # after_script:
     # - docker logout
   tags:
     - dalfcs_docker_kvm
@@ -35,7 +35,7 @@ backend_test:
     - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
     - mvn test
     - echo "Backend Tests Completed"
-  after_script:
+  # after_script:
     # - docker logout
   tags:
     - dalfcs_docker_kvm
