@@ -5,22 +5,20 @@ stages:
 
 backend_build:
   stage: build
-  image: mvn:latest
+  image: mvn:3.9.7-sapmachine-17
   before_script:
     - cd backend/
   script:
     - echo "Backend Build Started"
-    - docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PWD docker.io
     - mvn clean install
     - echo "Backend Build Completed"
 
 backend_test:
   stage: test
-  image: mvn:latest
+  image: mvn:3.9.7-sapmachine-17
   before_script:
     - cd backend/
   script:
     - echo "Backend tests Started"
-    - docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PWD docker.io
     - mvn test
     - echo "Backend Tests Completed"
