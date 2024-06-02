@@ -15,6 +15,19 @@ backend_build:
   tags:
     - dalfcs_gitlab_docker_ci
 
+frontend_build:
+  stage: build
+  image: node:latest
+  before_script:
+    - cd frontend/
+  script:
+    - echo "Frontend Build Started"
+    - npm install
+    - npm run build
+    - echo "Frontend Build Completed"
+  tags:
+    - dalfcs_gitlab_docker_ci
+
 backend_test:
   stage: test
   image: maven:3.9.7-sapmachine-17
