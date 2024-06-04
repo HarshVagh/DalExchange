@@ -63,18 +63,18 @@ publish_backend:
     - echo $DOCKER_HOST
     - docker --version
     - echo "Docker Login started"
-    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD docker.io
     - echo "Docker Login completed"
     - echo "------------------------------------------------------"
     - echo "Started building image for backend"
-    - docker build -t dal24asdcg9/backend .
+    - docker build -t docker.io/dal24asdcg9/backend .
     - echo "Image build completed for backend"
     - echo "------------------------------------------------------"
     - echo "Started pushing image to docker hub"
-    - docker push dal24asdcg9/backend
+    - docker push docker.io/dal24asdcg9/backend
   after_script:
     - echo "Pushed image to docker hub @dal24asdcg9:frontend"
-    - docker logout
+    # - docker logout
   tags:
     - dalfcs_gitlab_docker_ci
 
@@ -93,18 +93,18 @@ publish_frontend:
     - echo $DOCKER_HOST
     - docker --version
     - echo "Docker Login started"
-    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD docker.io
     - echo "Docker Login completed"
     - echo "------------------------------------------------------"
     - echo "Started building image for backend"
-    - docker build -t dal24asdcg9/frontend .
+    - docker build -t docker.io/dal24asdcg9/frontend .
     - echo "Image build completed for frontend"
     - echo "------------------------------------------------------"
     - echo "Started pushing image to docker hub"
-    - docker push dal24asdcg9/frontend
+    - docker push docker.io/dal24asdcg9/frontend
   after_script:
     - echo "Pushed Image to docker hub @dal24asdcg9:frontend"
-    - docker logout
+    # - docker logout
   tags:
     - dalfcs_gitlab_docker_ci
 
