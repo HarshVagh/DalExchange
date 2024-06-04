@@ -14,14 +14,14 @@ backend_build:
   before_script:
     - cd backend/
   script:
-    - echo "---------------- DOCKER Creds ------------------------"
-    - echo $DOCKER_USERNAME
-    - echo $DOCKER_PASSWORD
     - echo "------------------------------------------------------"
     - echo "Backend Build Started"
     - mvn clean install
     - echo "Backend Build Completed"
     - echo "------------------------------------------------------"
+  artifacts:
+    paths:
+      - backend/target/dalexchange-0.0.1-SNAPSHOT.jar
   tags:
     - dalfcs_gitlab_docker_ci
 
