@@ -16,7 +16,7 @@ backend_build:
     - echo "Backend Build Completed"
     - echo "------------------------------------------------------"
   tags:
-    - dalfcs_docker_kvm
+    - dalfcs_gitlab_docker_ci
 
 frontend_build:
   stage: build
@@ -32,7 +32,7 @@ frontend_build:
     - echo "Frontend Build Completed"
     - echo "------------------------------------------------------"
   tags:
-    - dalfcs_docker_kvm
+    - dalfcs_gitlab_docker_ci
 
 backend_test:
   stage: test
@@ -46,7 +46,7 @@ backend_test:
     - echo "Backend Tests Completed"
     - "------------------------------------------------------"
   tags:
-    - dalfcs_docker_kvm
+    - dalfcs_gitlab_docker_ci
 
 publish_backend:
   stage: publish
@@ -76,7 +76,7 @@ publish_backend:
     - echo "Pushed image to docker hub @dal24asdcg9:frontend"
     - docker logout
   tags:
-    - dalfcs_docker_kvm
+    - dalfcs_gitlab_docker_ci
 
 publish_frontend:
   stage: publish
@@ -106,7 +106,7 @@ publish_frontend:
     - echo "Pushed Image to docker hub @dal24asdcg9:frontend"
     - docker logout
   tags:
-    - dalfcs_docker_kvm
+    - dalfcs_gitlab_docker_ci
 
 deploy_build:
   image: alpine:latest
@@ -128,4 +128,4 @@ deploy_build:
     - ssh $SSH_USER@$VM_IPADDRESS "docker run -d -p8000:8080 dal24asdcg9/backend"
     - echo "------------------------------------------------------"
   tags:
-    - dalfcs_docker_kvm
+    - dalfcs_gitlab_docker_ci
