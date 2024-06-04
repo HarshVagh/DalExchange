@@ -4,12 +4,19 @@ stages:
   - publish
   - deploy
 
+variables:
+  DOCKER_USERNAME: ""
+  DOCKER_PASSWORD: ""
+
 backend_build:
   stage: build
   image: maven:3.9.7-sapmachine-17
   before_script:
     - cd backend/
   script:
+    - echo "---------------- DOCKER Creds ------------------------"
+    - echo $DOCKER_USERNAME
+    - echo $DOCKER_PASSWORD
     - echo "------------------------------------------------------"
     - echo "Backend Build Started"
     - mvn clean install
