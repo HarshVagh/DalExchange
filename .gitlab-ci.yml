@@ -40,11 +40,11 @@ backend_test:
   before_script:
     - cd backend/
   script:
-    - "------------------------------------------------------"
+    - echo "------------------------------------------------------"
     - echo "Backend tests Started"
     - mvn test
     - echo "Backend Tests Completed"
-    - "------------------------------------------------------"
+    - echo "------------------------------------------------------"
   tags:
     - dalfcs_gitlab_docker_ci
 
