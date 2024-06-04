@@ -20,7 +20,7 @@ backend_build:
 
 frontend_build:
   stage: build
-  image: node:latest
+  image: node:alpine
   before_script:
     - cd frontend/
   script:
