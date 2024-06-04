@@ -1,6 +1,7 @@
 stages:
   - build
   - test
+  - publish
   - deploy
 
 backend_build:
@@ -9,11 +10,13 @@ backend_build:
   before_script:
     - cd backend/
   script:
+    - echo "------------------------------------------------------"
     - echo "Backend Build Started"
     - mvn clean install
     - echo "Backend Build Completed"
+    - echo "------------------------------------------------------"
   tags:
-    - dalfcs_gitlab_docker_ci
+    - dalfcs_docker_kvm
 
 frontend_build:
   stage: build
@@ -21,12 +24,15 @@ frontend_build:
   before_script:
     - cd frontend/
   script:
+    - echo "------------------------------------------------------"
     - echo "Frontend Build Started"
     - npm install
+    - echo "------------------------------------------------------"
     - npm run build
     - echo "Frontend Build Completed"
+    - echo "------------------------------------------------------"
   tags:
-    - dalfcs_gitlab_docker_ci
+    - dalfcs_docker_kvm
 
 backend_test:
   stage: test
@@ -34,8 +40,92 @@ backend_test:
   before_script:
     - cd backend/
   script:
+    - "------------------------------------------------------"
     - echo "Backend tests Started"
     - mvn test
     - echo "Backend Tests Completed"
+    - "------------------------------------------------------"
   tags:
-    - dalfcs_gitlab_docker_ci
+    - dalfcs_docker_kvm
+
+publish_backend:
+  stage: publish
+  image: docker:latest
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+  services:
+    - docker:dind
+  before_script:
+    - cd backend/
+  script:
+    - echo "------------------------------------------------------"
+    - echo $DOCKER_HOST
+    - docker --version
+    - echo "Docker Login started"
+    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+    - echo "Docker Login completed"
+    - echo "------------------------------------------------------"
+    - echo "Started building image for backend"
+    - docker build -t dal24asdcg9/backend .
+    - echo "Image build completed for backend"
+    - echo "------------------------------------------------------"
+    - echo "Started pushing image to docker hub"
+    - docker push dal24asdcg9/backend
+  after_script:
+    - echo "Pushed image to docker hub @dal24asdcg9:frontend"
+    - docker logout
+  tags:
+    - dalfcs_docker_kvm
+
+publish_frontend:
+  stage: publish
+  image: docker:latest
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+  services:
+    - docker:dind
+  before_script:
+    - cd frontend/
+  script:
+    - echo "------------------------------------------------------"
+    - echo $DOCKER_HOST
+    - docker --version
+    - echo "Docker Login started"
+    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+    - echo "Docker Login completed"
+    - echo "------------------------------------------------------"
+    - echo "Started building image for backend"
+    - docker build -t dal24asdcg9/frontend .
+    - echo "Image build completed for frontend"
+    - echo "------------------------------------------------------"
+    - echo "Started pushing image to docker hub"
+    - docker push dal24asdcg9/frontend
+  after_script:
+    - echo "Pushed Image to docker hub @dal24asdcg9:frontend"
+    - docker logout
+  tags:
+    - dalfcs_docker_kvm
+
+deploy_build:
+  image: alpine:latest
+  stage: deploy
+  before_script:
+    - echo "------------------------------------------------------"
+    - echo "Deployment Started"
+    - command -v ssh-agent >/dev/null || (apk update && apk add openssh) 
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan $VM_IPADDRESS >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - echo "------------------------------------------------------"
+  script:
+    - echo "------------------------------------------------------"
+    - ssh $SSH_USER@$VM_IPADDRESS "docker run -d -p3000:80 dal24asdcg9/frontend"
+    - ssh $SSH_USER@$VM_IPADDRESS "docker run -d -p8000:8080 dal24asdcg9/backend"
+    - echo "------------------------------------------------------"
+  tags:
+    - dalfcs_docker_kvm
