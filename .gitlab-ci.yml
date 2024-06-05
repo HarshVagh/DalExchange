@@ -23,7 +23,7 @@ backend_build:
     paths:
       - backend/target/dalexchange-0.0.1-SNAPSHOT.jar
   tags:
-    - dalfcs_gitlab_docker_ci
+    - dalfcs_docker_kvm
 
 frontend_build:
   stage: build
@@ -38,8 +38,11 @@ frontend_build:
     - npm run build
     - echo "Frontend Build Completed"
     - echo "------------------------------------------------------"
+  artifacts:
+    paths:
+      - frontend/build
   tags:
-    - dalfcs_gitlab_docker_ci
+    - dalfcs_docker_kvm
 
 backend_test:
   stage: test
@@ -53,7 +56,7 @@ backend_test:
     - echo "Backend Tests Completed"
     - echo "------------------------------------------------------"
   tags:
-    - dalfcs_gitlab_docker_ci
+    - dalfcs_docker_kvm
 
 publish_backend:
   stage: publish
@@ -81,9 +84,9 @@ publish_backend:
     - docker push docker.io/dal24asdcg9/backend
   after_script:
     - echo "Pushed image to docker hub @dal24asdcg9:frontend"
-    # - docker logout
+    - docker logout
   tags:
-    - dalfcs_gitlab_docker_ci
+    - dalfcs_docker_kvm
 
 publish_frontend:
   stage: publish
@@ -111,9 +114,9 @@ publish_frontend:
     - docker push docker.io/dal24asdcg9/frontend
   after_script:
     - echo "Pushed Image to docker hub @dal24asdcg9:frontend"
-    # - docker logout
+    - docker logout
   tags:
-    - dalfcs_gitlab_docker_ci
+    - dalfcs_docker_kvm
 
 deploy_build:
   image: alpine:latest
@@ -135,4 +138,4 @@ deploy_build:
     - ssh $SSH_USER@$VM_IPADDRESS "docker run -d -p8000:8080 dal24asdcg9/backend"
     - echo "------------------------------------------------------"
   tags:
-    - dalfcs_gitlab_docker_ci
+    - dalfcs_docker_kvm
