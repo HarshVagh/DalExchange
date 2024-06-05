@@ -124,18 +124,18 @@ deploy_build:
   before_script:
     - echo "------------------------------------------------------"
     - echo "Deployment Started"
-    - command -v ssh-agent >/dev/null || (apk update && apk add openssh) 
-    - eval $(ssh-agent -s)
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - ssh-keyscan $VM_IPADDRESS >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
+    # - command -v ssh-agent >/dev/null || (apk update && apk add openssh) 
+    # - eval $(ssh-agent -s)
+    # - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    # - mkdir -p ~/.ssh
+    # - chmod 700 ~/.ssh
+    # - ssh-keyscan $VM_IPADDRESS >> ~/.ssh/known_hosts
+    # - chmod 644 ~/.ssh/known_hosts
     - echo "------------------------------------------------------"
   script:
     - echo "------------------------------------------------------"
-    - ssh $SSH_USER@$VM_IPADDRESS "docker run -d -p3000:80 dal24asdcg9/frontend"
-    - ssh $SSH_USER@$VM_IPADDRESS "docker run -d -p8000:8080 dal24asdcg9/backend"
-    - echo "------------------------------------------------------"
+    # - ssh $SSH_USER@$VM_IPADDRESS "docker run -d -p3000:80 dal24asdcg9/frontend"
+    # - ssh $SSH_USER@$VM_IPADDRESS "docker run -d -p8000:8080 dal24asdcg9/backend"
+    # - echo "------------------------------------------------------"
   tags:
     - dalfcs_docker_kvm
