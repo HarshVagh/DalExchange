@@ -4,10 +4,6 @@ stages:
   - publish
   - deploy
 
-variables:
-  DOCKER_USERNAME: ""
-  DOCKER_PASSWORD: ""
-
 backend_build:
   stage: build
   image: maven:3.9.7-sapmachine-17
@@ -21,7 +17,7 @@ backend_build:
     - echo "------------------------------------------------------"
   artifacts:
     paths:
-      - backend/target/dalexchange-0.0.1-SNAPSHOT.jar
+      - backend/target
   tags:
     - dalfcs_docker_kvm
 
@@ -77,13 +73,13 @@ publish_backend:
     - echo "Docker Login completed"
     - echo "------------------------------------------------------"
     - echo "Started building image for backend"
-    - docker build -t docker.io/dal24asdcg9/backend .
+    - docker build -t docker.io/$DOCKER_USERNAME/backend .
     - echo "Image build completed for backend"
     - echo "------------------------------------------------------"
     - echo "Started pushing image to docker hub"
-    - docker push docker.io/dal24asdcg9/backend
+    - docker push docker.io/$DOCKER_USERNAME/backend
   after_script:
-    - echo "Pushed image to docker hub @dal24asdcg9:frontend"
+    - echo "Pushed image to docker hub @$DOCKER_USERNAME:frontend"
     - docker logout
   tags:
     - dalfcs_docker_kvm
@@ -107,13 +103,13 @@ publish_frontend:
     - echo "Docker Login completed"
     - echo "------------------------------------------------------"
     - echo "Started building image for backend"
-    - docker build -t docker.io/dal24asdcg9/frontend .
+    - docker build -t docker.io/$DOCKER_USERNAME/frontend .
     - echo "Image build completed for frontend"
     - echo "------------------------------------------------------"
     - echo "Started pushing image to docker hub"
-    - docker push docker.io/dal24asdcg9/frontend
+    - docker push docker.io/$DOCKER_USERNAME/frontend
   after_script:
-    - echo "Pushed Image to docker hub @dal24asdcg9:frontend"
+    - echo "Pushed Image to docker hub @$DOCKER_USERNAME:frontend"
     - docker logout
   tags:
     - dalfcs_docker_kvm
@@ -139,8 +135,5 @@ deploy_backend:
     - sshpass -p $VM_PWD ssh -o StrictHostKeyChecking=no student@$SERVER_NAME "docker images -a"
     - sshpass -p $VM_PWD ssh -o StrictHostKeyChecking=no student@$SERVER_NAME "docker container ls -a"
     - echo "------------------------------------------------------"
-  # environment:
-  #   name: production_backend
-  #   url: http://$SERVER_NAME:8080
   only:
     - main
