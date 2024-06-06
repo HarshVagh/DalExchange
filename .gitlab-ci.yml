@@ -130,6 +130,7 @@ deploy_backend:
     - sshpass -p $VM_PWD ssh -o StrictHostKeyChecking=no student@$SERVER_NAME "docker pull docker.io/$DOCKER_USERNAME/backend"
     - sshpass -p $VM_PWD ssh -o StrictHostKeyChecking=no student@$SERVER_NAME "docker pull docker.io/$DOCKER_USERNAME/frontend"
     - sshpass -p $VM_PWD ssh -o StrictHostKeyChecking=no student@$SERVER_NAME "docker container rm -f backend || true"
+    - sshpass -p $VM_PWD ssh -o StrictHostKeyChecking=no student@$SERVER_NAME "docker container rm -f frontend || true"
     - sshpass -p $VM_PWD ssh -o StrictHostKeyChecking=no student@$SERVER_NAME "docker run -d -p 8080:8080 --name backend docker.io/$DOCKER_USERNAME/backend"
     - sshpass -p $VM_PWD ssh -o StrictHostKeyChecking=no student@$SERVER_NAME "docker run -d -p 80:80 --name frontend docker.io/$DOCKER_USERNAME/frontend"
     - sshpass -p $VM_PWD ssh -o StrictHostKeyChecking=no student@$SERVER_NAME "docker images -a"
