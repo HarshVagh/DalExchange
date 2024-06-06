@@ -118,24 +118,28 @@ publish_frontend:
   tags:
     - dalfcs_docker_kvm
 
-deploy_build:
+deploy_backend:
   image: alpine:latest
   stage: deploy
-  before_script:
-    - echo "------------------------------------------------------"
-    - echo "Deployment Started"
-    # - command -v ssh-agent >/dev/null || (apk update && apk add openssh) 
-    # - eval $(ssh-agent -s)
-    # - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    # - mkdir -p ~/.ssh
-    # - chmod 700 ~/.ssh
-    # - ssh-keyscan $VM_IPADDRESS >> ~/.ssh/known_hosts
-    # - chmod 644 ~/.ssh/known_hosts
-    - echo "------------------------------------------------------"
-  script:
-    - echo "------------------------------------------------------"
-    # - ssh $SSH_USER@$VM_IPADDRESS "docker run -d -p3000:80 dal24asdcg9/frontend"
-    # - ssh $SSH_USER@$VM_IPADDRESS "docker run -d -p8000:8080 dal24asdcg9/backend"
-    # - echo "------------------------------------------------------"
   tags:
     - dalfcs_docker_kvm
+  script:
+    - echo "------------------------------------------------------"
+    - echo "Deploying Backend..."
+    - apk update && apk add openssh-client sshpass
+    - sudo apt-get install sshpass || true
+    - which ssh || true
+    - which sshpass || true
+    - sshpass -p $VM_PWD ssh -o StrictHostKeyChecking=no student@$SERVER_NAME "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD docker.io"
+    - sshpass -p $VM_PWD ssh -o StrictHostKeyChecking=no student@$SERVER_NAME "docker pull docker.io/$DOCKER_USERNAME/backend:$CI_COMMIT_SHORT_SHA"
+    - sshpass -p $VM_PWD ssh -o StrictHostKeyChecking=no student@$SERVER_NAME "docker container rm -f backend || true"
+    - sshpass -p $VM_PWD ssh -o StrictHostKeyChecking=no student@$SERVER_NAME "docker run -d -p 8080:8080 --name backend docker.io/$DOCKER_USERNAME/backend:$CI_COMMIT_SHORT_SHA"
+    - sshpass -p $VM_PWD ssh -o StrictHostKeyChecking=no student@$SERVER_NAME "docker run -d -p 80:80 --name backend docker.io/$DOCKER_USERNAME/frontend:$CI_COMMIT_SHORT_SHA"
+    - sshpass -p $VM_PWD ssh -o StrictHostKeyChecking=no student@$SERVER_NAME "docker images -a"
+    - sshpass -p $VM_PWD ssh -o StrictHostKeyChecking=no student@$SERVER_NAME "docker container ls -a"
+    - echo "------------------------------------------------------"
+  environment:
+    name: production_backend
+    url: http://$SERVER_NAME:8080
+  only:
+    - main
