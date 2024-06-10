@@ -10,14 +10,15 @@ backend_build:
   before_script:
     - cd backend/
   script:
-    - echo "------------------------------------------------------"
     - echo "Backend Build Started"
     - mvn clean install
     - echo "Backend Build Completed"
-    - echo "------------------------------------------------------"
   artifacts:
     paths:
       - backend/target
+  only:
+    - main
+    - develop
   tags:
     - dalfcs_docker_kvm
 
@@ -27,16 +28,16 @@ frontend_build:
   before_script:
     - cd frontend/
   script:
-    - echo "------------------------------------------------------"
     - echo "Frontend Build Started"
     - npm install
-    - echo "------------------------------------------------------"
     - npm run build
     - echo "Frontend Build Completed"
-    - echo "------------------------------------------------------"
   artifacts:
     paths:
       - frontend/build
+  only:
+    - main
+    - develop
   tags:
     - dalfcs_docker_kvm
 
@@ -46,11 +47,12 @@ backend_test:
   before_script:
     - cd backend/
   script:
-    - echo "------------------------------------------------------"
     - echo "Backend tests Started"
     - mvn test
     - echo "Backend Tests Completed"
-    - echo "------------------------------------------------------"
+  only:
+    - main
+    - develop
   tags:
     - dalfcs_docker_kvm
 
@@ -65,22 +67,21 @@ publish_backend:
   before_script:
     - cd backend/
   script:
-    - echo "------------------------------------------------------"
     - echo $DOCKER_HOST
     - docker --version
     - echo "Docker Login started"
     - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD docker.io
     - echo "Docker Login completed"
-    - echo "------------------------------------------------------"
     - echo "Started building image for backend"
     - docker build -t docker.io/$DOCKER_USERNAME/backend .
     - echo "Image build completed for backend"
-    - echo "------------------------------------------------------"
     - echo "Started pushing image to docker hub"
     - docker push docker.io/$DOCKER_USERNAME/backend
+    - echo "Pushed image to docker hub @$DOCKER_USERNAME:backend"
   after_script:
-    - echo "Pushed image to docker hub @$DOCKER_USERNAME:frontend"
     - docker logout
+  only:
+    - main
   tags:
     - dalfcs_docker_kvm
 
@@ -95,22 +96,21 @@ publish_frontend:
   before_script:
     - cd frontend/
   script:
-    - echo "------------------------------------------------------"
     - echo $DOCKER_HOST
     - docker --version
     - echo "Docker Login started"
     - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD docker.io
     - echo "Docker Login completed"
-    - echo "------------------------------------------------------"
     - echo "Started building image for backend"
     - docker build -t docker.io/$DOCKER_USERNAME/frontend .
     - echo "Image build completed for frontend"
-    - echo "------------------------------------------------------"
     - echo "Started pushing image to docker hub"
     - docker push docker.io/$DOCKER_USERNAME/frontend
-  after_script:
     - echo "Pushed Image to docker hub @$DOCKER_USERNAME:frontend"
+  after_script:
     - docker logout
+  only:
+    - main
   tags:
     - dalfcs_docker_kvm
 
@@ -120,7 +120,6 @@ deploy_backend:
   tags:
     - dalfcs_docker_kvm
   script:
-    - echo "------------------------------------------------------"
     - echo "Deploying Backend..."
     - apk update && apk add openssh-client sshpass
     - sudo apt-get install sshpass || true
@@ -135,6 +134,5 @@ deploy_backend:
     - sshpass -p $VM_PWD ssh -o StrictHostKeyChecking=no student@$SERVER_NAME "docker run -d -p 80:80 --name frontend docker.io/$DOCKER_USERNAME/frontend"
     - sshpass -p $VM_PWD ssh -o StrictHostKeyChecking=no student@$SERVER_NAME "docker images -a"
     - sshpass -p $VM_PWD ssh -o StrictHostKeyChecking=no student@$SERVER_NAME "docker container ls -a"
-    - echo "------------------------------------------------------"
   only:
     - main
