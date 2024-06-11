@@ -3,6 +3,8 @@ package com.asdc.dalexchange.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.Set;
+
 @Data
 @Entity
 @Table(name = "product_category")
@@ -19,7 +21,6 @@ public class ProductCategory {
     @Column(name = "description")
     private String description;
 
-//    @OneToMany(mappedBy = "category")
-//    private Set<Product> products;
-
+    @OneToMany(mappedBy = "category")
+    private Set<Product> products;
 }

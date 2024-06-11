@@ -12,14 +12,17 @@ import jakarta.persistence.*;
 @Table(name = "product_rating")
 public class ProductRating {
 
-    @Id
+    @EmbeddedId
+    private ProductRatingID id;
+
     @ManyToOne
+    @MapsId("productId")
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @Id
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    @MapsId("userId")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Column(name = "review")

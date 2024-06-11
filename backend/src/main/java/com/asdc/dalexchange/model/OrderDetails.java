@@ -20,10 +20,11 @@ public class OrderDetails {
     @JoinColumn(name = "user_id")
     private User buyer;
 
-    @Column(name = "product_id")
-    private Long productId;
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product productId;
 
-    @Column(name = "total_amount")
+    @Column(name = "total_amount", nullable = false)
     private double totalAmount;
 
     @Enumerated(EnumType.STRING)
