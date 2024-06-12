@@ -121,7 +121,7 @@ const ProductList = () => {
         <main className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <img
-              alt="Product Image"
+              alt=""
               className="w-full h-48 object-cover"
               height={300}
               src="
@@ -139,7 +139,7 @@ const ProductList = () => {
           </div>
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <img
-              alt="Product Image"
+              alt=""
               className="w-full h-48 object-cover"
               height={300}
               src="/placeholder.png"
@@ -156,7 +156,7 @@ const ProductList = () => {
           </div>
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <img
-              alt="Product Image"
+              alt=""
               className="w-full h-48 object-cover"
               height={300}
               src="/placeholder.png"
@@ -173,10 +173,10 @@ const ProductList = () => {
           </div>
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <img
-              alt="Product Image"
+              alt=""
               className="w-full h-48 object-cover"
               height={300}
-              src="/placeholder.png"
+              src=""
               style={{
                 aspectRatio: "400/300",
                 objectFit: "cover",
@@ -190,7 +190,7 @@ const ProductList = () => {
           </div>
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <img
-              alt="Product Image"
+              alt=""
               className="w-full h-48 object-cover"
               height={300}
               src="/placeholder.png"
@@ -209,7 +209,7 @@ const ProductList = () => {
           </div>
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <img
-              alt="Product Image"
+              alt=""
               className="w-full h-48 object-cover"
               height={300}
               src="/placeholder.png"
@@ -226,7 +226,7 @@ const ProductList = () => {
           </div>
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <img
-              alt="Product Image"
+              alt=""
               className="w-full h-48 object-cover"
               height={300}
               src="/placeholder.png"
@@ -243,7 +243,7 @@ const ProductList = () => {
           </div>
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <img
-              alt="Product Image"
+              alt=""
               className="w-full h-48 object-cover"
               height={300}
               src="/placeholder.png"
