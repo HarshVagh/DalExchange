@@ -22,7 +22,7 @@ public class ProductDTO {
     public String description;
     public double price;
     public ProductCategory category;
-    public ProductCondition useCondition;
+    public ProductCondition productCondition;
     public String useDuration;
     public ShippingType shippingType;
     public Integer quantityAvailable;

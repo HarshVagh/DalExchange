@@ -2,6 +2,7 @@ package com.asdc.dalexchange.dto;
 
 
 import com.asdc.dalexchange.model.User;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Timestamp;

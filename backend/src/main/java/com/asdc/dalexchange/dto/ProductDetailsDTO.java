@@ -20,21 +20,21 @@ public class ProductDetailsDTO {
     private String title;
     private String description;
     private double price;
-    private ProductCategory category;
-    private ProductCondition useCondition;
+   // private ProductCategory category;
+    private String category;
+    private ProductCondition productCondition;
     private String useDuration;
     private ShippingType shippingType;
     private Integer quantityAvailable;
 
 
 
-    //
     //images
     private List<String> imageurl;
 
     //seller
     private String SellerName;
     private int Rating;
-    private LocalDateTime joinat;
+    private LocalDateTime sellerJoiningDate;
 
 }
