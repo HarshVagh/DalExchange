@@ -20,11 +20,6 @@ public class ProductServiceImp implements ProductService {
 
     @Override
     public ProductDTO getProductById(Long productId) {
-         /*Product prodcut = this.productRepository.findById(productId).orElseThrow(() -> new ManualException("Product not found with ID: " + productId));
-         ProductDTO productDTO = this.modelMapper.map(prodcut, ProductDTO.class);
-         return productDTO;
-         //.orElseThrow(()->new ResourceNotFoundException("ss","",""));*/
-
         Product product = this.productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
         return this.modelMapper.map(product, ProductDTO.class);

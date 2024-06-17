@@ -33,7 +33,7 @@ public class PoductDetailsController {
 
 
 
-    @PostMapping("/{userid}/{productid}/favorite")
+/*    @PostMapping("/{userid}/{productid}/favorite")
     public ResponseEntity<String> markAsFavorite(@PathVariable long userid, @PathVariable long productid) {
 
         ProductWishlistDTO productWishlistDTO = new ProductWishlistDTO();
@@ -45,7 +45,7 @@ public class PoductDetailsController {
         productWishlistDTO1 = this.productWishlistService.markProductAsFavorite(userid, productid);
 
         return ResponseEntity.ok().body("Product added Sucessfully in wishlist.");
-    }
+    }*/
 
 
     ////////////////////////////////
@@ -63,7 +63,7 @@ public class PoductDetailsController {
 
 //////////////////////////////////////////
     // check the product service
-/*    @Autowired
+   /* @Autowired
     private ProductService productService;
 
     @GetMapping("/{productid}")
