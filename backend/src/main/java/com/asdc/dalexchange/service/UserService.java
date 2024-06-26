@@ -1,20 +1,53 @@
 package com.asdc.dalexchange.service;
 
+import com.asdc.dalexchange.model.User;
+import com.asdc.dalexchange.model.VerificationCode;
 import com.asdc.dalexchange.repository.UserRepository;
+import com.asdc.dalexchange.repository.VerificationCodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class UserService {
 
     @Autowired
-    private final UserRepository userRepository;
+    private UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    @Autowired
+    private VerificationCodeRepository verificationCodeRepository;
+
+    @Autowired
+    private EmailService emailService;
+
+    public User registerUser(User user) {
+        User registeredUser = userRepository.save(user);
+
+        String verificationCode = generateVerificationCode();
+        VerificationCode code = new VerificationCode();
+        code.setEmail(user.getEmail());
+        code.setCode(verificationCode);
+        code.setExpiryDate(LocalDateTime.now().plusHours(1));
+        verificationCodeRepository.save(code);
+
+        String subject = "Verify your email";
+        String text = "Your verification code is " + verificationCode;
+        emailService.sendEmail(user.getEmail(), subject, text);
+
+        return registeredUser;
     }
 
-    public long newCustomers(){
-        return userRepository.countUsersJoinedInLast30Days();
+    public boolean verifyUser(String email, String code) {
+        Optional<VerificationCode> verificationCode = verificationCodeRepository.findByEmailAndCode(email, code);
+        return verificationCode.isPresent() && verificationCode.get().getExpiryDate().isAfter(LocalDateTime.now());
     }
+
+    private String generateVerificationCode() {
+        Random random = new Random();
+        return String.format("%06d", random.nextInt(999999));
+    }
+
 }
