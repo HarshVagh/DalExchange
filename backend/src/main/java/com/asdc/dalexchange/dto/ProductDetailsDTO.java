@@ -15,26 +15,29 @@ import java.util.List;
 @Getter
 public class ProductDetailsDTO {
 
-    private Long productId;
-   // public User seller;
-    private String title;
-    private String description;
-    private double price;
-   // private ProductCategory category;
-    private String category;
-    private ProductCondition productCondition;
-    private String useDuration;
-    private ShippingType shippingType;
-    private Integer quantityAvailable;
+ private Long productId;
+ // public User seller;
+ private String title;
+ private String description;
+ private double price;
+ // private ProductCategory category;
+ private String category;
+ private ProductCondition productCondition;
+ private String useDuration;
+ private ShippingType shippingType;
+ private Integer quantityAvailable;
 
 
 
-    //images
-    private List<String> imageurl;
+ //images
+ private List<String> imageurl;
 
-    //seller
-    private String SellerName;
-    private int Rating;
-    private LocalDateTime sellerJoiningDate;
+ //whishlist
+ private  boolean  Favorite;
+
+ //seller
+ private String SellerName;
+ private int Rating;
+ private LocalDateTime sellerJoiningDate;
 
 }

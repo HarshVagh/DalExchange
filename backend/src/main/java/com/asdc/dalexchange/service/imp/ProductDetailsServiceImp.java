@@ -5,6 +5,7 @@ import com.asdc.dalexchange.dto.ProductDetailsDTO;
 import com.asdc.dalexchange.service.ProductDetailsService;
 import com.asdc.dalexchange.service.ProductImageService;
 import com.asdc.dalexchange.service.ProductService;
+import com.asdc.dalexchange.service.ProductWishlistService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,15 +22,18 @@ public class ProductDetailsServiceImp implements ProductDetailsService {
     ProductImageService productImageService;
 
     @Autowired
+    ProductWishlistService productWishlistService;
+
+    @Autowired
     ModelMapper modelMapper;
 
     @Override
-    public ProductDetailsDTO DetailsOfProduct(Long productId) {
+    public ProductDetailsDTO DetailsOfProduct(Long userId, Long productId) {
         // get all the details of the product
         ProductDTO prodcutDetails = productService.getProductById(productId);
 
         //get the all image url of given product
-         List<String> productImageUrl = productImageService.getProductAllImages(productId);
+        List<String> productImageUrl = productImageService.getProductAllImages(productId);
 
         // convert the model to DTO
         ProductDetailsDTO productDetailsDTO = modelMapper.map(prodcutDetails, ProductDetailsDTO.class);
@@ -42,6 +46,9 @@ public class ProductDetailsServiceImp implements ProductDetailsService {
 
         // set the category name of the  product DTO
         productDetailsDTO.setCategory(prodcutDetails.getCategory().getName());
+
+        // set the favorite
+        productDetailsDTO.setFavorite(productWishlistService.checkProductIsFavoriteByGivenUser(userId, productId));
 
         return  productDetailsDTO;
     }

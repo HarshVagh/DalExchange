@@ -24,12 +24,30 @@ public class PoductDetailsController {
     @Autowired
     private ProductWishlistService productWishlistService;
 
-    @GetMapping("/{productid}")
-    public ResponseEntity<ProductDetailsDTO> product(@PathVariable long productid) {
-        ProductDetailsDTO productDetailsDTO = productDetailsService.DetailsOfProduct(productid);
-       // int sellerId = productDTO.getSellerId();
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/{userid}/{productid}")
+    public ResponseEntity<ProductDetailsDTO> product(@PathVariable long userid ,@PathVariable long productid) {
+        ProductDetailsDTO productDetailsDTO = productDetailsService.DetailsOfProduct(userid,productid);
+        // int sellerId = productDTO.getSellerId();
         return ResponseEntity.ok().body(productDetailsDTO);
     }
+
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PostMapping("/{userid}/{productid}/favorite")
+    public ResponseEntity<String> markAsFavorite(@PathVariable long userid, @PathVariable long productid) {
+
+        ProductWishlistDTO productWishlistDTO = new ProductWishlistDTO();
+        productWishlistDTO.setUserId(userid);
+        productWishlistDTO.setProductId(productid);
+
+        // Assuming ProductWishlistService is injected properly
+        ProductWishlist productWishlistDTO1 = new ProductWishlist();
+        productWishlistDTO1 = productWishlistService.markProductAsFavorite(userid, productid);
+
+        return ResponseEntity.ok().body("Product added Sucessfully in wishlist.");
+    }
+
 
 
 

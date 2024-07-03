@@ -11,9 +11,13 @@ import lombok.*;
 @Setter
 @Getter
 public class ProductRatingDTO {
-    private ProductRatingID id;
+    /*private ProductRatingID id;
     private Product productId;
     private User user;
+    private String review;
+    private Integer rating;*/
+    //private Product productId;
+    private String title;
     private String review;
     private Integer rating;
 

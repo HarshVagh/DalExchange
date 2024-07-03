@@ -12,20 +12,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProductServiceImp implements ProductService {
 
-         @Autowired
-         private ProductRepository productRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
-         @Autowired
-         private ModelMapper modelMapper;
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Override
     public ProductDTO getProductById(Long productId) {
         Product product = this.productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
         return this.modelMapper.map(product, ProductDTO.class);
-
-
-
     }
 
 
