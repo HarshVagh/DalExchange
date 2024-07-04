@@ -1,12 +1,16 @@
 package com.asdc.dalexchange.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.util.Set;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 @Table(name = "product_category")
 public class ProductCategory {
 
