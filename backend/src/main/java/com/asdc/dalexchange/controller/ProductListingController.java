@@ -1,18 +1,21 @@
 package com.asdc.dalexchange.controller;
 
+import com.asdc.dalexchange.dto.PaginatedResponse;
 import com.asdc.dalexchange.dto.ProductListingDTO;
 import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.service.ProductListingService;
 import com.asdc.dalexchange.mappers.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "http://localhost:3000/products")
 @RestController
 public class ProductListingController {
 
@@ -28,10 +31,28 @@ public class ProductListingController {
     }
 
     @GetMapping(path = "/products_listing")
-    public List<ProductListingDTO> getProductListing() {
-        List<Product> products = productListingService.findAll();
-        return products.stream()
+    public PaginatedResponse<ProductListingDTO> getProductListing(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) List<String> categories,
+            @RequestParam(required = false) List<String> conditions,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Product> productPage = productListingService.findByCriteria(pageable, search, categories, conditions, minPrice, maxPrice);
+
+        List<ProductListingDTO> content = productPage.getContent().stream()
                 .map(productListingMapper::mapTo)
                 .collect(Collectors.toList());
+
+        return new PaginatedResponse<>(
+                content,
+                productPage.getNumber(),
+                productPage.getSize(),
+                productPage.getTotalElements(),
+                productPage.getTotalPages()
+        );
     }
 }
