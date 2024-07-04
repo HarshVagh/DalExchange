@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import StoreIcon from "../assets/icons/store-solid.svg";
 import SearchIcon from "../assets/icons/magnifying-glass-solid.svg";
 import PlusIcon from "../assets/icons/plus-solid.svg";
