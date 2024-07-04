@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { ProductListingAPI } from "../../services/productListingApi";
 import Header from "../../components/AppHeader";
 import ProductCard from "./components/ProductCard";
@@ -32,11 +32,7 @@ const ProductList = () => {
     profile: true
   };
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  const fetchProducts = async (page = pageData.page) => {
+  const fetchProducts = useCallback(async (page = pageData.page) => {
     const params = {
       page: page,
       size: pageData.size
@@ -64,7 +60,11 @@ const ProductList = () => {
     };
     console.log("request params: ", params)
     await ProductListingAPI.get(setters, params);
-  };
+  }, [filters, pageData, search, setProducts, setIsLoading, setError, setPageData]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   const handlePageChange = (newPage) => {
     fetchProducts(newPage);
