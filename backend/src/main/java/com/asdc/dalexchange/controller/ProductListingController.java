@@ -5,6 +5,7 @@ import com.asdc.dalexchange.dto.ProductListingDTO;
 import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.service.ProductListingService;
 import com.asdc.dalexchange.mappers.Mapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@Slf4j
 public class ProductListingController {
 
     @Autowired
@@ -39,6 +41,17 @@ public class ProductListingController {
             @RequestParam(required = false) List<String> conditions,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice) {
+
+        log.info("get products_listing api endpoint called!");
+        log.info("get products_listing params: { " +
+                "page: {}, " +
+                "size: {}, " +
+                "search: {}, " +
+                "categories: {}, " +
+                "conditions: {}, " +
+                "minPrice: {}, " +
+                "maxPrice: {}, }",
+                page, size, search, categories, conditions, minPrice, maxPrice);
 
         Pageable pageable = PageRequest.of(page, size);
         Page<Product> productPage = productListingService.findByCriteria(pageable, search, categories, conditions, minPrice, maxPrice);
