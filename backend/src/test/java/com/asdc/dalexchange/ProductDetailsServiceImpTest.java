@@ -8,9 +8,10 @@ import com.asdc.dalexchange.dto.ProductDetailsDTO;
 import com.asdc.dalexchange.model.Seller;
 import com.asdc.dalexchange.model.ProductCategory;
 import com.asdc.dalexchange.model.User;
-import com.asdc.dalexchange.service.imp.ProductDetailsServiceImp;
 import com.asdc.dalexchange.service.ProductImageService;
 import com.asdc.dalexchange.service.ProductService;
+import com.asdc.dalexchange.service.ProductWishlistService;
+import com.asdc.dalexchange.service.imp.ProductDetailsServiceImp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,11 +34,15 @@ public class ProductDetailsServiceImpTest {
     private ProductImageService productImageService;
 
     @Mock
+    private ProductWishlistService productWishlistService;
+
+    @Mock
     private ModelMapper modelMapper;
 
     @InjectMocks
     private ProductDetailsServiceImp productDetailsService;
 
+    private Long userId;
     private Long productId;
     private ProductDTO productDTO;
     private ProductDetailsDTO productDetailsDTO;
@@ -47,6 +52,7 @@ public class ProductDetailsServiceImpTest {
 
     @BeforeEach
     public void setUp() {
+        userId = 1L;
         productId = 1L;
 
         // Mock Seller with joining date
@@ -72,24 +78,27 @@ public class ProductDetailsServiceImpTest {
 
     @Test
     public void testDetailsOfProductSuccess() {
-        // Mock behavior of productService, productImageService, and modelMapper
+        // Mock behavior of productService, productImageService, productWishlistService, and modelMapper
         when(productService.getProductById(productId)).thenReturn(productDTO);
         when(productImageService.getProductAllImages(productId)).thenReturn(imageUrls);
         when(modelMapper.map(productDTO, ProductDetailsDTO.class)).thenReturn(productDetailsDTO);
+        when(productWishlistService.checkProductIsFavoriteByGivenUser(userId, productId)).thenReturn(true);
 
         // Call the method under test
-        ProductDetailsDTO result = productDetailsService.DetailsOfProduct(productId);
+        ProductDetailsDTO result = productDetailsService.DetailsOfProduct(userId, productId);
 
         // Assertions to verify correctness of result
         assertNotNull(result);
         assertEquals(imageUrls, result.getImageurl());
         assertEquals(seller.getUser().getJoinedAt(), result.getSellerJoiningDate());
         assertEquals(category.getName(), result.getCategory());
+        assertTrue(result.isFavorite());
 
         // Verify that mocked methods were called exactly once
         verify(productService, times(1)).getProductById(productId);
         verify(productImageService, times(1)).getProductAllImages(productId);
         verify(modelMapper, times(1)).map(productDTO, ProductDetailsDTO.class);
+        verify(productWishlistService, times(1)).checkProductIsFavoriteByGivenUser(userId, productId);
 
         // Additional assertion to cover setCategory in ProductDetailsDTO
         assertEquals(productDTO.getCategory().getName(), result.getCategory());

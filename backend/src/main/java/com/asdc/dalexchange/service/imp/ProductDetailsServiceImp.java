@@ -2,6 +2,81 @@ package com.asdc.dalexchange.service.imp;
 
 import com.asdc.dalexchange.dto.ProductDTO;
 import com.asdc.dalexchange.dto.ProductDetailsDTO;
+import com.asdc.dalexchange.mapper.Mapper;
+import com.asdc.dalexchange.model.Product;
+import com.asdc.dalexchange.service.ProductDetailsService;
+import com.asdc.dalexchange.service.ProductImageService;
+import com.asdc.dalexchange.service.ProductService;
+import com.asdc.dalexchange.service.ProductWishlistService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class ProductDetailsServiceImp implements ProductDetailsService {
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private ProductImageService productImageService;
+
+    @Autowired
+    private ProductWishlistService productWishlistService;
+
+    @Autowired
+    private Mapper<Product, ProductDetailsDTO> productDetailsMapper; // Inject the mapper
+
+    @Override
+    public ProductDetailsDTO DetailsOfProduct(Long userId, Long productId) {
+        // get all the details of the product
+        ProductDTO productDetails = productService.getProductById(productId);
+
+        //get the all image url of given product
+        List<String> productImageUrl = productImageService.getProductAllImages(productId);
+
+        // Map product to ProductDetailsDTO
+        ProductDetailsDTO productDetailsDTO = productDetailsMapper.mapTo(productDetails);
+
+        // Set the all image URL to the ProductDetailsDTO
+        productDetailsDTO.setImageurl(productImageUrl);
+
+        // set the favorite
+        productDetailsDTO.setFavorite(productWishlistService.checkProductIsFavoriteByGivenUser(userId, productId));
+
+        return productDetailsDTO;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+package com.asdc.dalexchange.service.imp;
+
+import com.asdc.dalexchange.dto.ProductDTO;
+import com.asdc.dalexchange.dto.ProductDetailsDTO;
 import com.asdc.dalexchange.service.ProductDetailsService;
 import com.asdc.dalexchange.service.ProductImageService;
 import com.asdc.dalexchange.service.ProductService;
@@ -54,3 +129,4 @@ public class ProductDetailsServiceImp implements ProductDetailsService {
     }
 
 }
+*/

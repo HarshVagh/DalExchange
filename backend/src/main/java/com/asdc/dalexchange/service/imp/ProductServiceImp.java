@@ -1,6 +1,7 @@
 package com.asdc.dalexchange.service.imp;
 
 import com.asdc.dalexchange.dto.ProductDTO;
+import com.asdc.dalexchange.mapper.Mapper;
 import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.repository.ProductRepository;
 import com.asdc.dalexchange.service.ProductService;
@@ -16,14 +17,13 @@ public class ProductServiceImp implements ProductService {
     private ProductRepository productRepository;
 
     @Autowired
-    private ModelMapper modelMapper;
+    private Mapper<Product, ProductDTO> productMapper; // Inject the mapper
 
     @Override
     public ProductDTO getProductById(Long productId) {
         Product product = this.productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
-        return this.modelMapper.map(product, ProductDTO.class);
+        return productMapper.mapTo(product);
     }
-
 
 }
