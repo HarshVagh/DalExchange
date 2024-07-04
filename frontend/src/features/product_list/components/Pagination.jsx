@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React from 'react'
 
 const Pagination = ({pageData, onPageChange}) => {
   const { page, totalPages } = pageData;
@@ -14,9 +14,9 @@ const Pagination = ({pageData, onPageChange}) => {
     for (let pageNumber = 1; pageNumber <= pageData.totalPages; pageNumber++) {
       pageNumbers.push(
         <li key={pageNumber} onClick={() => handlePageClick(pageNumber-1)} disabled={pageNumber === page}>{ 
-          pageNumber-1 == page ? 
-          <a href="#" aria-current="page" className="z-10 flex items-center justify-center px-3 h-8 leading-tight text-blue-600 border border-blue-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700">{pageNumber}</a>
-          : <a href="#" className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">{pageNumber}</a>
+          pageNumber-1 === page ? 
+          <div aria-current="page" className="z-10 flex items-center justify-center px-3 h-8 leading-tight text-blue-600 border border-blue-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700">{pageNumber}</div>
+          : <div className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">{pageNumber}</div>
         }</li>
       );
     }
