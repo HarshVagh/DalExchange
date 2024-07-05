@@ -2,8 +2,6 @@ package com.asdc.dalexchange.dto;
 
 import com.asdc.dalexchange.enums.ProductCondition;
 import com.asdc.dalexchange.enums.ShippingType;
-import com.asdc.dalexchange.model.ProductCategory;
-import com.asdc.dalexchange.model.User;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -37,7 +35,6 @@ public class ProductDetailsDTO {
 
  //seller
  private String SellerName;
- private int Rating;
+ private double Rating;
  private LocalDateTime sellerJoiningDate;
-
 }

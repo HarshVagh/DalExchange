@@ -1,5 +1,6 @@
 package com.asdc.dalexchange.controller;
 
+import com.asdc.dalexchange.dto.ProductDTO;
 import com.asdc.dalexchange.dto.ProductDetailsDTO;
 import com.asdc.dalexchange.dto.ProductWishlistDTO;
 import com.asdc.dalexchange.model.ProductWishlist;
@@ -7,6 +8,8 @@ import com.asdc.dalexchange.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 //@RequestMapping("/dalexchange")
@@ -60,11 +63,11 @@ public class PoductDetailsController {
 
 
     ////////////////////////////////
-  /*  // check the image url
+   /* // check the image url
     @Autowired
     private ProductImageService productImageService;
-
-    @GetMapping("/{productid}")
+*/
+   /* @GetMapping("/{productid}")
     public List<String> product(@PathVariable long productid) {
         List<String> urllist = productImageService.getProductAllImages(productid);
         System.out.println("urllist: " + urllist);
@@ -73,8 +76,8 @@ public class PoductDetailsController {
     }*/
 
 //////////////////////////////////////////
-    // check the product service
-   /* @Autowired
+   /* // check the product service
+    @Autowired
     private ProductService productService;
 
     @GetMapping("/{productid}")

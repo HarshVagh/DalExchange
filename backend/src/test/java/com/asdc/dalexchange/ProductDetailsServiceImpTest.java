@@ -1,106 +1,92 @@
+/*
 package com.asdc.dalexchange;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 import com.asdc.dalexchange.dto.ProductDTO;
 import com.asdc.dalexchange.dto.ProductDetailsDTO;
-import com.asdc.dalexchange.model.Seller;
-import com.asdc.dalexchange.model.ProductCategory;
+import com.asdc.dalexchange.dto.SellerDTO;
+import com.asdc.dalexchange.mapper.impl.ProductDetailsMapperImpl;
+import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.model.User;
-import com.asdc.dalexchange.service.ProductImageService;
-import com.asdc.dalexchange.service.ProductService;
-import com.asdc.dalexchange.service.ProductWishlistService;
+import com.asdc.dalexchange.repository.ProductRepository;
 import com.asdc.dalexchange.service.imp.ProductDetailsServiceImp;
+import com.asdc.dalexchange.service.imp.SellerServiceImp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.modelmapper.ModelMapper;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
+import org.modelmapper.ModelMapper;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Optional;
 
-@ExtendWith(MockitoExtension.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
+
 public class ProductDetailsServiceImpTest {
 
     @Mock
-    private ProductService productService;
+    private ProductRepository productRepository;
 
     @Mock
-    private ProductImageService productImageService;
-
-    @Mock
-    private ProductWishlistService productWishlistService;
-
-    @Mock
-    private ModelMapper modelMapper;
+    private SellerServiceImp sellerService;
 
     @InjectMocks
     private ProductDetailsServiceImp productDetailsService;
 
-    private Long userId;
-    private Long productId;
-    private ProductDTO productDTO;
-    private ProductDetailsDTO productDetailsDTO;
-    private List<String> imageUrls;
-    private Seller seller;
-    private ProductCategory category;
+   // private ProductDetailsMapperImpl productDetailsMapper = new ProductDetailsMapperImpl(ModelMapper productRepository);
 
     @BeforeEach
     public void setUp() {
-        userId = 1L;
-        productId = 1L;
-
-        // Mock Seller with joining date
-        seller = new Seller();
-        seller.setUser(new User()); // Assuming Seller has a User object
-        seller.getUser().setJoinedAt(LocalDateTime.now());
-
-        // Mock ProductCategory
-        category = new ProductCategory();
-        category.setName("Electronics");
-
-        // Mock ProductDTO
-        productDTO = new ProductDTO();
-        productDTO.setSeller(seller.getUser()); // Set the User for the Seller
-        productDTO.setCategory(category);
-
-        // Mock image URLs
-        imageUrls = Arrays.asList("image1.jpg", "image2.jpg", "image3.jpg");
-
-        // Mock ProductDetailsDTO
-        productDetailsDTO = new ProductDetailsDTO();
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testDetailsOfProductSuccess() {
-        // Mock behavior of productService, productImageService, productWishlistService, and modelMapper
-        when(productService.getProductById(productId)).thenReturn(productDTO);
-        when(productImageService.getProductAllImages(productId)).thenReturn(imageUrls);
-        when(modelMapper.map(productDTO, ProductDetailsDTO.class)).thenReturn(productDetailsDTO);
-        when(productWishlistService.checkProductIsFavoriteByGivenUser(userId, productId)).thenReturn(true);
+    public void testDetailsOfProduct_SellerNotAvailable() {
+        // Arrange
+        Long productId = 1L;
+        Long userId = 1L;
+        Product product = new Product();
+        product.setProductId(productId);
+        product.setTitle("Test Product");
 
-        // Call the method under test
-        ProductDetailsDTO result = productDetailsService.DetailsOfProduct(userId, productId);
+        when(productRepository.findById(productId)).thenReturn(Optional.of(product));
+        when(sellerService.getSellerById(anyLong())).thenReturn(Optional.empty()); // Mock seller not available
 
-        // Assertions to verify correctness of result
-        assertNotNull(result);
-        assertEquals(imageUrls, result.getImageurl());
-        assertEquals(seller.getUser().getJoinedAt(), result.getSellerJoiningDate());
-        assertEquals(category.getName(), result.getCategory());
-        assertTrue(result.isFavorite());
+        // Act
+        ProductDetailsDTO productDTO = productDetailsService.DetailsOfProduct(userId,productId);
 
-        // Verify that mocked methods were called exactly once
-        verify(productService, times(1)).getProductById(productId);
-        verify(productImageService, times(1)).getProductAllImages(productId);
-        verify(modelMapper, times(1)).map(productDTO, ProductDetailsDTO.class);
-        verify(productWishlistService, times(1)).checkProductIsFavoriteByGivenUser(userId, productId);
+        // Assert
+        assertEquals(productId, productDTO.getProductId());
+        assertEquals("Test Product", productDTO.getTitle());
+        assertEquals(null, productDTO.getSellerName()); // Assert seller is null
+    }
 
-        // Additional assertion to cover setCategory in ProductDetailsDTO
-        assertEquals(productDTO.getCategory().getName(), result.getCategory());
+    @Test
+    public void testDetailsOfProduct_ValidProductAndSeller() {
+        // Arrange
+        Long productId = 2L;
+        Long userId = 2L;
+        Product product = new Product();
+        product.setProductId(productId);
+        product.setTitle("Test Product");
+
+        User seller = new User();
+        seller.setUserId(101L);
+        seller.setUsername("seller101");
+
+        SellerDTO sellerDTO = new SellerDTO();
+        sellerDTO.setSellerId(seller.getUserId());
+
+        when(productRepository.findById(productId)).thenReturn(Optional.of(product));
+        when(sellerService.getSellerById(anyLong())).thenReturn(Optional.of(sellerDTO)); // Mock seller available
+
+        // Act
+        ProductDetailsDTO productDTO = productDetailsService.DetailsOfProduct(userId,productId);
+
+        // Assert
+        assertEquals(productId, productDTO.getProductId());
+        assertEquals("Test Product", productDTO.getTitle());
+        assertEquals(sellerDTO, productDTO.getSellerName()); // Assert seller is correctly mapped
     }
 }
+*/

@@ -12,7 +12,6 @@ public class DalexchangeApplication {
 		SpringApplication.run(DalexchangeApplication.class, args);
 	}
 
-
 	@Bean
 	public ModelMapper modelmapper(){
 		return new ModelMapper();

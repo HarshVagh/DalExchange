@@ -1,9 +1,8 @@
-package com.asdc.dalexchange.mappers.impl;
+package com.asdc.dalexchange.mapper.impl;
 
 import com.asdc.dalexchange.dto.ProductDetailsDTO;
 import com.asdc.dalexchange.mapper.Mapper;
 import com.asdc.dalexchange.model.Product;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

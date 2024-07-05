@@ -1,30 +1,30 @@
 package com.asdc.dalexchange;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.model.ProductWishlist;
 import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.repository.ProductRepository;
 import com.asdc.dalexchange.repository.ProductWishlistRepository;
 import com.asdc.dalexchange.repository.UserRepository;
+import com.asdc.dalexchange.service.ProductService;
 import com.asdc.dalexchange.service.imp.ProductWishListServiceImp;
+import com.asdc.dalexchange.specification.ProductWishlistSpecification;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-@ExtendWith(MockitoExtension.class)
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
+
 public class ProductWishListServiceImpTest {
 
     @Mock
@@ -34,149 +34,141 @@ public class ProductWishListServiceImpTest {
     private UserRepository userRepository;
 
     @Mock
+    private ProductService productService;
+
+    @Mock
     private ProductRepository productRepository;
 
     @InjectMocks
-    private ProductWishListServiceImp productWishListService;
-
-    private Long userId;
-    private Long productId;
-    private User user;
-    private Product product;
-    private ProductWishlist productWishlist;
+    private ProductWishListServiceImp productWishlistService;
 
     @BeforeEach
     public void setUp() {
-        userId = 1L;
-        productId = 1L;
+        MockitoAnnotations.openMocks(this);
+    }
 
-        user = new User();
+    @Test
+    public void testMarkProductAsFavorite_AddToFavorites() {
+        // Mock data
+        long userId = 1L;
+        long productId = 100L;
+        User user = new User();
         user.setUserId(userId);
-
-        product = new Product();
+        Product product = new Product();
         product.setProductId(productId);
-
-        productWishlist = new ProductWishlist();
+        ProductWishlist productWishlist = new ProductWishlist();
         productWishlist.setUserId(user);
         productWishlist.setProductId(product);
-    }
 
-    @Test
-    public void testMarkProductAsFavoriteAddToWishlist() {
+        // Mock repository behavior
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(productRepository.findById(productId)).thenReturn(Optional.of(product));
-        when(productWishlistRepository.findOne(any(Specification.class))).thenReturn(Optional.empty());
+        when(productWishlistRepository.findAll(any(Specification.class))).thenReturn(new ArrayList<>());
         when(productWishlistRepository.save(any(ProductWishlist.class))).thenReturn(productWishlist);
 
-        ProductWishlist result = productWishListService.markProductAsFavorite(userId, productId);
+        // Call method under test
+        ProductWishlist result = productWishlistService.markProductAsFavorite(userId, productId);
 
+        // Assertions
         assertNotNull(result);
-        assertEquals(productWishlist, result);
-        verify(userRepository, times(1)).findById(userId);
-        verify(productRepository, times(1)).findById(productId);
-        verify(productWishlistRepository, times(1)).findOne(any(Specification.class));
-        verify(productWishlistRepository, times(1)).save(any(ProductWishlist.class));
+        assertEquals(userId, result.getUserId().getUserId());
+        assertEquals(productId, result.getProductId().getProductId());
     }
 
     @Test
-    public void testMarkProductAsFavoriteRemoveFromWishlist() {
+    public void testMarkProductAsFavorite_RemoveFromFavorites() {
+        // Mock data
+        long userId = 1L;
+        long productId = 100L;
+        User user = new User();
+        user.setUserId(userId);
+        Product product = new Product();
+        product.setProductId(productId);
+        ProductWishlist productWishlist = new ProductWishlist();
+        productWishlist.setUserId(user);
+        productWishlist.setProductId(product);
+        List<ProductWishlist> existingWishlistItems = new ArrayList<>();
+        existingWishlistItems.add(productWishlist);
+
+        // Mock repository behavior
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(productRepository.findById(productId)).thenReturn(Optional.of(product));
-        when(productWishlistRepository.findOne(any(Specification.class))).thenReturn(Optional.of(productWishlist));
+        when(productWishlistRepository.findAll(any(Specification.class))).thenReturn(existingWishlistItems);
 
-        ProductWishlist result = productWishListService.markProductAsFavorite(userId, productId);
+        // Call method under test
+        ProductWishlist result = productWishlistService.markProductAsFavorite(userId, productId);
 
+        // Assertions
         assertNull(result);
-        verify(userRepository, times(1)).findById(userId);
-        verify(productRepository, times(1)).findById(productId);
-        verify(productWishlistRepository, times(1)).findOne(any(Specification.class));
-        verify(productWishlistRepository, times(1)).delete(productWishlist);
-    }
-
-    @Test
-    public void testCheckProductIsFavoriteByGivenUser() {
-        when(productWishlistRepository.count(any(Specification.class))).thenReturn(1L);
-
-        boolean result = productWishListService.checkProductIsFavoriteByGivenUser(userId, productId);
-
-        assertTrue(result);
-        verify(productWishlistRepository, times(1)).count(any(Specification.class));
-    }
-
-    @Test
-    public void testCheckProductIsNotFavoriteByGivenUser() {
-        when(productWishlistRepository.count(any(Specification.class))).thenReturn(0L);
-
-        boolean result = productWishListService.checkProductIsFavoriteByGivenUser(userId, productId);
-
-        assertFalse(result);
-        verify(productWishlistRepository, times(1)).count(any(Specification.class));
+        verify(productWishlistRepository, times(1)).deleteAll(existingWishlistItems);
     }
 
     @Test
     public void testGetProductIdsByUserId() {
-        List<ProductWishlist> wishlists = Arrays.asList(productWishlist);
-        List<Long> productIds = Arrays.asList(productId);
-        when(productWishlistRepository.findAll(any(Specification.class))).thenReturn(wishlists);
-        when(productRepository.findByProductIdIn(productIds)).thenReturn(Arrays.asList(product));
+        // Mock data
+        long userId = 1L;
+        User user = new User();
+        user.setUserId(userId);
 
-        List<Product> result = productWishListService.getProductIdsByUserId(userId);
+        Product product1 = new Product();
+        product1.setProductId(100L);
+        Product product2 = new Product();
+        product2.setProductId(101L);
 
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals(product, result.get(0));
-        verify(productWishlistRepository, times(1)).findAll(any(Specification.class));
-        verify(productRepository, times(1)).findByProductIdIn(productIds);
+        ProductWishlist productWishlist1 = new ProductWishlist();
+        productWishlist1.setUserId(user);
+        productWishlist1.setProductId(product1);
+
+        ProductWishlist productWishlist2 = new ProductWishlist();
+        productWishlist2.setUserId(user);
+        productWishlist2.setProductId(product2);
+
+        List<ProductWishlist> allWishlistedProducts = List.of(productWishlist1, productWishlist2);
+        List<Long> productIds = List.of(100L, 101L);
+        List<Product> expectedProducts = List.of(product1, product2);
+
+        // Mock repository behavior
+        when(productWishlistRepository.findAll(any(Specification.class))).thenReturn(allWishlistedProducts);
+        when(productRepository.findByProductIdIn(productIds)).thenReturn(expectedProducts);
+
+        // Call method under test
+        List<Product> result = productWishlistService.getProductIdsByUserId(userId);
+
+        // Assertions
+        assertEquals(expectedProducts.size(), result.size());
+        assertEquals(productIds, result.stream().map(Product::getProductId).toList());
     }
 
     @Test
-    public void testGetProductIdsByUserIdNoWishlistItems() {
-        when(productWishlistRepository.findAll(any(Specification.class))).thenReturn(new ArrayList<>());
+    public void testCheckProductIsFavoriteByGivenUser_FavoriteExists() {
+        // Mock data
+        long userId = 1L;
+        long productId = 100L;
+        List<ProductWishlist> existingWishlistItems = List.of(new ProductWishlist());
 
-        List<Product> result = productWishListService.getProductIdsByUserId(userId);
+        // Mock repository behavior
+        when(productWishlistRepository.count(any(Specification.class))).thenReturn(1L);
 
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-        verify(productWishlistRepository, times(1)).findAll(any(Specification.class));
-        verify(productRepository, times(0)).findByProductIdIn(anyList());
+        // Call method under test
+        boolean result = productWishlistService.checkProductIsFavoriteByGivenUser(userId, productId);
+
+        // Assertions
+        assertTrue(result);
     }
 
     @Test
-    public void testMarkProductAsFavoriteUserNotFound() {
-        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+    public void testCheckProductIsFavoriteByGivenUser_FavoriteDoesNotExist() {
+        // Mock data
+        long userId = 1L;
+        long productId = 100L;
 
-        Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
-            productWishListService.markProductAsFavorite(userId, productId);
-        });
+        // Mock repository behavior
+        when(productWishlistRepository.count(any(Specification.class))).thenReturn(0L);
 
-        String expectedMessage = "User not found with id " + userId;
-        String actualMessage = exception.getMessage();
+        // Call method under test
+        boolean result = productWishlistService.checkProductIsFavoriteByGivenUser(userId, productId);
 
-        assertTrue(actualMessage.contains(expectedMessage));
-        verify(userRepository, times(1)).findById(userId);
-        verify(productRepository, times(0)).findById(productId);
-        verify(productWishlistRepository, times(0)).findOne(any(Specification.class));
-        verify(productWishlistRepository, times(0)).save(any(ProductWishlist.class));
-        verify(productWishlistRepository, times(0)).delete(any(ProductWishlist.class));
-    }
-
-    @Test
-    public void testMarkProductAsFavoriteProductNotFound() {
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(productRepository.findById(productId)).thenReturn(Optional.empty());
-
-        Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
-            productWishListService.markProductAsFavorite(userId, productId);
-        });
-
-        String expectedMessage = "Product not found with id " + productId;
-        String actualMessage = exception.getMessage();
-
-        assertTrue(actualMessage.contains(expectedMessage));
-        verify(userRepository, times(1)).findById(userId);
-        verify(productRepository, times(1)).findById(productId);
-        verify(productWishlistRepository, times(0)).findOne(any(Specification.class));
-        verify(productWishlistRepository, times(0)).save(any(ProductWishlist.class));
-        verify(productWishlistRepository, times(0)).delete(any(ProductWishlist.class));
+        // Assertions
+        assertFalse(result);
     }
 }

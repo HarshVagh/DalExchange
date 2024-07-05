@@ -6,8 +6,6 @@ import com.asdc.dalexchange.model.ProductCategory;
 import com.asdc.dalexchange.model.User;
 import lombok.*;
 
-import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Data
