@@ -1,4 +1,4 @@
-package com.asdc.dalexchange;
+package com.asdc.dalexchange.service.impl;
 
 import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.model.ProductWishlist;
@@ -8,8 +8,6 @@ import com.asdc.dalexchange.repository.ProductWishlistRepository;
 import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.service.ProductService;
 import com.asdc.dalexchange.service.imp.ProductWishListServiceImp;
-import com.asdc.dalexchange.specification.ProductWishlistSpecification;
-import com.asdc.dalexchange.util.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -22,7 +20,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 public class ProductWishListServiceImpTest {

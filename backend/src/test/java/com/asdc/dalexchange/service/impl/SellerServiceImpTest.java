@@ -1,4 +1,4 @@
-package com.asdc.dalexchange;
+package com.asdc.dalexchange.service.impl;
 
 import com.asdc.dalexchange.dto.SellerDTO;
 import com.asdc.dalexchange.mapper.impl.SellerDetailsMapperImpl;

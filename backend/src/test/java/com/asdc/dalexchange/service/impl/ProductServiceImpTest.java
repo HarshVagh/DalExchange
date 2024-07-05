@@ -1,4 +1,4 @@
-package com.asdc.dalexchange;
+package com.asdc.dalexchange.service.impl;
 
 import com.asdc.dalexchange.dto.ProductDTO;
 import com.asdc.dalexchange.mapper.Mapper;
@@ -16,7 +16,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 public class ProductServiceImpTest {

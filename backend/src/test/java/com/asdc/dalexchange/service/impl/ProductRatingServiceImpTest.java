@@ -1,11 +1,10 @@
-package com.asdc.dalexchange;
+package com.asdc.dalexchange.service.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.asdc.dalexchange.model.ProductRating;
 import com.asdc.dalexchange.repository.ProductRatingRepository;
-import com.asdc.dalexchange.service.ProductRatingService;
 import com.asdc.dalexchange.service.imp.ProductRatingServiceImp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
