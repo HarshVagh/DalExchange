@@ -41,7 +41,7 @@ public class ProductDetailsServiceImp implements ProductDetailsService {
     }
 
     @Override
-    public ProductDetailsDTO DetailsOfProduct(Long userId, Long productId) {
+    public ProductDetailsDTO getDetails(Long userId, Long productId) {
         // Get all the details of the product
         ProductDTO productDetails = productService.getProductById(productId);
 

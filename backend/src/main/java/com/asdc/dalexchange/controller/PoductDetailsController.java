@@ -1,6 +1,5 @@
 package com.asdc.dalexchange.controller;
 
-import com.asdc.dalexchange.dto.ProductDTO;
 import com.asdc.dalexchange.dto.ProductDetailsDTO;
 import com.asdc.dalexchange.dto.ProductWishlistDTO;
 import com.asdc.dalexchange.model.ProductWishlist;
@@ -8,8 +7,6 @@ import com.asdc.dalexchange.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 //@RequestMapping("/dalexchange")
@@ -23,7 +20,7 @@ public class PoductDetailsController {
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/{userid}/{productid}")
     public ResponseEntity<ProductDetailsDTO> product(@PathVariable long userid ,@PathVariable long productid) {
-        ProductDetailsDTO productDetailsDTO = productDetailsService.DetailsOfProduct(userid,productid);
+        ProductDetailsDTO productDetailsDTO = productDetailsService.getDetails(userid,productid);
         // int sellerId = productDTO.getSellerId();
         return ResponseEntity.ok().body(productDetailsDTO);
     }
