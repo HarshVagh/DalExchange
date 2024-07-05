@@ -16,6 +16,7 @@ const Login = () => {
             const response = await axios.post('http://localhost:8080/auth/login', { email, password });
             setMessage('Login successful.');
             const { token } = response.data;
+            localStorage.setItem('jwtToken', token);
             setToken(token);
             navigate('/landing-page');
         } catch (error) {
