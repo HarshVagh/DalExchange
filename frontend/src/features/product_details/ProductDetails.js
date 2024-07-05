@@ -1,82 +1,81 @@
-import React from 'react'
-import Header from "../../components/header";
-import { useState,  useEffect } from 'react';
-import axios from 'axios';
-
+import React, { useState, useEffect } from "react";
+import Header from "../../components/AppHeader";
+import axios from "axios";
+import placeholder from "../../assets/images/placeholder.png";
 
 const ProductDetails = () => {
   const userid = 1;
 
   const [product, setProduct] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const urlSearchString = window.location.search
-    const params = new URLSearchParams(urlSearchString)
-    const [favorite, steFavortite] = useState(product?.favorite || false);
-    
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  function capitalizeFirstLetter(str) {
+    if (!str) return "";
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  }
 
-    function capitalizeFirstLetter(str) {
-      if (!str) return ''; // Handle empty strings
-      return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-    }
+  async function addtoFavorite(userid, productId) {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    try {
+      const response = await axios.post(
+        `http://localhost:8080/${userid}/${productId}/favorite`,
+        headers
+      );
+      console.log(response, "response");
+      if (response.status === 200) {
+        setProduct({...product, favorite: !product.favorite});
+      }
+    } catch (error) {}
+  }
 
+  useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const productId = params.get("id")
-        console.log({productId})
+        const params = new URLSearchParams(window.location.search);
+        const productId = params.get("id");
+        console.log({ productId });
         //const userid = params.get("userid")
         //console.log({userid})
-        const response = await fetch(`http://localhost:8080/${userid}/${productId}`);      
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        console.log(data,"product data" )
+        const response = await axios.get(`http://localhost:8080/${userid}/${productId}`, { 
+          params: params,
+          paramsSerializer: {indexes: null }
+        });
+        const data = response.data;
+        console.log(data, "product data");
         setProduct(data);
-        steFavortite(data?.favorite)
         setLoading(false);
       } catch (error) {
-        console.error('Failed to fetch product data', error);
+        console.error("Failed to fetch product data", error);
         setError(error);
         setLoading(false);
       }
     };
-
-    async function addtoFavorite  (userid, productId){
-      const headers = {
-        'Content-Type': 'application/json',
-        
-      };
-      try {
-        const response = await axios.post(`http://localhost:8080/${userid}/${productId}/favorite`,headers);
-      console.log(response,"response");
-        if (response.status === 200) {
-          fetchProductData()
-        }
-      } catch (error) {
-              
-      }
-    }
-  
-  useEffect(() => {
-    
-
     fetchProductData();
   }, []);
 
   return (
-    <div>
+    !loading && <div>
       <Header />
       <div className="flex flex-1">
-        <main className="flex-1 p-6">
+        {error && <div className="flex justify-center h-16 w-full" >
+            <div className="flex items-center py-4 px-12 mt-4 text-sm text-red-600 rounded-lg bg-red-50 border-2 border-red-600" role="alert">
+              <span className="sr-only">Error</span>
+              <div>
+                <span className="font-medium">Error!</span> {error.message}
+              </div>
+            </div>
+          </div>}
+        {!error && <main className="flex-1 p-6">
           <div className="grid grid-cols-1 md:grid-cols-10 gap-8">
             <div className="md:col-span-3">
               <img
-                alt="Product Image"
+                alt="Product"
                 className="w-full rounded-lg"
                 height={600}
-                src="/placeholder.png"
+                src={placeholder}
                 style={{
                   aspectRatio: "1/1",
                   objectFit: "cover",
@@ -86,10 +85,10 @@ const ProductDetails = () => {
               <div className="grid grid-cols-4 gap-4 mt-4">
                 <button className="border rounded-lg overflow-hidden">
                   <img
-                    alt="Thumbnail 1"
+                    alt=""
                     className="w-full aspect-square object-cover"
                     height={100}
-                    src="/placeholder.png"
+                    src={placeholder}
                     width={100}
                   />
                 </button>
@@ -98,7 +97,7 @@ const ProductDetails = () => {
                     alt="Thumbnail 2"
                     className="w-full aspect-square object-cover"
                     height={100}
-                    src="/placeholder.png"
+                    src={placeholder}
                     width={100}
                   />
                 </button>
@@ -107,7 +106,7 @@ const ProductDetails = () => {
                     alt="Thumbnail 3"
                     className="w-full aspect-square object-cover"
                     height={100}
-                    src="/placeholder.png"
+                    src={placeholder}
                     width={100}
                   />
                 </button>
@@ -116,7 +115,7 @@ const ProductDetails = () => {
                     alt="Thumbnail 4"
                     className="w-full aspect-square object-cover"
                     height={100}
-                    src="/placeholder.png"
+                    src={placeholder}
                     width={100}
                   />
                 </button>
@@ -135,7 +134,7 @@ const ProductDetails = () => {
                     className="flex flex-end gap-2 bg-transparent hover:bg-neutral-900 text-700 font-semibold hover:text-white py-2 px-4 border border-500 hover:border-transparent rounded"
                     onClick={() => addtoFavorite(1, product?.productId)}
                   >
-                    {favorite ? <FilledHeartIcon /> : <HeartIcon />}
+                    {product.favorite ? <FilledHeartIcon /> : <HeartIcon />}
                     Favorite
                   </button>
                   <button
@@ -203,69 +202,67 @@ const ProductDetails = () => {
               </div>
             </div>
           </div>
-        </main>
+        </main>}
       </div>
     </div>
   );
-}
+};
 
- const HeartIcon = (props) => {
-    return (
-      <svg
-        {...props}
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-      </svg>
-    );
-  }
-  const FilledHeartIcon = (props) => {
-    return (
-      <svg
-        {...props}
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-      </svg>
-    );
-  }
+const HeartIcon = (props) => {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+    </svg>
+  );
+};
+const FilledHeartIcon = (props) => {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+    </svg>
+  );
+};
 
-  
-  const StarIcon = (props) => {
-    return (
-      <svg
-        {...props}
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-      </svg>
-    );
-  }
-
+const StarIcon = (props) => {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+  );
+};
 
 const FilledStarIcon = (props) => {
   return (
@@ -298,11 +295,7 @@ const StarRating = ({ starCount }) => {
     }
   }
 
-  return <div  className="flex flex-row">{stars}</div>;
+  return <div className="flex flex-row">{stars}</div>;
 };
 
-
-  
-
-
-export default ProductDetails
+export default ProductDetails;
