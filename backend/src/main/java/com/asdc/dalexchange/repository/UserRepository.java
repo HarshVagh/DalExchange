@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-<<<<<<< HEAD
 
     @Query(value = "SELECT COUNT(*) FROM user WHERE joined_at >= CURDATE() - INTERVAL 30 DAY", nativeQuery = true)
     Long countUsersJoinedInLast30Days();
@@ -23,6 +22,3 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 
 }
-=======
-}
->>>>>>> fe8b9d1bd5f445d24500c65808c8057d8b809556
