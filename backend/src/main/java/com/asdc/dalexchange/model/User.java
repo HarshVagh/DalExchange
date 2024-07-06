@@ -43,4 +43,7 @@ public class User {
 
         @Column(name = "bio")
         private String bio;
+
+        @Column(name = "active", columnDefinition = "BOOLEAN DEFAULT true")
+        private Boolean active;
 }

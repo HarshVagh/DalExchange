@@ -8,4 +8,8 @@ public class AdminDashboardDTO {
     private long orders;
     private double sales;
     private double avgOrderValue;
+    private double salesChange;
+    private double ordersChange;
+    private double customersChange;
+    private double avgOrderValueChange;
 }

@@ -2,8 +2,6 @@ package com.asdc.dalexchange.service;
 
 
 import com.asdc.dalexchange.dto.AdminDashboardDTO;
-import com.asdc.dalexchange.dto.UserDTO;
-import com.asdc.dalexchange.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,16 +25,13 @@ public class AdminDashboardService {
         adminStats.setOrders(orderService.newOrders());
         adminStats.setSales(orderService.totalSales());
         adminStats.setAvgOrderValue(orderService.avgSales());
+        adminStats.setSalesChange(orderService.salesChange());
+        adminStats.setOrdersChange(orderService.ordersChange());
+        adminStats.setCustomersChange(userService.customersChange());
+        adminStats.setAvgOrderValueChange(orderService.avgOrderValueChange());
         return adminStats;
     }
 
 
-//    public long newCustomers(){
-//        return ;
-//    }
-//
-//    public long newOrders(){
-//        return ;
-//    }
 
 }
