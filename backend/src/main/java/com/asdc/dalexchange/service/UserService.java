@@ -23,7 +23,7 @@ public class UserService {
     }
 
     public double customersChange() {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = getCurrentDateTime();
         LocalDateTime startOfCurrentPeriod = now.minusDays(30);
         LocalDateTime startOfPreviousPeriod = startOfCurrentPeriod.minusDays(30);
 
@@ -40,6 +40,11 @@ public class UserService {
         return calculatePercentageIncrease(totalCustomersLast30Days.doubleValue(), totalCustomersPrevious30Days.doubleValue());
     }
 
+    public LocalDateTime getCurrentDateTime() {
+        return LocalDateTime.now();
+    }
+
+
     private double calculatePercentageIncrease(Double current, Double previous) {
         if (previous == 0) {
             return current > 0 ? 100.0 : 0.0;
@@ -49,7 +54,7 @@ public class UserService {
 
     //new
     // View User Details
-    public Optional<User> viewUserDetails(int userId) {
+    public Optional<User> viewUserDetails(long userId) {
         return userRepository.findById(userId);
     }
 
@@ -59,7 +64,7 @@ public class UserService {
     }
 
     // Activate User Account
-    public User activateUser(int userId) {
+    public User activateUser(long userId) {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
@@ -71,7 +76,7 @@ public class UserService {
     }
 
     // Deactivate User Account
-    public User deactivateUser(int userId) {
+    public User deactivateUser(long userId) {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
@@ -83,12 +88,12 @@ public class UserService {
     }
 
     // Delete User Account
-    public void deleteUser(int userId) {
+    public void deleteUser(long userId) {
         userRepository.deleteById(userId);
     }
 
     // Reset Password
-    public User resetPassword(int userId, String newPassword) {
+    public User resetPassword(long userId, String newPassword) {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();

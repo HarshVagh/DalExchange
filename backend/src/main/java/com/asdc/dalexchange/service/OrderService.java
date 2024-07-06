@@ -13,7 +13,7 @@ public class OrderService {
     private OrderRepository orderRepository;
 
     public double salesChange() {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = getCurrentDateTime();
         LocalDateTime startOfCurrentPeriod = now.minusDays(30);
         LocalDateTime startOfPreviousPeriod = startOfCurrentPeriod.minusDays(30);
 
@@ -33,7 +33,7 @@ public class OrderService {
     }
 
     public double ordersChange() {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = getCurrentDateTime();
         LocalDateTime startOfCurrentPeriod = now.minusDays(30);
         LocalDateTime startOfPreviousPeriod = startOfCurrentPeriod.minusDays(30);
 
@@ -58,7 +58,7 @@ public class OrderService {
     }
 
     public double avgOrderValueChange() {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = getCurrentDateTime();
         LocalDateTime startOfCurrentPeriod = now.minusDays(30);
         LocalDateTime startOfPreviousPeriod = startOfCurrentPeriod.minusDays(30);
 
@@ -85,6 +85,10 @@ public class OrderService {
 
     public double avgSales(){
         return orderRepository.avgOrderValueInLast30Days();
+    }
+
+    public LocalDateTime getCurrentDateTime() {
+        return LocalDateTime.now();
     }
 
 }

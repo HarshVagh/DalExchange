@@ -1,4 +1,4 @@
-package com.asdc.dalexchange;
+package com.asdc.dalexchange.service.impl;
 
 import com.asdc.dalexchange.dto.AdminDashboardDTO;
 import com.asdc.dalexchange.service.AdminDashboardService;
