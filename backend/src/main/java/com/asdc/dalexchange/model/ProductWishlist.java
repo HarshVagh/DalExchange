@@ -1,6 +1,7 @@
 package com.asdc.dalexchange.model;
+
 import jakarta.persistence.*;
-        import lombok.Data;
+import lombok.Data;
 
 @Data
 @Entity
