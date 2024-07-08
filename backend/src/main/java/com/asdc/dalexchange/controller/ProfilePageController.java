@@ -3,6 +3,7 @@ package com.asdc.dalexchange.controller;
 
 import com.asdc.dalexchange.dto.ProfilePageDTO;
 import com.asdc.dalexchange.dto.SavedProductDTO;
+import com.asdc.dalexchange.dto.SoldItemDTO;
 import com.asdc.dalexchange.service.ProfilePageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,4 +29,12 @@ public class ProfilePageController {
         List<SavedProductDTO> savedProductDTOs = profilePageService.GetAllsavedProduct(userId);
         return ResponseEntity.ok(savedProductDTOs);
     }
+
+
+    @GetMapping("/sold_products/{userId}")
+    public ResponseEntity<List<SoldItemDTO>> getAllSoldProducts(@PathVariable Long userId) {
+        List<SoldItemDTO> soldProductDTOs = profilePageService.GetallSoldProduct(userId);
+        return ResponseEntity.ok(soldProductDTOs);
+    }
+
 }
