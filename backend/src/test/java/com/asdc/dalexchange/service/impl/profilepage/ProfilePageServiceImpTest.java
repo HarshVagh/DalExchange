@@ -1,8 +1,9 @@
-package com.asdc.dalexchange;
-import com.asdc.dalexchange.dto.*;
+package com.asdc.dalexchange.service.impl.profilepage;
+
 import com.asdc.dalexchange.model.*;
 import com.asdc.dalexchange.repository.UserRepository;
-import com.asdc.dalexchange.service.*;
+import com.asdc.dalexchange.service.ProductRatingService;
+import com.asdc.dalexchange.service.ProductWishlistService;
 import com.asdc.dalexchange.service.imp.ProfilePageServiceImp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -154,7 +154,7 @@ public class ProfilePageServiceImpTest {
 
 
 
-   /* @Test
+ @Test
     void testUpdateUserUsername() {
         userDTO.setUsername("newUsername");
 
@@ -225,10 +225,10 @@ public class ProfilePageServiceImpTest {
         assertNull(user.getFullName());
         assertNull(user.getPassword());
         assertNull(user.getPhoneNo());
-    }*/
+    }
+
 }
 
-/*
 
 import com.asdc.dalexchange.dto.*;
 import com.asdc.dalexchange.model.*;
@@ -431,4 +431,4 @@ public class ProfilePageServiceImpTest {
     }
 }
 
-*/
+
