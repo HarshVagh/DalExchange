@@ -4,8 +4,12 @@ import com.asdc.dalexchange.model.*;
 import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.service.*;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -30,5 +34,28 @@ public class ProfilePageServiceImp implements ProfilePageService {
         ProfilePageDTO profilePageDTO = new ProfilePageDTO();
         modelMapper.map(user, profilePageDTO);
         return profilePageDTO;
+    }
+
+    @Override
+    public List<SavedProductDTO> GetAllsavedProduct(Long userid) {
+        List<Product> allSavedProduct = productWishlistService.getProductIdsByUserId(userid);
+
+        // Custom ModelMapper for this method only
+        ModelMapper customMapper = new ModelMapper();
+        customMapper.addMappings(new PropertyMap<Product, SavedProductDTO>() {
+            @Override
+            protected void configure() {
+                map().setTitle(source.getTitle());
+                map().setPrice(source.getPrice());
+                map().setCategory(source.getCategory().getName());
+                map().setProductCondition(source.getProductCondition());
+                map().setUseDuration(source.getUseDuration());
+                map().setQuantityAvailable(source.getQuantityAvailable());
+            }
+        });
+
+        return allSavedProduct.stream()
+                .map(product -> customMapper.map(product, SavedProductDTO.class))
+                .collect(Collectors.toList());
     }
 }
