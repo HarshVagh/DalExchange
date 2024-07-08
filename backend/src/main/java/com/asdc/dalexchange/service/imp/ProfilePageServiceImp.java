@@ -26,6 +26,9 @@ public class ProfilePageServiceImp implements ProfilePageService {
     public ProductRatingService productRatingService;
 
     @Autowired
+    public SoldItemService soldItemService;
+
+    @Autowired
     public ModelMapper modelMapper;
 
     @Override
@@ -58,4 +61,26 @@ public class ProfilePageServiceImp implements ProfilePageService {
                 .map(product -> customMapper.map(product, SavedProductDTO.class))
                 .collect(Collectors.toList());
     }
+
+
+    @Override
+    public List<SoldItemDTO> GetallSoldProduct(Long userid) {
+        List<SoldItem> allSoldItem = soldItemService.getSoldItemsBySellerId(userid);
+
+        // Custom ModelMapper for this method only
+        ModelMapper customMapper = new ModelMapper();
+        customMapper.addMappings(new PropertyMap<SoldItem, SoldItemDTO>() {
+            @Override
+            protected void configure() {
+                map().setTitle(source.getProduct().getTitle());
+                map().setPrice(source.getProduct().getPrice());
+            }
+        });
+
+        return allSoldItem.stream()
+                .map(soldItem -> customMapper.map(soldItem, SoldItemDTO.class))
+                .collect(Collectors.toList());
+    }
+
+
 }
