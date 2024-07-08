@@ -1,6 +1,7 @@
 package com.asdc.dalexchange.service;
 
 import com.asdc.dalexchange.dto.ProfilePageDTO;
+import com.asdc.dalexchange.dto.PurchaseProductDTO;
 import com.asdc.dalexchange.dto.SavedProductDTO;
 import com.asdc.dalexchange.dto.SoldItemDTO;
 import com.asdc.dalexchange.model.User;
@@ -17,5 +18,8 @@ public interface ProfilePageService {
 
     //get the all sold itemsby the given user
     List<SoldItemDTO> GetallSoldProduct(Long userid);
+
+    //get the all purchase the history
+    List<PurchaseProductDTO> GetallPurchasedProduct(Long userid);
 
 }
