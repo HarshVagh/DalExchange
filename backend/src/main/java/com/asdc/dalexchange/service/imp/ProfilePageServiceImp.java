@@ -1,6 +1,7 @@
 package com.asdc.dalexchange.service.imp;
 import com.asdc.dalexchange.dto.*;
 import com.asdc.dalexchange.model.*;
+import com.asdc.dalexchange.repository.OrderRepository;
 import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.service.*;
 import org.modelmapper.ModelMapper;
@@ -18,6 +19,12 @@ public class ProfilePageServiceImp implements ProfilePageService {
 
     @Autowired
     public ProductWishlistService productWishlistService;
+
+    @Autowired
+    public OrderRepository orderRepository;
+
+    @Autowired
+    public OrderService orderService;
 
     @Autowired
     public UserRepository userRepository;
@@ -80,6 +87,26 @@ public class ProfilePageServiceImp implements ProfilePageService {
         return allSoldItem.stream()
                 .map(soldItem -> customMapper.map(soldItem, SoldItemDTO.class))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PurchaseProductDTO> GetallPurchasedProduct(Long userid) {
+        List<OrderDetails> orderDetailsList = orderService.getOrdersByUserId(userid);
+
+        // Custom ModelMapper for this method only
+        ModelMapper customMapper = new ModelMapper();
+        customMapper.addMappings(new PropertyMap<OrderDetails, PurchaseProductDTO>() {
+            @Override
+            protected void configure() {
+                map().setTitle(source.getProductId().getTitle());
+                map().setCategory(source.getProductId().getCategory().getName());
+            }
+        });
+
+        return orderDetailsList.stream()
+                .map(orderDetail -> customMapper.map(orderDetail, PurchaseProductDTO.class))
+                .collect(Collectors.toList());
+
     }
 
 
