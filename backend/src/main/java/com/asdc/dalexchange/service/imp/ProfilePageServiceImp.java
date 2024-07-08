@@ -110,4 +110,23 @@ public class ProfilePageServiceImp implements ProfilePageService {
     }
 
 
+    @Override
+    public List<ProductRatingDTO> GetAllProductRating(Long userid) {
+        List<ProductRating> allProductRating = productRatingService.getProductRatingsByUserId(userid);
+
+        // Custom ModelMapper for this method only
+        ModelMapper customMapper = new ModelMapper();
+        customMapper.addMappings(new PropertyMap<ProductRating, ProductRatingDTO>() {
+            @Override
+            protected void configure() {
+                map().setTitle(source.getProduct().getTitle());
+            }
+        });
+
+        return allProductRating.stream()
+                .map(productRating -> customMapper.map(productRating, ProductRatingDTO.class))
+                .collect(Collectors.toList());
+    }
+
+
 }

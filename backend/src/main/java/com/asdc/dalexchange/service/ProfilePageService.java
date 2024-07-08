@@ -1,9 +1,6 @@
 package com.asdc.dalexchange.service;
 
-import com.asdc.dalexchange.dto.ProfilePageDTO;
-import com.asdc.dalexchange.dto.PurchaseProductDTO;
-import com.asdc.dalexchange.dto.SavedProductDTO;
-import com.asdc.dalexchange.dto.SoldItemDTO;
+import com.asdc.dalexchange.dto.*;
 import com.asdc.dalexchange.model.User;
 
 import java.util.List;
@@ -21,5 +18,9 @@ public interface ProfilePageService {
 
     //get the all purchase the history
     List<PurchaseProductDTO> GetallPurchasedProduct(Long userid);
+
+    // get the review of the product rating  and anthe review of their profile
+    List<ProductRatingDTO> GetAllProductRating(Long userid);
+
 
 }

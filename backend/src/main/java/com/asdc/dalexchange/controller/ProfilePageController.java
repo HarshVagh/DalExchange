@@ -1,10 +1,7 @@
 package com.asdc.dalexchange.controller;
 
 
-import com.asdc.dalexchange.dto.ProfilePageDTO;
-import com.asdc.dalexchange.dto.PurchaseProductDTO;
-import com.asdc.dalexchange.dto.SavedProductDTO;
-import com.asdc.dalexchange.dto.SoldItemDTO;
+import com.asdc.dalexchange.dto.*;
 import com.asdc.dalexchange.service.ProfilePageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -42,5 +39,11 @@ public class ProfilePageController {
     public ResponseEntity<List<PurchaseProductDTO>> getAllPurchasedProducts(@PathVariable Long userId) {
         List<PurchaseProductDTO> purchasedProductDTOs = profilePageService.GetallPurchasedProduct(userId);
         return ResponseEntity.ok(purchasedProductDTOs);
+    }
+
+    @GetMapping("/product_ratings/{userId}")
+    public ResponseEntity<List<ProductRatingDTO>> getAllProductRatings(@PathVariable Long userId) {
+        List<ProductRatingDTO> productRatingDTOs = profilePageService.GetAllProductRating(userId);
+        return ResponseEntity.ok(productRatingDTOs);
     }
 }
