@@ -28,9 +28,6 @@ public class ProductWishListServiceImp implements ProductWishlistService {
     private UserRepository userRepository;
 
     @Autowired
-    private ProductService productService;
-
-    @Autowired
     private ProductRepository productRepository;
 
     @Autowired
