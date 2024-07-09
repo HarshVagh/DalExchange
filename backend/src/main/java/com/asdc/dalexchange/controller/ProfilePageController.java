@@ -2,6 +2,7 @@ package com.asdc.dalexchange.controller;
 
 
 import com.asdc.dalexchange.dto.*;
+import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.service.ProfilePageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -46,4 +47,19 @@ public class ProfilePageController {
         List<ProductRatingDTO> productRatingDTOs = profilePageService.GetAllProductRating(userId);
         return ResponseEntity.ok(productRatingDTOs);
     }
+
+    @PutMapping("/edit_user/{userId}")
+    public ResponseEntity<EditProfileDTO> editUserDetails(@RequestBody EditProfileDTO editProfileDTO, @PathVariable Long userId) {
+        System.out.println("user is :"  + editProfileDTO);
+        EditProfileDTO updatedUser = profilePageService.editUserDetails(userId,editProfileDTO);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    @GetMapping("/edit_user/{userId}")
+    public ResponseEntity<EditProfileDTO> editUserDetails(@PathVariable long userId) {
+        System.out.println("user is :"  + userId);
+        EditProfileDTO updatedUser = profilePageService.editGetUserDetails(userId);
+        return ResponseEntity.ok(updatedUser);
+    }
+
 }
