@@ -63,12 +63,10 @@ public class ProductWishListServiceImpTest {
         when(productWishlistRepository.save(any(ProductWishlist.class))).thenReturn(productWishlist);
 
         // Call method under test
-        ProductWishlist result = productWishlistService.markProductAsFavorite(userId, productId);
+        boolean result = productWishlistService.markProductAsFavorite(userId, productId);
 
         // Assertions
-        assertNotNull(result);
-        assertEquals(userId, result.getUserId().getUserId());
-        assertEquals(productId, result.getProductId().getProductId());
+        assertTrue(result);
     }
 
     @Test
@@ -92,10 +90,10 @@ public class ProductWishListServiceImpTest {
         when(productWishlistRepository.findAll(any(Specification.class))).thenReturn(existingWishlistItems);
 
         // Call method under test
-        ProductWishlist result = productWishlistService.markProductAsFavorite(userId, productId);
+        boolean result = productWishlistService.markProductAsFavorite(userId, productId);
 
         // Assertions
-        assertNull(result);
+        assertFalse(result);
         verify(productWishlistRepository, times(1)).deleteAll(existingWishlistItems);
     }
 
