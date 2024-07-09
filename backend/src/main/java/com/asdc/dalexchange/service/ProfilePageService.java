@@ -22,5 +22,8 @@ public interface ProfilePageService {
     // get the review of the product rating  and anthe review of their profile
     List<ProductRatingDTO> GetAllProductRating(Long userid);
 
+    // edit the profile of user details
+    EditProfileDTO editUserDetails(Long userId , EditProfileDTO editProfileDTO);
 
+    EditProfileDTO editGetUserDetails(Long userId);
 }

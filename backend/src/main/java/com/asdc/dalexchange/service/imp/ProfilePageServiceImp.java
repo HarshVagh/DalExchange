@@ -4,12 +4,14 @@ import com.asdc.dalexchange.model.*;
 import com.asdc.dalexchange.repository.OrderRepository;
 import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.service.*;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -128,5 +130,36 @@ public class ProfilePageServiceImp implements ProfilePageService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public EditProfileDTO editUserDetails(Long userId, EditProfileDTO editProfileDTO) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setUsername(editProfileDTO.getUsername());
+            user.setPassword(editProfileDTO.getPassword());
+            user.setEmail(editProfileDTO.getEmail());
+            user.setPhoneNo(editProfileDTO.getPhoneNo());
+            user.setFullName(editProfileDTO.getFullName());
+            user.setProfilePicture(editProfileDTO.getProfilePicture());
+            user.setBio(editProfileDTO.getBio());
+            userRepository.save(user);
+            return new EditProfileDTO(
+                    user.getUsername(),
+                    user.getPassword(),
+                    user.getEmail(),
+                    user.getPhoneNo(),
+                    user.getFullName(),
+                    user.getProfilePicture(),
+                    user.getBio()
+            );
+        } else {
+            throw new RuntimeException("User not found with id " + userId);
+        }
+    }
 
+    @Override
+    public EditProfileDTO editGetUserDetails(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        return modelMapper.map(user, EditProfileDTO.class);
+    }
 }
