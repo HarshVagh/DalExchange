@@ -20,16 +20,13 @@ public class ProductDetailsMapperImpl implements Mapper<Product, ProductDetailsD
     @Override
     public ProductDetailsDTO mapTo(Product product) {
         ProductDetailsDTO productDetailsDTO = modelMapper.map(product, ProductDetailsDTO.class);
-        // Additional mappings if needed
         productDetailsDTO.setSellerJoiningDate(product.getSeller().getJoinedAt());
         productDetailsDTO.setCategory(product.getCategory().getName());
-        // You can add more mappings here
         return productDetailsDTO;
     }
 
     @Override
     public Product mapFrom(ProductDetailsDTO productDetailsDTO) {
-        // Mapping from ProductDetailsDTO to Product is typically not needed for this use case
         throw new UnsupportedOperationException("Mapping from ProductDetailsDTO to Product is not supported.");
     }
 }

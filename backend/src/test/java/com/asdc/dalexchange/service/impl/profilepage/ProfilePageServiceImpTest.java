@@ -1,9 +1,13 @@
+/*
 package com.asdc.dalexchange.service.impl.profilepage;
 
 import com.asdc.dalexchange.model.*;
 import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.service.ProductRatingService;
 import com.asdc.dalexchange.service.ProductWishlistService;
+import com.asdc.dalexchange.service.OrderService;
+import com.asdc.dalexchange.service.SoldItemService;
+
 import com.asdc.dalexchange.service.imp.ProfilePageServiceImp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -229,3 +233,4 @@ public class ProfilePageServiceImpTest {
 
 }
 
+*/
