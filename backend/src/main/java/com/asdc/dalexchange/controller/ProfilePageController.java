@@ -50,7 +50,6 @@ public class ProfilePageController {
 
     @PutMapping("/edit_user/{userId}")
     public ResponseEntity<EditProfileDTO> editUserDetails(@RequestBody EditProfileDTO editProfileDTO, @PathVariable Long userId) {
-        System.out.println("user is :"  + editProfileDTO);
         EditProfileDTO updatedUser = profilePageService.editUserDetails(userId,editProfileDTO);
         return ResponseEntity.ok(updatedUser);
     }

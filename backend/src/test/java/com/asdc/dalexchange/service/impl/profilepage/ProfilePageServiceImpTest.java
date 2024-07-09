@@ -1,4 +1,3 @@
-/*
 package com.asdc.dalexchange.service.impl.profilepage;
 
 import com.asdc.dalexchange.model.*;
@@ -230,4 +229,3 @@ public class ProfilePageServiceImpTest {
 
 }
 
-*/
