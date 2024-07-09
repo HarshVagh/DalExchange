@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
-import Header from "../../components/AppHeader";
+import Header from "../../components/Header";
 import axios from "axios";
 import placeholder from "../../assets/images/placeholder.png";
+import { useParams } from "react-router-dom";
+import SubHeader from "../../components/SubHeader";
 
 const ProductDetails = () => {
   const userid = 1;
+  const { productId } = useParams();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -15,14 +18,15 @@ const ProductDetails = () => {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   }
 
-  async function addtoFavorite(userid, productId) {
-    const headers = {
-      "Content-Type": "application/json",
-    };
+  async function addtoFavorite(productId) {
     try {
-      const response = await axios.post(
-        `http://localhost:8080/${userid}/${productId}/favorite`,
-        headers
+      const response = await axios.get(
+        `http://localhost:8080/product_details/favorite`, {
+          params: {
+            productId: productId
+          },
+          paramsSerializer: {indexes: null }
+        }
       );
       console.log(response, "response");
       if (response.status === 200) {
@@ -34,13 +38,11 @@ const ProductDetails = () => {
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const params = new URLSearchParams(window.location.search);
-        const productId = params.get("id");
         console.log({ productId });
-        //const userid = params.get("userid")
-        //console.log({userid})
-        const response = await axios.get(`http://localhost:8080/${userid}/${productId}`, { 
-          params: params,
+        const response = await axios.get('http://localhost:8080/product_details', { 
+          params: {
+            productId: productId
+          },
           paramsSerializer: {indexes: null }
         });
         const data = response.data;
@@ -59,6 +61,7 @@ const ProductDetails = () => {
   return (
     !loading && <div>
       <Header />
+      <SubHeader title={'Product Details'} backPath={'/products'} />
       <div className="flex flex-1">
         {error && <div className="flex justify-center h-16 w-full" >
             <div className="flex items-center py-4 px-12 mt-4 text-sm text-red-600 rounded-lg bg-red-50 border-2 border-red-600" role="alert">
@@ -131,8 +134,8 @@ const ProductDetails = () => {
                   <button
                     size="sm"
                     variant="outline"
-                    className="flex flex-end gap-2 bg-transparent hover:bg-neutral-900 text-700 font-semibold hover:text-white py-2 px-4 border border-500 hover:border-transparent rounded"
-                    onClick={() => addtoFavorite(1, product?.productId)}
+                    className="flex flex-end gap-2 bg-transparent hover:bg-neutral-900 text-700 font-semibold hover:text-white py-2 px-4 border-2 border-gray-300 hover:border-transparent rounded"
+                    onClick={() => addtoFavorite(product?.productId)}
                   >
                     {product.favorite ? <FilledHeartIcon /> : <HeartIcon />}
                     Favorite
@@ -140,7 +143,7 @@ const ProductDetails = () => {
                   <button
                     size="sm"
                     variant="outline"
-                    className="bg-transparent hover:bg-neutral-900 text-700 font-semibold hover:text-white py-2 px-4 border border-500 hover:border-transparent rounded"
+                    className="bg-transparent hover:bg-neutral-900 text-700 font-semibold hover:text-white py-2 px-4 border-2 border-gray-300 hover:border-transparent rounded"
                   >
                     Send Buy Request
                   </button>
