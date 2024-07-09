@@ -1,9 +1,10 @@
 import React from "react";
 import placeholder from "../../../assets/images/placeholder.png";
+import { Link } from "react-router-dom";
 
 const ProductCard = ({ product }) => {
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden h-96">
+    <Link to={`/products/${product.productId}`} className="bg-white rounded-lg shadow-md overflow-hidden h-96">
       <img
         alt=""
         className="w-full h-48 object-cover"
@@ -36,7 +37,7 @@ const ProductCard = ({ product }) => {
             Posted on {product.createdAt[2]}/{product.createdAt[1]}/{product.createdAt[0]}
         </p>
       </div>
-    </div>
+    </Link>
   );
 };
 

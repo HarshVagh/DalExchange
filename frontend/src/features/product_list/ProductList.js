@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { ProductListingAPI } from "../../services/productListingApi";
-import Header from "../../components/AppHeader";
+import Header from "../../components/Header";
 import ProductCard from "./components/ProductCard";
 import Sidebar from "./components/Sidebar";
 import Pagination from "./components/Pagination";
