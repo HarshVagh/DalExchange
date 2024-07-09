@@ -46,4 +46,7 @@ public class User {
 
         @Column(name = "active", columnDefinition = "BOOLEAN DEFAULT true")
         private Boolean active;
+
+        @Column(name = "seller_rating")
+        private Double sellerRating;
 }

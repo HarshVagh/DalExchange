@@ -1,4 +1,4 @@
-package com.asdc.dalexchange.service.imp;
+package com.asdc.dalexchange.service.impl;
 
 import com.asdc.dalexchange.model.ProductRating;
 import com.asdc.dalexchange.repository.ProductRatingRepository;

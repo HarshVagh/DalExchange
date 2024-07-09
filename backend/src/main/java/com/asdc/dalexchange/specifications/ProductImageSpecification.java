@@ -1,4 +1,4 @@
-package com.asdc.dalexchange.specification;
+package com.asdc.dalexchange.specifications;
 import com.asdc.dalexchange.model.ProductImage;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;

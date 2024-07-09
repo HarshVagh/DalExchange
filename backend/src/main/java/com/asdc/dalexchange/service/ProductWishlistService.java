@@ -13,5 +13,5 @@ public interface ProductWishlistService {
 
     public List<Product> getProductIdsByUserId(Long userId);
 
-    public boolean checkProductIsFavoriteByGivenUser(long userId, long productId);
+//    public boolean checkProductIsFavoriteByGivenUser(long userId, long productId);
 }

@@ -3,7 +3,7 @@ package com.asdc.dalexchange.service.impl;
 import com.asdc.dalexchange.dto.ProductDetailsDTO;
 import com.asdc.dalexchange.enums.ProductCondition;
 import com.asdc.dalexchange.enums.ShippingType;
-import com.asdc.dalexchange.mapper.impl.ProductDetailsMapperImpl;
+import com.asdc.dalexchange.mappers.impl.ProductDetailsMapperImpl;
 import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.model.ProductCategory;
 import com.asdc.dalexchange.model.User;
