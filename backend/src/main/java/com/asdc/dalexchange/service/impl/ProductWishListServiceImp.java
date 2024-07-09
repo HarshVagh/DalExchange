@@ -1,4 +1,4 @@
-package com.asdc.dalexchange.service.imp;
+package com.asdc.dalexchange.service.impl;
 import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.model.ProductWishlist;
 import com.asdc.dalexchange.model.User;
@@ -7,7 +7,7 @@ import com.asdc.dalexchange.repository.ProductWishlistRepository;
 import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.service.ProductService;
 import com.asdc.dalexchange.service.ProductWishlistService;
-import com.asdc.dalexchange.specification.ProductWishlistSpecification;
+import com.asdc.dalexchange.specifications.ProductWishlistSpecification;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -69,11 +69,5 @@ public class ProductWishListServiceImp implements ProductWishlistService {
                 .collect(Collectors.toList());
 
         return productRepository.findByProductIdIn(productIds);
-    }
-
-    public boolean checkProductIsFavoriteByGivenUser(long userId, long productId) {
-        Specification<ProductWishlist> spec = ProductWishlistSpecification.byUserIdAndProductId(userId, productId);
-        long count = productWishlistRepository.count(spec);
-        return count > 0;
     }
 }

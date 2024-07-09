@@ -2,8 +2,7 @@ package com.asdc.dalexchange.service.impl;
 
 import com.asdc.dalexchange.model.ProductImage;
 import com.asdc.dalexchange.repository.ProductImageRepository;
-import com.asdc.dalexchange.service.imp.ProductImageServiceImp;
-import com.asdc.dalexchange.specification.ProductImageSpecification;
+import com.asdc.dalexchange.specifications.ProductImageSpecification;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

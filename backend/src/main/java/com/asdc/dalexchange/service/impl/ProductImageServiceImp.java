@@ -1,13 +1,12 @@
-package com.asdc.dalexchange.service.imp;
+package com.asdc.dalexchange.service.impl;
 
 
 import com.asdc.dalexchange.model.ProductImage;
 import com.asdc.dalexchange.repository.ProductImageRepository;
 import com.asdc.dalexchange.service.ProductImageService;
-import com.asdc.dalexchange.specification.ProductImageSpecification;
+import com.asdc.dalexchange.specifications.ProductImageSpecification;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
