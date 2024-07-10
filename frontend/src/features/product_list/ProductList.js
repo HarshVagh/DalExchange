@@ -101,21 +101,21 @@ const ProductList = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col min-h-[100dvh]">
       <Header 
         config={headerConfig} 
         search={tempSearch}
         setSearch={handleSearchUpdate}
         onSearchSubmit={handleSearchSubmit} />
       <div className="lg:flex lg:flex-1 md:flex md:flex-1">
-        
-        <Sidebar 
+
+        {isLoading && <Loader title={'Loading Trade Requests...'} />}
+
+        {!isLoading && !error && <Sidebar 
           filters={tempFilters}
           onFilterUpdate={handleFilterUpdate} 
           onFilterSubmit={handleFilterSubmit}>
-        </Sidebar>
-
-        {isLoading && <Loader title={'Loading Trade Requests...'} />}
+        </Sidebar>}
         
         {!isLoading && error && <div className="flex justify-center h-16 w-full" >
           <div className="flex items-center py-4 px-12 mt-4 text-sm text-red-600 rounded-lg bg-red-50 border-2 border-red-600" role="alert">
