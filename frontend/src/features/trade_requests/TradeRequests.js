@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import { TradeRequestApi } from "../../services/TradeRequestApi";
-import RequestCard from "./components/RequestCard";
 import SubHeader from "../../components/SubHeader";
 import Loader from "../../components/Loader";
+import BuyRequestCard from "./components/BuyRequestCard";
+import SellRequestCard from "./components/SellRequestCard";
+import Modal from "../../components/Modal";
+import ErrorAlert from "../../components/ErrorAlert";
 
 const TradeRequests = () => {
   const [activeTab, setActiveTab] = useState("buy");
@@ -79,15 +82,15 @@ const TradeRequests = () => {
     <div className="flex flex-col min-h-[100dvh]">
       <Header config={headerConfig}></Header>
       <SubHeader title={'Trade Requests'} backPath={'/products'}></SubHeader>
+      {false && <Modal
+          title={'Reject request'}
+          body={'Are you sure you want to reject this request?'}
+          acceptCTA={'Yes, reject!'}
+          rejectCTA={'Cancel'}
+          isNegative={true}
+        ></Modal>}
       {isLoading && <Loader title={'Loading Trade Requests...'} />}
-      {!isLoading && error && <div className="flex justify-center h-16 w-full" >
-          <div className="flex items-center py-4 px-12 mt-4 text-sm text-red-600 rounded-lg bg-red-50 border-2 border-red-600" role="alert">
-            <span className="sr-only">Error</span>
-            <div>
-              <span className="font-medium">Error!</span> {error.message}
-            </div>
-          </div>
-        </div>} 
+      {!isLoading && error && <ErrorAlert message={error.message} />} 
       {!isLoading && !error && <main>
         <div className="w-full max-w-6xl mx-auto px-4 md:px-6 pb-8">
           <div>
@@ -106,10 +109,10 @@ const TradeRequests = () => {
             </ul>
           </div>
           {activeTab === 'buy' && buyRequests.map((tradeRequest) => (
-            <RequestCard tradeRequest={tradeRequest}/>
+            <BuyRequestCard key={tradeRequest.requestId} tradeRequest={tradeRequest} />
           ))}
           {activeTab === 'sell' && sellRequests.map((tradeRequest) => (
-            <RequestCard tradeRequest={tradeRequest}/>
+            <SellRequestCard key={tradeRequest.requestId} tradeRequest={tradeRequest} />
           ))}
           </div>
         </div>

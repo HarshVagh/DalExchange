@@ -8,7 +8,6 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
-    const [token, setToken] = useState('');
     const navigate = useNavigate();
     const headerConfig = {
         search: false,
@@ -16,16 +15,15 @@ const Login = () => {
         notifications: false,
         add: false,
         profile: false
-      };
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const response = await axios.post('http://localhost:8080/auth/login', { email, password });
             setMessage('Login successful.');
-            setToken(response.data.token);
-            localStorage.setItem('jwtToken', token);
-            navigate('/landing-page');
+            localStorage.setItem('jwtToken', response.data.token);
+            navigate('/products');
         } catch (error) {
             setMessage('Invalid credentials.');
         }
