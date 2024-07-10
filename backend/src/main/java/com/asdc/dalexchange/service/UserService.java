@@ -1,25 +1,53 @@
 package com.asdc.dalexchange.service;
 
 import com.asdc.dalexchange.model.User;
+import com.asdc.dalexchange.model.VerificationCode;
 import com.asdc.dalexchange.repository.UserRepository;
+import com.asdc.dalexchange.repository.VerificationCodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class UserService {
 
     @Autowired
-    private final UserRepository userRepository;
+    private UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    @Autowired
+    private VerificationCodeRepository verificationCodeRepository;
+
+    @Autowired
+    private EmailService emailService;
+
+    public User registerUser(User user) {
+        User registeredUser = userRepository.save(user);
+
+        String verificationCode = generateVerificationCode();
+        VerificationCode code = new VerificationCode();
+        code.setEmail(user.getEmail());
+        code.setCode(verificationCode);
+        code.setExpiryDate(LocalDateTime.now().plusHours(1));
+        verificationCodeRepository.save(code);
+
+        String subject = "Verify your email";
+        String text = "Your verification code is " + verificationCode;
+        emailService.sendEmail(user.getEmail(), subject, text);
+
+        return registeredUser;
     }
 
-    public long newCustomers(){
-        return userRepository.countUsersJoinedInLast30Days();
+    public boolean verifyUser(String email, String code) {
+        Optional<VerificationCode> verificationCode = verificationCodeRepository.findByEmailAndCode(email, code);
+        return verificationCode.isPresent() && verificationCode.get().getExpiryDate().isAfter(LocalDateTime.now());
+    }
+
+    private String generateVerificationCode() {
+        Random random = new Random();
+        return String.format("%06d", random.nextInt(999999));
     }
 
     public double customersChange() {
@@ -28,7 +56,8 @@ public class UserService {
         LocalDateTime startOfPreviousPeriod = startOfCurrentPeriod.minusDays(30);
 
         Long totalCustomersLast30Days = userRepository.countUsersJoinedSince(startOfCurrentPeriod);
-        Long totalCustomersPrevious30Days = userRepository.countUsersJoinedBetween(startOfPreviousPeriod, startOfCurrentPeriod);
+        Long totalCustomersPrevious30Days = userRepository.countUsersJoinedBetween(startOfPreviousPeriod,
+                startOfCurrentPeriod);
 
         if (totalCustomersLast30Days == null) {
             totalCustomersLast30Days = 0L;
@@ -37,13 +66,13 @@ public class UserService {
             totalCustomersPrevious30Days = 0L;
         }
 
-        return calculatePercentageIncrease(totalCustomersLast30Days.doubleValue(), totalCustomersPrevious30Days.doubleValue());
+        return calculatePercentageIncrease(totalCustomersLast30Days.doubleValue(),
+                totalCustomersPrevious30Days.doubleValue());
     }
 
     public LocalDateTime getCurrentDateTime() {
         return LocalDateTime.now();
     }
-
 
     private double calculatePercentageIncrease(Double current, Double previous) {
         if (previous == 0) {
@@ -52,7 +81,7 @@ public class UserService {
         return ((current - previous) / previous) * 100;
     }
 
-    //new
+    // new
     // View User Details
     public Optional<User> viewUserDetails(long userId) {
         return userRepository.findById(userId);
@@ -102,6 +131,10 @@ public class UserService {
         } else {
             throw new RuntimeException("User not found");
         }
+    }
+
+    public long newCustomers(){
+        return userRepository.countUsersJoinedInLast30Days();
     }
 
 }
