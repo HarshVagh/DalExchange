@@ -2,7 +2,7 @@ import React from 'react';
 import placeholder from "../../../assets/images/placeholder.png";
 import UserPlaceholder from "../../../assets/images/placeholder-user.jpg";
 
-const RequestCard = ({tradeRequest}) => {
+const RequestCard = ({tradeRequest, isBuyRequest, productUser}) => {
   return (
     tradeRequest && tradeRequest.product &&
     <div key={tradeRequest.requestId} className="flex items-center mb-4 bg-white border border-gray-200 rounded-lg shadow md:flex-row hover:bg-gray-100">
@@ -17,7 +17,8 @@ const RequestCard = ({tradeRequest}) => {
             <div className="flex items-center gap-4">
               <img className="w-10 h-10 rounded-full border-2" src={UserPlaceholder} alt=""/>
               <div className="font-medium">
-                  <div>{tradeRequest.buyerName}</div>
+                  <div>{productUser.name}</div>
+                  {/* <div className="text-sm text-gray-500">{productUser.joinedAt}</div> */}
                   <div className="text-sm text-gray-500">Joined in August 2014</div>
               </div>
               <div className="text-gray-800 text-sm font-medium ml-4">
@@ -48,12 +49,12 @@ const RequestCard = ({tradeRequest}) => {
               <div className="flex justify-end gap-2 items-end w-full">
                 <button type="button" 
                   className="text-white bg-gray-900 hover:bg-gray-800 focus:outline-none font-medium rounded-lg text-sm px-8 py-2.5">
-                  Accept
+                  {isBuyRequest ? 'Buy' : 'Accept'}
                 </button>
                 <button 
                   type="button"
                   className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 font-medium rounded-lg text-sm px-8 py-2.5">
-                  Reject
+                  {isBuyRequest ? 'Cancel' : 'Reject'}
                 </button>
               </div>
             </div>

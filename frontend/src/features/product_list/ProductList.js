@@ -5,6 +5,7 @@ import ProductCard from "./components/ProductCard";
 import Sidebar from "./components/Sidebar";
 import Pagination from "./components/Pagination";
 import Loader from "../../components/Loader";
+import ErrorAlert from "../../components/ErrorAlert";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -110,14 +111,7 @@ const ProductList = () => {
           onFilterSubmit={handleFilterSubmit}>
         </Sidebar>}
         
-        {!isLoading && error && <div className="flex justify-center h-16 w-full" >
-          <div className="flex items-center py-4 px-12 mt-4 text-sm text-red-600 rounded-lg bg-red-50 border-2 border-red-600" role="alert">
-            <span className="sr-only">Error</span>
-            <div>
-              <span className="font-medium">Error!</span> {error.message}
-            </div>
-          </div>
-        </div>}
+        {!isLoading && error && <ErrorAlert message={error.message} />}
 
         {!isLoading && !error && products && products.length === 0 && <div className="flex justify-center h-16 w-full" >
           <div className="p-3 px-12 mt-4 text-sm font-medium text-gray-800 rounded-lg bg-gray-50 border-2 border-gray-800" role="alert">
