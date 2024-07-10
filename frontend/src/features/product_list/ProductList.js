@@ -20,7 +20,6 @@ const ProductList = () => {
     totalElements: 12,
     totalPages: 1
   });
-  const [tempPageData, setTempPageData] = useState(pageData);
 
   const [filters, setFilters] = useState({
     minPrice: -1,
@@ -73,13 +72,7 @@ const ProductList = () => {
   }, [fetchProducts]);
 
   const handlePageChange = (newPage) => {
-    setTempPageData((prev) => ({ ...prev, page: newPage }));
-    fetchProducts(tempPageData.page);
-  };
-
-  const handlePageSubmit = () => {
-    setPageData(tempPageData);
-    fetchProducts(tempPageData.page);
+    fetchProducts(newPage);
   };
 
   const handleSearchUpdate = (newSearch) => {
@@ -143,7 +136,7 @@ const ProductList = () => {
           </div>
 
           {pageData.totalPages > 1 && <div className="flex justify-center mt-4 mb-4">
-              <Pagination pageData={tempPageData} onPageChange={handlePageChange} onPageSubmit={handlePageSubmit}></Pagination>
+              <Pagination pageData={pageData} onPageChange={handlePageChange}></Pagination>
           </div>}
         </div>}        
       </div>
