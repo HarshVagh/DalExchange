@@ -28,7 +28,7 @@ public class User {
     @Column(name = "phone_no")
     private String phoneNo;
 
-    @Column(name = "full_name", nullable = false)
+    @Column(name = "full_name", nullable = true, columnDefinition = "VARCHAR(255) DEFAULT 'shivani'")
     private String fullName;
 
     @Column(name = "profile_picture")

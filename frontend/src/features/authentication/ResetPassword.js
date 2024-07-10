@@ -15,7 +15,7 @@ const ResetPassword = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:8080/auth/reset-password',
+             await axios.post('http://localhost:8080/auth/reset-password',
                 new URLSearchParams({ email, token, newPassword }),
                 {
                     headers: {

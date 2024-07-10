@@ -133,4 +133,8 @@ public class UserService {
         }
     }
 
+    public long newCustomers(){
+        return userRepository.countUsersJoinedInLast30Days();
+    }
+
 }

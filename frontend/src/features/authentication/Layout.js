@@ -1,23 +1,18 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import '../authentication/global.css';
+import Header from '../../components/Header';
 
 const Layout = ({ children }) => {
-    const location = useLocation();
+    const headerConfig = {
+        search: false,
+        requests: false,
+        notifications: false,
+        add: false,
+        profile: false
+      };
 
     return (
         <div className="container">
-            <header>
-                <div className="header-links">
-                    <Link to="/about">About Us</Link>
-                    {location.pathname === '/login' || location.pathname === '/'? (
-                        <Link to="/signup">Register</Link>
-                    ) : (
-                        <Link to="/login">Login</Link>
-                    )}
-                </div>
-                <h1>Dal Exchange</h1>
-            </header>
+            <Header config={headerConfig}> </Header>
             <main className="main-content">
                 {children}
             </main>

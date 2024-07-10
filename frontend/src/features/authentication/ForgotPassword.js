@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Layout from './Layout';
-import { useNavigate } from 'react-router-dom';
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
-    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:8080/auth/forgot-password', null, {
+            await axios.post('http://localhost:8080/auth/forgot-password', null, {
                 params: {
                     email: email
                 }

@@ -12,7 +12,7 @@ const VerifyEmail = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:8080/auth/verify', { email, code });
+            await axios.post('http://localhost:8080/auth/verify', { email, code });
             setMessage('User verified successfully.');
             navigate('/landing-page');
         } catch (error) {
