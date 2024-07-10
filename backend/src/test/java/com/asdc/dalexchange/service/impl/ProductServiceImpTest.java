@@ -11,11 +11,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class ProductServiceImpTest {
 
@@ -66,4 +67,78 @@ public class ProductServiceImpTest {
             productService.getProductById(productId);
         });
     }
+
+    @Test
+    void testGetAllProducts() {
+        Product product1 = new Product();
+        Product product2 = new Product();
+        when(productRepository.findAll()).thenReturn(Arrays.asList(product1, product2));
+
+        List<Product> result = productService.getAllProducts();
+
+        assertEquals(2, result.size());
+        verify(productRepository, times(1)).findAll();
+    }
+
+    @Test
+    void testUpdateProduct() {
+        Product product = new Product();
+        product.setProductId(1L);
+        product.setTitle("Old Title");
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(productRepository.save(any(Product.class))).thenReturn(product);
+
+        Product updatedProduct = new Product();
+        updatedProduct.setTitle("New Title");
+        updatedProduct.setDescription("New Description");
+        updatedProduct.setPrice(100.0);
+
+        Product result = productService.updateProduct(1L, updatedProduct);
+
+        assertEquals("New Title", result.getTitle());
+        assertEquals("New Description", result.getDescription());
+        assertEquals(100.0, result.getPrice());
+        verify(productRepository, times(1)).findById(1L);
+        verify(productRepository, times(1)).save(product);
+    }
+
+    @Test
+    void testUpdateProductNotFound() {
+        when(productRepository.findById(1L)).thenReturn(Optional.empty());
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            productService.updateProduct(1L, new Product());
+        });
+
+        assertEquals("Product not found", exception.getMessage());
+        verify(productRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    void testUnlistProduct() {
+        Product product = new Product();
+        product.setProductId(1L);
+        product.setUnlisted(false);
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(productRepository.save(any(Product.class))).thenReturn(product);
+
+        productService.unlistProduct(1L);
+
+        assertTrue(product.isUnlisted());
+        verify(productRepository, times(1)).findById(1L);
+        verify(productRepository, times(1)).save(product);
+    }
+
+    @Test
+    void testUnlistProductNotFound() {
+        when(productRepository.findById(1L)).thenReturn(Optional.empty());
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            productService.unlistProduct(1L);
+        });
+
+        assertEquals("Product not found", exception.getMessage());
+        verify(productRepository, times(1)).findById(1L);
+    }
+
 }

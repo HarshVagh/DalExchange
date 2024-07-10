@@ -1,9 +1,6 @@
 package com.asdc.dalexchange.service.impl;
 
 import com.asdc.dalexchange.dto.AdminDashboardDTO;
-import com.asdc.dalexchange.service.AdminDashboardService;
-import com.asdc.dalexchange.service.OrderService;
-import com.asdc.dalexchange.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -13,16 +10,16 @@ import org.mockito.MockitoAnnotations;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-public class AdminDashboardServiceTest {
+public class AdminDashboardServiceImplTest {
 
     @Mock
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
     @Mock
-    private OrderService orderService;
+    private OrderServiceImpl orderServiceImpl;
 
     @InjectMocks
-    private AdminDashboardService adminDashboardService;
+    private AdminDashboardServiceImpl adminDashboardServiceImpl;
 
     @BeforeEach
     public void setUp() {
@@ -31,13 +28,13 @@ public class AdminDashboardServiceTest {
 
     @Test
     public void testAdminStats() {
-        when(userService.newCustomers()).thenReturn(10L);
-        when(orderService.newOrders()).thenReturn(20L);
-        when(orderService.totalSales()).thenReturn(5000.0);
-        when(orderService.avgSales()).thenReturn(250.0);
-        when(orderService.salesChange()).thenReturn(15.2);
+        when(userServiceImpl.newCustomers()).thenReturn(10L);
+        when(orderServiceImpl.newOrders()).thenReturn(20L);
+        when(orderServiceImpl.totalSales()).thenReturn(5000.0);
+        when(orderServiceImpl.avgSales()).thenReturn(250.0);
+        when(orderServiceImpl.salesChange()).thenReturn(15.2);
 
-        AdminDashboardDTO adminStats = adminDashboardService.adminStats();
+        AdminDashboardDTO adminStats = adminDashboardServiceImpl.adminStats();
 
         assertEquals(10L, adminStats.getCustomers());
         assertEquals(20L, adminStats.getOrders());
