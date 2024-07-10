@@ -4,6 +4,13 @@ stages:
   - publish
   - deploy
 
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/backend/.m2/repository"
+
+cache:
+  paths:
+    - $CI_PROJECT_DIR/backend/.m2/repository
+
 backend_build:
   stage: build
   image: maven:3.9.7-sapmachine-17
