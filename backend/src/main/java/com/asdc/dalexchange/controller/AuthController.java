@@ -4,6 +4,7 @@ package com.asdc.dalexchange.controller;
 import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.model.VerificationRequest;
 import com.asdc.dalexchange.service.UserService;
+import com.asdc.dalexchange.service.impl.UserServiceImpl;
 import com.asdc.dalexchange.util.JwtUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,7 @@ public class AuthController {
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -46,7 +47,7 @@ public class AuthController {
             String encodedPassword = passwordEncoder.encode(user.getPassword());
             user.setPassword(encodedPassword);
 
-            userService.registerUser(user);
+            userServiceImpl.registerUser(user);
             // Send verification code logic
             return ResponseEntity.ok("User registered successfully. Please check your email for verification code.");
         } catch (Exception e) {
@@ -76,7 +77,7 @@ public class AuthController {
         logger.info("Received verification request: {}", request);
         try {
             logger.info("Verifying user with email: {} and code: {}", request.getEmail(), request.getCode());
-            boolean isVerified = userService.verifyUser(request.getEmail(), request.getCode());
+            boolean isVerified = userServiceImpl.verifyUser(request.getEmail(), request.getCode());
             if (isVerified) {
                 logger.info("Verification successful for email: {}", request.getEmail());
                 return ResponseEntity.ok("User verified successfully");

@@ -28,4 +28,7 @@ public interface UserService {
 
     // Reset Password
     User resetPassword(long userId, String newPassword);
+
+    User registerUser(User user);
+    boolean verifyUser(String email, String code);
 }
