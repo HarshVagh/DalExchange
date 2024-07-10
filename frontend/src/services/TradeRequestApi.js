@@ -7,8 +7,8 @@ export const TradeRequestApi = {
     try {
       setters.isLoading(true);
       setters.error(null);
-      const sellResponse = await axios.get(BASE_URL + "/sell_requests/1");
-      const buyResponse = await axios.get(BASE_URL + "/buy_requests/1");
+      const sellResponse = await axios.get(BASE_URL + "/sell_requests");
+      const buyResponse = await axios.get(BASE_URL + "/buy_requests");
       setters.sellRequests(sellResponse.data);
       setters.buyRequests(buyResponse.data);
     } catch (error) {

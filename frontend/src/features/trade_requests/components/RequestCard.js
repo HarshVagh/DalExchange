@@ -64,4 +64,4 @@ const RequestCard = ({tradeRequest}) => {
   )
 }
 
-export default RequestCard
+export default RequestCard;

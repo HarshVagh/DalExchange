@@ -4,6 +4,7 @@ import Header from "../../components/Header";
 import ProductCard from "./components/ProductCard";
 import Sidebar from "./components/Sidebar";
 import Pagination from "./components/Pagination";
+import Loader from "../../components/Loader";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -100,7 +101,7 @@ const ProductList = () => {
   };
 
   return (
-    !isLoading && <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen">
       <Header 
         config={headerConfig} 
         search={tempSearch}
@@ -113,8 +114,10 @@ const ProductList = () => {
           onFilterUpdate={handleFilterUpdate} 
           onFilterSubmit={handleFilterSubmit}>
         </Sidebar>
+
+        {isLoading && <Loader title={'Loading Trade Requests...'} />}
         
-        {error && <div className="flex justify-center h-16 w-full" >
+        {!isLoading && error && <div className="flex justify-center h-16 w-full" >
           <div className="flex items-center py-4 px-12 mt-4 text-sm text-red-600 rounded-lg bg-red-50 border-2 border-red-600" role="alert">
             <span className="sr-only">Error</span>
             <div>
@@ -123,13 +126,13 @@ const ProductList = () => {
           </div>
         </div>}
 
-        {!error && products && products.length === 0 && <div className="flex justify-center h-16 w-full" >
+        {!isLoading && !error && products && products.length === 0 && <div className="flex justify-center h-16 w-full" >
           <div className="p-3 px-12 mt-4 text-sm font-medium text-gray-800 rounded-lg bg-gray-50 border-2 border-gray-800" role="alert">
             Sorry there are no products available at the moment.
           </div>
         </div>}
         
-        {products && <div className="flex flex-col">
+        {!isLoading && !error && products && products.length > 0 && <div className="flex flex-col">
           <div className="flex-grow flex-1 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
               {products.map((product) => (
                 <ProductCard

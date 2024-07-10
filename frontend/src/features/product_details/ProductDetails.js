@@ -6,7 +6,6 @@ import { useParams } from "react-router-dom";
 import SubHeader from "../../components/SubHeader";
 
 const ProductDetails = () => {
-  const userid = 1;
   const { productId } = useParams();
 
   const [product, setProduct] = useState(null);
@@ -56,7 +55,7 @@ const ProductDetails = () => {
       }
     };
     fetchProductData();
-  }, []);
+  }, [productId]);
 
   return (
     !loading && <div>
