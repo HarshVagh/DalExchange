@@ -37,7 +37,7 @@ public class ProductWishListServiceImp implements ProductWishlistService {
     private ModelMapper modelMapper;
 
     @Transactional
-    public ProductWishlist markProductAsFavorite(long userId, long productId) {
+    public boolean markProductAsFavorite(long userId, long productId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + userId));
 
@@ -49,13 +49,12 @@ public class ProductWishListServiceImp implements ProductWishlistService {
 
         if (!existingWishlistItems.isEmpty()) {
             productWishlistRepository.deleteAll(existingWishlistItems);
-            return null; // Indicate that the item was removed
+            return false; // Indicate that the item was removed
         } else {
             ProductWishlist productWishlist = new ProductWishlist();
             productWishlist.setUserId(user);
             productWishlist.setProductId(product);
-
-            return productWishlistRepository.save(productWishlist);
+            return true;
         }
     }
 

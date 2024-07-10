@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import StoreIcon from "../assets/icons/store-solid.svg";
 import SearchIcon from "../assets/icons/magnifying-glass-solid.svg";
 import PlusIcon from "../assets/icons/plus-solid.svg";
@@ -23,7 +24,7 @@ const Header = ({config, search, setSearch, onSearchSubmit}) => {
   };
 
   return (
-    <header className="bg-gray-900 text-white py-4 px-6 flex justify-between items-center">
+    <header className="sticky top-0 z-50 bg-gray-900 text-white py-4 px-6 flex justify-between items-center">
 			<div className="flex justify-start items-center">
         <img alt="" className="h-8 w-8 mr-4" src={StoreIcon} />
 				<h1 className="text-2xl font-bold">Dal Exchange</h1>
@@ -44,7 +45,9 @@ const Header = ({config, search, setSearch, onSearchSubmit}) => {
 						onKeyDown={handleKeyDown}
 						onClick={() => submitSearch()} />
 				</div>}
-        {config?.requests && <img alt="" className="w-8 h-8" src={HandshakeIcon} /> }
+        {config?.requests && <Link to="/trade_requests">
+					<img alt="" className="w-8 h-8" src={HandshakeIcon} ></img>
+				</Link>}
         {config?.notifications && <img alt="" className="w-6 h-6" src={BellIcon} /> }
         {config?.add && <button type="button" className="flex px-2.5 py-2.5 text-sm text-white font-medium bg-blue-700 hover:bg-blue-800 rounded-full dark:bg-blue-600 focus:outline-none">
           <img alt="" className="h-5 w-5" src={PlusIcon}/>
