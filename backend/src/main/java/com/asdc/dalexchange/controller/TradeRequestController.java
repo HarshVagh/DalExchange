@@ -28,8 +28,9 @@ public class TradeRequestController {
     }
 
     @GetMapping(path = "/sell_requests")
-    public List<TradeRequestDTO> getSellRequests(@RequestParam(defaultValue = "0") Long sellerId) {
+    public List<TradeRequestDTO> getSellRequests() {
         log.info("get sell_requests api endpoint called");
+        long sellerId = 1L;
         List<TradeRequest> tradeRequests = tradeRequestService.getSellerTradeRequests(sellerId);
         return tradeRequests.stream()
                 .map(tradeRequestMapper::mapTo)
@@ -37,8 +38,9 @@ public class TradeRequestController {
     }
 
     @GetMapping(path = "/buy_requests")
-    public List<TradeRequestDTO> getBuyRequests(@RequestParam(defaultValue = "0") Long buyerId) {
+    public List<TradeRequestDTO> getBuyRequests() {
         log.info("get buy_requests api endpoint called");
+        long buyerId = 1L;
         List<TradeRequest> tradeRequests = tradeRequestService.getBuyerTradeRequests(buyerId);
         return tradeRequests.stream()
                 .map(tradeRequestMapper::mapTo)

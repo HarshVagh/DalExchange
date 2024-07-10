@@ -40,7 +40,7 @@ public class TradeRequestControllerTest {
         when(tradeRequestService.getSellerTradeRequests(sellerId)).thenReturn(List.of(tradeRequest));
         when(tradeRequestMapper.mapTo(tradeRequest)).thenReturn(tradeRequestDTO);
 
-        List<TradeRequestDTO> result = tradeRequestController.getSellRequests(sellerId);
+        List<TradeRequestDTO> result = tradeRequestController.getSellRequests();
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -59,7 +59,7 @@ public class TradeRequestControllerTest {
         when(tradeRequestService.getBuyerTradeRequests(buyerId)).thenReturn(List.of(tradeRequest));
         when(tradeRequestMapper.mapTo(tradeRequest)).thenReturn(tradeRequestDTO);
 
-        List<TradeRequestDTO> result = tradeRequestController.getBuyRequests(buyerId);
+        List<TradeRequestDTO> result = tradeRequestController.getBuyRequests();
 
         assertNotNull(result);
         assertEquals(1, result.size());
