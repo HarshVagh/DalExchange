@@ -12,10 +12,12 @@ import java.util.List;
 
 public interface ProductWishlistRepository extends JpaRepository<ProductWishlist, Long>, JpaSpecificationExecutor<ProductWishlist> {
 
-    ProductWishlist findByUserIdAndProductId(User user, Product product);
+       ProductWishlist findByUserIdAndProductId(User user, Product product);
+
+      // boolean deleteByUserIdAndProductId(Long user, Long product);
     
 
-    List<ProductWishlist> findByUserIdUserId(Long userId);
+     List<ProductWishlist> findByUserIdUserId(Long userId);
 
 
 }

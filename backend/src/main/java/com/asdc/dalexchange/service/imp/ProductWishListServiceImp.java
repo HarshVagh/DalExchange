@@ -73,4 +73,10 @@ public class ProductWishListServiceImp implements ProductWishlistService {
         long count = productWishlistRepository.count(spec);
         return count > 0;
     }
+
+   /* public boolean removeProductFromFavorite(long userId, long productId) {
+        Specification<ProductWishlist> spec = productWishlistRepository.deleteByUserIdAndProductId(userId,productId);
+        long count = productWishlistRepository.count(spec);
+        return count > 0;
+    }*/
 }

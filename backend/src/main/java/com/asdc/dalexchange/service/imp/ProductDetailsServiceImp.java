@@ -64,7 +64,6 @@ public class ProductDetailsServiceImp implements ProductDetailsService {
         productDetailsDTO.setImageurl(productImageUrl);
 
         // Set the seller joining date and rating
-
             productDetailsDTO.setSellerJoiningDate(sellerDTO.get().getSellerJoiningDate());
             productDetailsDTO.setRating(sellerDTO.get().getSellerRating());
 

@@ -24,9 +24,6 @@ public class ProfilePageServiceImp implements ProfilePageService {
     public OrderRepository orderRepository;
 
     @Autowired
-    public OrderService orderService;
-
-    @Autowired
     public UserRepository userRepository;
 
     @Autowired
@@ -85,7 +82,7 @@ public class ProfilePageServiceImp implements ProfilePageService {
 
     @Override
     public List<PurchaseProductDTO> GetallPurchasedProduct(Long userid) {
-        List<OrderDetails> orderDetailsList = orderService.getOrdersByUserId(userid);
+        List<OrderDetails> orderDetailsList = orderRepository.findByBuyerUserId(userid);
         return orderDetailsList.stream()
                 .map(purchaseProductMapper::mapTo)
                 .collect(Collectors.toList());

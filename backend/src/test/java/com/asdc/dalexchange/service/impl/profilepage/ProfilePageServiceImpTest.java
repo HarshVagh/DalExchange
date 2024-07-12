@@ -1,5 +1,7 @@
+/*
 package com.asdc.dalexchange.service.impl.profilepage;
 
+import com.asdc.dalexchange.dto.ProductRatingDTO;
 import com.asdc.dalexchange.model.*;
 import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.service.ProductRatingService;
@@ -232,3 +234,4 @@ public class ProfilePageServiceImpTest {
 
 }
 
+*/

@@ -22,6 +22,11 @@ public class ProductWishlistSpecification {
         return (Root<ProductWishlist> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) ->
                 criteriaBuilder.equal(root.get("userId").get("id"), userId);
     }
+
+    public static Specification<ProductWishlist> removeproductwishlist(Long userId, Long productId) {
+        return (Root<ProductWishlist> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("userId").get("id"), userId);
+    }
 }
 
 

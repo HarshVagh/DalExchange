@@ -41,8 +41,4 @@ public class OrderServiceImp implements OrderService {
         return orderRepository.avgOrderValueInLast30Days();
     }
 
-
-    public List<OrderDetails> getOrdersByUserId(Long userId) {
-        return orderRepository.findByBuyerUserId(userId);
-    }
 }

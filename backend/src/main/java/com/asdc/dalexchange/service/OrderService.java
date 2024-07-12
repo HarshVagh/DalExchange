@@ -10,7 +10,6 @@ import java.util.List;
 @Service
 public interface OrderService {
 
-    public List<OrderDetails> getOrdersByUserId(Long userId);
 
     public long newOrders();
 

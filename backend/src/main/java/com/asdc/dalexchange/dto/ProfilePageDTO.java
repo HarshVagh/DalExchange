@@ -13,5 +13,6 @@ import lombok.Setter;
 public class ProfilePageDTO {
     private String profilePicture;
     private String username;
+    private String bio;
 }
 

@@ -26,6 +26,12 @@ public class ProfilePageController {
         return ResponseEntity.ok(savedProductDTOs);
     }
 
+    @PutMapping("/saved_products/{userId}/remove_product/{productId}")
+    public ResponseEntity<List<SavedProductDTO>> removesavedproduct(@PathVariable Long userId,@PathVariable Long productId) {
+        List<SavedProductDTO> savedProductDTOs = profilePageService.GetAllsavedProduct(userId);
+        return ResponseEntity.ok(savedProductDTOs);
+    }
+
 
     @GetMapping("/sold_products/{userId}")
     public ResponseEntity<List<SoldItemDTO>> getAllSoldProducts(@PathVariable Long userId) {
@@ -46,9 +52,9 @@ public class ProfilePageController {
     }
 
     @PutMapping("/edit_user/{userId}")
-    public ResponseEntity<EditProfileDTO> editUserDetails(@RequestBody EditProfileDTO editProfileDTO, @PathVariable Long userId) {
+    public ResponseEntity<String> editUserDetails(@RequestBody EditProfileDTO editProfileDTO, @PathVariable Long userId) {
         EditProfileDTO updatedUser = profilePageService.editUserDetails(userId,editProfileDTO);
-        return ResponseEntity.ok(updatedUser);
+        return ResponseEntity.ok().body("Profile Edited Sucessfully");
     }
 
     @GetMapping("/edit_user/{userId}")
