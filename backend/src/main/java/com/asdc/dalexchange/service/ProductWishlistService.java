@@ -11,7 +11,7 @@ import java.util.List;
 public interface ProductWishlistService {
     ProductWishlist markProductAsFavorite(long userid, long productid);
 
-    public List<Product> getProductIdsByUserId(Long userId);
+    //public List<Product> getProductIdsByUserId(Long userId);
 
     public boolean checkProductIsFavoriteByGivenUser(long userId, long productId);
 

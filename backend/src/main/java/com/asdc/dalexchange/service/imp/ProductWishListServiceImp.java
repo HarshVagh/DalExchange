@@ -56,7 +56,7 @@ public class ProductWishListServiceImp implements ProductWishlistService {
         }
     }
 
-    public List<Product> getProductIdsByUserId(Long userId) {
+    /*public List<Product> getProductIdsByUserId(Long userId) {
         Specification<ProductWishlist> spec = ProductWishlistSpecification.byUserId(userId);
         List<ProductWishlist> allWishlistedProducts = productWishlistRepository.findAll(spec);
 
@@ -66,7 +66,7 @@ public class ProductWishListServiceImp implements ProductWishlistService {
                 .collect(Collectors.toList());
 
         return productRepository.findByProductIdIn(productIds);
-    }
+    }*/
 
     public boolean checkProductIsFavoriteByGivenUser(long userId, long productId) {
         Specification<ProductWishlist> spec = ProductWishlistSpecification.byUserIdAndProductId(userId, productId);
