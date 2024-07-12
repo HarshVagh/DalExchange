@@ -82,6 +82,7 @@ public class ProfilePageServiceImp implements ProfilePageService {
 
     @Override
     public List<PurchaseProductDTO> GetallPurchasedProduct(Long userid) {
+        //
         List<OrderDetails> orderDetailsList = orderRepository.findByBuyerUserId(userid);
         return orderDetailsList.stream()
                 .map(purchaseProductMapper::mapTo)
