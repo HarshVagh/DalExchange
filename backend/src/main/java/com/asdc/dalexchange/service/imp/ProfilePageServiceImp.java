@@ -96,7 +96,7 @@ public class ProfilePageServiceImp implements ProfilePageService {
                 .collect(Collectors.toList());
     }
 
-
+/*
     @Override
     public List<SoldItemDTO> GetallSoldProduct(Long userid) {
         List<SoldItem> allSoldItems = soldItemService.getSoldItemsBySellerId(userid);
@@ -104,7 +104,7 @@ public class ProfilePageServiceImp implements ProfilePageService {
         return allSoldItems.stream()
                 .map(soldItemMapper::mapTo)
                 .collect(Collectors.toList());
-    }
+    }*/
 
 
     @Override

@@ -13,9 +13,6 @@ public interface ProfilePageService {
     // get the all saved items
     List<SavedProductDTO> GetAllsavedProduct(Long userid);
 
-    //get the all sold itemsby the given user
-    List<SoldItemDTO> GetallSoldProduct(Long userid);
-
     //get the all purchase the history
     List<PurchaseProductDTO> GetallPurchasedProduct(Long userid);
 
