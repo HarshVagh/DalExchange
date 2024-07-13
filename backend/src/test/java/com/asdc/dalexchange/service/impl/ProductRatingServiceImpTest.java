@@ -5,7 +5,6 @@ import static org.mockito.Mockito.*;
 
 import com.asdc.dalexchange.model.ProductRating;
 import com.asdc.dalexchange.repository.ProductRatingRepository;
-import com.asdc.dalexchange.service.imp.ProductRatingServiceImp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

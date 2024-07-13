@@ -1,4 +1,4 @@
-package com.asdc.dalexchange.service.imp;
+package com.asdc.dalexchange.service.impl;
 import com.asdc.dalexchange.dto.PurchaseProductDTO;
 import com.asdc.dalexchange.dto.SavedProductDTO;
 import com.asdc.dalexchange.mappers.impl.PurchaseProductMapperImpl;
@@ -11,9 +11,8 @@ import com.asdc.dalexchange.repository.OrderRepository;
 import com.asdc.dalexchange.repository.ProductRepository;
 import com.asdc.dalexchange.repository.ProductWishlistRepository;
 import com.asdc.dalexchange.repository.UserRepository;
-import com.asdc.dalexchange.service.ProductService;
 import com.asdc.dalexchange.service.ProductWishlistService;
-import com.asdc.dalexchange.specification.ProductWishlistSpecification;
+import com.asdc.dalexchange.specifications.ProductWishlistSpecification;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -71,18 +70,6 @@ public class ProductWishListServiceImp implements ProductWishlistService {
         }
     }
 
-    /*public List<Product> getProductIdsByUserId(Long userId) {
-        Specification<ProductWishlist> spec = ProductWishlistSpecification.byUserId(userId);
-        List<ProductWishlist> allWishlistedProducts = productWishlistRepository.findAll(spec);
-
-        List<Long> productIds = allWishlistedProducts.stream()
-                .map(ProductWishlist::getProductId)
-                .map(Product::getProductId)
-                .collect(Collectors.toList());
-
-        return productRepository.findByProductIdIn(productIds);
-    }*/
-
 
     @Override
     public List<SavedProductDTO> GetAllsavedProduct(Long userId) {
@@ -117,9 +104,4 @@ public class ProductWishListServiceImp implements ProductWishlistService {
         return count > 0;
     }
 
-   /* public boolean removeProductFromFavorite(long userId, long productId) {
-        Specification<ProductWishlist> spec = productWishlistRepository.deleteByUserIdAndProductId(userId,productId);
-        long count = productWishlistRepository.count(spec);
-        return count > 0;
-    }*/
 }

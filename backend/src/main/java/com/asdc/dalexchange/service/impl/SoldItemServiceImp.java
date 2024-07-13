@@ -1,4 +1,4 @@
-package com.asdc.dalexchange.service.imp;
+package com.asdc.dalexchange.service.impl;
 
 import com.asdc.dalexchange.dto.SoldItemDTO;
 import com.asdc.dalexchange.mappers.impl.SoldItemMapperImpl;

@@ -1,7 +1,7 @@
 package com.asdc.dalexchange.mappers.impl;
 
 import com.asdc.dalexchange.dto.SoldItemDTO;
-import com.asdc.dalexchange.mapper.Mapper;
+import com.asdc.dalexchange.mappers.Mapper;
 import com.asdc.dalexchange.model.SoldItem;
 import jakarta.annotation.PostConstruct;
 import org.modelmapper.ModelMapper;

@@ -1,10 +1,10 @@
-package com.asdc.dalexchange.service.imp;
+package com.asdc.dalexchange.service.impl;
 
 import com.asdc.dalexchange.dto.ProductDTO;
 import com.asdc.dalexchange.dto.ProductDetailsDTO;
 import com.asdc.dalexchange.dto.SellerDTO;
-import com.asdc.dalexchange.mapper.Mapper;
-import com.asdc.dalexchange.mapper.impl.ProductMapperImpl;
+import com.asdc.dalexchange.mappers.Mapper;
+import com.asdc.dalexchange.mappers.impl.ProductMapperImpl;
 import com.asdc.dalexchange.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

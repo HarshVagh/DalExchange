@@ -1,5 +1,6 @@
 package com.asdc.dalexchange.controller;
 import com.asdc.dalexchange.dto.*;
+import com.asdc.dalexchange.model.ProductWishlist;
 import com.asdc.dalexchange.service.ProductRatingService;
 import com.asdc.dalexchange.service.ProductWishlistService;
 import com.asdc.dalexchange.service.ProfilePageService;
@@ -26,11 +27,19 @@ public class ProfilePageController {
     @Autowired
     private ProductWishlistService productWishlistService;
 
+    // home page of the user
     @GetMapping("/{userId}/profiledetails")
-    public ResponseEntity<ProfilePageDTO> profilledetails(@PathVariable Long userId) {
+    public ResponseEntity<EditProfileDTO> profilledetails(@PathVariable Long userId) {
+        EditProfileDTO updatedUser = profilePageService.editGetUserDetails(userId);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+   /* public ResponseEntity<ProfilePageDTO> profilledetails(@PathVariable Long userId) {
         ProfilePageDTO ProfilePageDTOs = profilePageService.ProfileDetails(userId);
         return ResponseEntity.ok(ProfilePageDTOs);
     }
+*/
+
 
     @GetMapping("/saved_products/{userId}")
     public ResponseEntity<List<SavedProductDTO>> getAllSavedProducts(@PathVariable Long userId) {
@@ -69,10 +78,22 @@ public class ProfilePageController {
         return ResponseEntity.ok().body("Profile Edited Sucessfully");
     }
 
-    @GetMapping("/edit_user/{userId}")
+    /*@GetMapping("/edit_user/{userId}")
     public ResponseEntity<EditProfileDTO> editUserDetails(@PathVariable long userId) {
         EditProfileDTO updatedUser = profilePageService.editGetUserDetails(userId);
         return ResponseEntity.ok(updatedUser);
+    }*/
+
+    @PostMapping("/{userid}/{productid}/removesaved")
+    public ResponseEntity<String> unmarkAsFavorite(@PathVariable long userid, @PathVariable long productid) {
+        ProductWishlistDTO productWishlistDTO = new ProductWishlistDTO();
+        productWishlistDTO.setUserId(userid);
+        productWishlistDTO.setProductId(productid);
+        // Assuming ProductWishlistService is injected properly
+        ProductWishlist productWishlistDTO1 = new ProductWishlist();
+        productWishlistDTO1 = productWishlistService.markProductAsFavorite(userid, productid);
+
+        return ResponseEntity.ok().body("Product added Sucessfully in wishlist.");
     }
 
 }

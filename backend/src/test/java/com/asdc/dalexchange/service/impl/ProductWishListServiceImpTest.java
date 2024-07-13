@@ -7,7 +7,6 @@ import com.asdc.dalexchange.repository.ProductRepository;
 import com.asdc.dalexchange.repository.ProductWishlistRepository;
 import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.service.ProductService;
-import com.asdc.dalexchange.service.imp.ProductWishListServiceImp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

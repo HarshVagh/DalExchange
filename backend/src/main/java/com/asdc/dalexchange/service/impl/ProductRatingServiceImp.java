@@ -1,4 +1,4 @@
-package com.asdc.dalexchange.service.imp;
+package com.asdc.dalexchange.service.impl;
 
 import com.asdc.dalexchange.dto.ProductRatingDTO;
 import com.asdc.dalexchange.mappers.impl.ProductRatingMapperImpl;
@@ -20,10 +20,6 @@ public class ProductRatingServiceImp implements ProductRatingService {
     @Autowired
     private ProductRatingMapperImpl productRatingMapper;
 
-   /* @Override
-    public List<ProductRating> getProductRatingsByUserId(Long userId) {
-        return productRatingRepository.findByIdUserId(userId);
-    }*/
 
     @Override
     public List<ProductRatingDTO> GetAllProductRating(Long userid) {

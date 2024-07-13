@@ -9,7 +9,7 @@ import com.asdc.dalexchange.service.ProductWishlistService;
 import com.asdc.dalexchange.service.OrderService;
 import com.asdc.dalexchange.service.SoldItemService;
 
-import com.asdc.dalexchange.service.imp.ProfilePageServiceImp;
+import com.asdc.dalexchange.service.impl.ProfilePageServiceImp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
