@@ -1,7 +1,7 @@
 package com.asdc.dalexchange.service.impl;
 
 import com.asdc.dalexchange.dto.ProductDTO;
-import com.asdc.dalexchange.mapper.Mapper;
+import com.asdc.dalexchange.mappers.Mapper;
 import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.repository.ProductRepository;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
