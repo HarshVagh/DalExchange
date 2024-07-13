@@ -2,10 +2,7 @@ package com.asdc.dalexchange.service.imp;
 import com.asdc.dalexchange.dto.*;
 import com.asdc.dalexchange.mappers.impl.*;
 import com.asdc.dalexchange.model.*;
-import com.asdc.dalexchange.repository.OrderRepository;
-import com.asdc.dalexchange.repository.ProductRepository;
-import com.asdc.dalexchange.repository.ProductWishlistRepository;
-import com.asdc.dalexchange.repository.UserRepository;
+import com.asdc.dalexchange.repository.*;
 import com.asdc.dalexchange.service.*;
 import com.asdc.dalexchange.specification.ProductWishlistSpecification;
 import org.modelmapper.ModelMapper;
@@ -41,6 +38,9 @@ public class ProfilePageServiceImp implements ProfilePageService {
 
     @Autowired
     public ProductWishlistRepository productWishlistRepository;
+
+    @Autowired
+    private ProductRatingRepository productRatingRepository;
 
 
     @Autowired
@@ -120,7 +120,7 @@ public class ProfilePageServiceImp implements ProfilePageService {
 
     @Override
     public List<ProductRatingDTO> GetAllProductRating(Long userid) {
-        List<ProductRating> allProductRatings = productRatingService.getProductRatingsByUserId(userid);
+        List<ProductRating> allProductRatings = productRatingRepository.findByIdUserId(userid);
         return allProductRatings.stream()
                 .map(productRatingMapper::mapTo)
                 .collect(Collectors.toList());

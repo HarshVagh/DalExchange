@@ -10,11 +10,11 @@ import java.util.List;
 @Service
 public class ProductRatingServiceImp implements ProductRatingService {
 
-    @Autowired
+    /*@Autowired
     private ProductRatingRepository productRatingRepository;
 
     @Override
     public List<ProductRating> getProductRatingsByUserId(Long userId) {
         return productRatingRepository.findByIdUserId(userId);
-    }
+    }*/
 }
