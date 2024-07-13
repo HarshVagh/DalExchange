@@ -1,7 +1,13 @@
 package com.asdc.dalexchange.service.imp;
+import com.asdc.dalexchange.dto.PurchaseProductDTO;
+import com.asdc.dalexchange.dto.SavedProductDTO;
+import com.asdc.dalexchange.mappers.impl.PurchaseProductMapperImpl;
+import com.asdc.dalexchange.mappers.impl.SavedProductMapperImpl;
+import com.asdc.dalexchange.model.OrderDetails;
 import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.model.ProductWishlist;
 import com.asdc.dalexchange.model.User;
+import com.asdc.dalexchange.repository.OrderRepository;
 import com.asdc.dalexchange.repository.ProductRepository;
 import com.asdc.dalexchange.repository.ProductWishlistRepository;
 import com.asdc.dalexchange.repository.UserRepository;
@@ -26,6 +32,15 @@ public class ProductWishListServiceImp implements ProductWishlistService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private SavedProductMapperImpl savedProductMapper;
+
+    @Autowired
+    public OrderRepository orderRepository;
+
+    @Autowired
+    private PurchaseProductMapperImpl purchaseProductMapper;
 
     @Autowired
     private ProductRepository productRepository;
@@ -67,6 +82,34 @@ public class ProductWishListServiceImp implements ProductWishlistService {
 
         return productRepository.findByProductIdIn(productIds);
     }*/
+
+
+    @Override
+    public List<SavedProductDTO> GetAllsavedProduct(Long userId) {
+        Specification<ProductWishlist> spec = ProductWishlistSpecification.byUserId(userId);
+        List<ProductWishlist> allWishlistedProducts = productWishlistRepository.findAll(spec);
+
+        List<Long> productIds = allWishlistedProducts.stream()
+                .map(ProductWishlist::getProductId)
+                .map(Product::getProductId)
+                .collect(Collectors.toList());
+
+        List<Product> allSavedProducts = productRepository.findByProductIdIn(productIds);
+
+        return allSavedProducts.stream()
+                .map(savedProductMapper::mapTo)
+                .collect(Collectors.toList());
+    }
+
+
+    @Override
+    public List<PurchaseProductDTO> GetallPurchasedProduct(Long userid) {
+        List<OrderDetails> orderDetailsList = orderRepository.findByBuyerUserId(userid);
+        return orderDetailsList.stream()
+                .map(purchaseProductMapper::mapTo)
+                .collect(Collectors.toList());
+
+    }
 
     public boolean checkProductIsFavoriteByGivenUser(long userId, long productId) {
         Specification<ProductWishlist> spec = ProductWishlistSpecification.byUserIdAndProductId(userId, productId);

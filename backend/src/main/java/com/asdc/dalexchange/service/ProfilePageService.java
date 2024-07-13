@@ -11,13 +11,13 @@ public interface ProfilePageService {
     ProfilePageDTO ProfileDetails(Long userid);
 
     // get the all saved items
-    List<SavedProductDTO> GetAllsavedProduct(Long userid);
+    //List<SavedProductDTO> GetAllsavedProduct(Long userid);
 
     //get the all purchase the history
-    List<PurchaseProductDTO> GetallPurchasedProduct(Long userid);
+   // List<PurchaseProductDTO> GetallPurchasedProduct(Long userid);
 
     // get the review of the product rating  and anthe review of their profile
-    List<ProductRatingDTO> GetAllProductRating(Long userid);
+   // List<ProductRatingDTO> GetAllProductRating(Long userid);
 
     // edit the profile of user details
     EditProfileDTO editUserDetails(Long userId , EditProfileDTO editProfileDTO);

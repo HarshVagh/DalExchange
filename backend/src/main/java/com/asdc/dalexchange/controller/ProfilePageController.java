@@ -1,5 +1,7 @@
 package com.asdc.dalexchange.controller;
 import com.asdc.dalexchange.dto.*;
+import com.asdc.dalexchange.service.ProductRatingService;
+import com.asdc.dalexchange.service.ProductWishlistService;
 import com.asdc.dalexchange.service.ProfilePageService;
 import com.asdc.dalexchange.service.SoldItemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,13 @@ public class ProfilePageController {
     private ProfilePageService profilePageService;
 
     @Autowired
+    private ProductRatingService productRatingService;
+
+    @Autowired
     private SoldItemService soldItemService;
+
+    @Autowired
+    private ProductWishlistService productWishlistService;
 
     @GetMapping("/{userId}/profiledetails")
     public ResponseEntity<ProfilePageDTO> profilledetails(@PathVariable Long userId) {
@@ -26,13 +34,13 @@ public class ProfilePageController {
 
     @GetMapping("/saved_products/{userId}")
     public ResponseEntity<List<SavedProductDTO>> getAllSavedProducts(@PathVariable Long userId) {
-        List<SavedProductDTO> savedProductDTOs = profilePageService.GetAllsavedProduct(userId);
+        List<SavedProductDTO> savedProductDTOs = productWishlistService.GetAllsavedProduct(userId);
         return ResponseEntity.ok(savedProductDTOs);
     }
 
     @PutMapping("/saved_products/{userId}/remove_product/{productId}")
     public ResponseEntity<List<SavedProductDTO>> removesavedproduct(@PathVariable Long userId,@PathVariable Long productId) {
-        List<SavedProductDTO> savedProductDTOs = profilePageService.GetAllsavedProduct(userId);
+        List<SavedProductDTO> savedProductDTOs = productWishlistService.GetAllsavedProduct(userId);
         return ResponseEntity.ok(savedProductDTOs);
     }
 
@@ -45,13 +53,13 @@ public class ProfilePageController {
 
     @GetMapping("/purchased_products/{userId}")
     public ResponseEntity<List<PurchaseProductDTO>> getAllPurchasedProducts(@PathVariable Long userId) {
-        List<PurchaseProductDTO> purchasedProductDTOs = profilePageService.GetallPurchasedProduct(userId);
+        List<PurchaseProductDTO> purchasedProductDTOs = productWishlistService.GetallPurchasedProduct(userId);
         return ResponseEntity.ok(purchasedProductDTOs);
     }
 
     @GetMapping("/product_ratings/{userId}")
     public ResponseEntity<List<ProductRatingDTO>> getAllProductRatings(@PathVariable Long userId) {
-        List<ProductRatingDTO> productRatingDTOs = profilePageService.GetAllProductRating(userId);
+        List<ProductRatingDTO> productRatingDTOs = productRatingService.GetAllProductRating(userId);
         return ResponseEntity.ok(productRatingDTOs);
     }
 

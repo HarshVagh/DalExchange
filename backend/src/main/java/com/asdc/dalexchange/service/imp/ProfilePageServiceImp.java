@@ -42,17 +42,6 @@ public class ProfilePageServiceImp implements ProfilePageService {
     @Autowired
     private ProductRatingRepository productRatingRepository;
 
-
-    @Autowired
-    private PurchaseProductMapperImpl purchaseProductMapper;
-
-
-    @Autowired
-    private SavedProductMapperImpl savedProductMapper;
-
-    @Autowired
-    private SoldItemMapperImpl soldItemMapper;
-
     @Autowired
     private ProfilePageMapperImpl profilePageMapper;
 
@@ -71,15 +60,8 @@ public class ProfilePageServiceImp implements ProfilePageService {
         return profilePageMapper.mapTo(user);
     }
 
-   /* @Override
-    public List<SavedProductDTO> GetAllsavedProduct(Long userid) {
-        List<Product> allSavedProduct = productWishlistService.getProductIdsByUserId(userid);
-        return allSavedProduct.stream()
-                .map(savedProductMapper::mapTo)
-                .collect(Collectors.toList());
-    }*/
 
-    @Override
+    /*@Override
     public List<SavedProductDTO> GetAllsavedProduct(Long userId) {
         Specification<ProductWishlist> spec = ProductWishlistSpecification.byUserId(userId);
         List<ProductWishlist> allWishlistedProducts = productWishlistRepository.findAll(spec);
@@ -94,7 +76,7 @@ public class ProfilePageServiceImp implements ProfilePageService {
         return allSavedProducts.stream()
                 .map(savedProductMapper::mapTo)
                 .collect(Collectors.toList());
-    }
+    }*/
 
 /*
     @Override
@@ -107,24 +89,24 @@ public class ProfilePageServiceImp implements ProfilePageService {
     }*/
 
 
-    @Override
+    /*@Override
     public List<PurchaseProductDTO> GetallPurchasedProduct(Long userid) {
         List<OrderDetails> orderDetailsList = orderRepository.findByBuyerUserId(userid);
         return orderDetailsList.stream()
                 .map(purchaseProductMapper::mapTo)
                 .collect(Collectors.toList());
 
-    }
+    }*/
 
 
 
-    @Override
+  /*  @Override
     public List<ProductRatingDTO> GetAllProductRating(Long userid) {
         List<ProductRating> allProductRatings = productRatingRepository.findByIdUserId(userid);
         return allProductRatings.stream()
                 .map(productRatingMapper::mapTo)
                 .collect(Collectors.toList());
-    }
+    }*/
 
 
     @Override
