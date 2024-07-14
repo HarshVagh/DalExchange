@@ -10,7 +10,7 @@ import org.mockito.MockitoAnnotations;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-public class AdminDashboardServiceImplTest {
+public class AdminDashboardServiceServiceImplTest {
 
     @Mock
     private UserServiceImpl userServiceImpl;
@@ -19,7 +19,7 @@ public class AdminDashboardServiceImplTest {
     private OrderServiceImpl orderServiceImpl;
 
     @InjectMocks
-    private AdminDashboardServiceImpl adminDashboardServiceImpl;
+    private AdminDashboardServiceServiceImpl adminDashboardServiceImpl;
 
     @BeforeEach
     public void setUp() {

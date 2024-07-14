@@ -2,12 +2,12 @@ package com.asdc.dalexchange.service.impl;
 
 
 import com.asdc.dalexchange.dto.AdminDashboardDTO;
-import com.asdc.dalexchange.service.AdminDashboard;
+import com.asdc.dalexchange.service.AdminDashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AdminDashboardServiceImpl implements AdminDashboard {
+public class AdminDashboardServiceServiceImpl implements AdminDashboardService {
 
     @Autowired
     private final UserServiceImpl userServiceImpl;
@@ -15,7 +15,7 @@ public class AdminDashboardServiceImpl implements AdminDashboard {
     @Autowired
     private final OrderServiceImpl orderServiceImpl;
 
-    public AdminDashboardServiceImpl(UserServiceImpl userServiceImpl, OrderServiceImpl orderServiceImpl) {
+    public AdminDashboardServiceServiceImpl(UserServiceImpl userServiceImpl, OrderServiceImpl orderServiceImpl) {
         this.userServiceImpl = userServiceImpl;
         this.orderServiceImpl = orderServiceImpl;
     }
