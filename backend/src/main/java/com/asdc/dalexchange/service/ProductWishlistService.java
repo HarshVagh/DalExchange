@@ -23,5 +23,6 @@ public interface ProductWishlistService {
     public List<SavedProductDTO> GetAllsavedProduct(Long userId);
 
     
-     public boolean removeProductFromFavorite(long userId, long productId)
+     public boolean removeProductFromFavorite(long userId, long productId);
+
 }

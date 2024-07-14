@@ -90,8 +90,8 @@ public class ProfilePageController {
         productWishlistDTO.setUserId(userid);
         productWishlistDTO.setProductId(productid);
         // Assuming ProductWishlistService is injected properly
-        ProductWishlist productWishlistDTO1 = new ProductWishlist();
-        productWishlistDTO1 = productWishlistService.markProductAsFavorite(userid, productid);
+        //ProductWishlist productWishlistDTO1 = new ProductWishlist();
+        boolean whishlist = productWishlistService.markProductAsFavorite(userid, productid);
 
         return ResponseEntity.ok().body("Product added Sucessfully in wishlist.");
     }

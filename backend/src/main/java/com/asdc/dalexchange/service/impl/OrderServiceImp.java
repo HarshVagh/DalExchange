@@ -1,9 +1,13 @@
+/*
 package com.asdc.dalexchange.service.impl;
 
+import com.asdc.dalexchange.model.OrderDetails;
 import com.asdc.dalexchange.repository.OrderRepository;
 import com.asdc.dalexchange.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 public class OrderServiceImp implements OrderService {
@@ -15,6 +19,21 @@ public class OrderServiceImp implements OrderService {
     public void orderRepository(OrderRepository orderRepository) {
 
         this.orderRepository = orderRepository;
+    }
+
+    @Override
+    public double salesChange() {
+        return 0;
+    }
+
+    @Override
+    public double ordersChange() {
+        return 0;
+    }
+
+    @Override
+    public double avgOrderValueChange() {
+        return 0;
     }
 
     @Override
@@ -32,4 +51,30 @@ public class OrderServiceImp implements OrderService {
         return orderRepository.avgOrderValueInLast30Days();
     }
 
+    @Override
+    public LocalDateTime getCurrentDateTime() {
+        return null;
+    }
+
+    @Override
+    public OrderDetails getOrderById(int orderId) {
+        return null;
+    }
+
+    @Override
+    public OrderDetails updateOrder(int orderId, OrderDetails updatedOrderDetails) {
+        return null;
+    }
+
+    @Override
+    public void cancelOrder(int orderId, String adminComments) {
+
+    }
+
+    @Override
+    public OrderDetails processRefund(int orderId, double refundAmount) {
+        return null;
+    }
+
 }
+*/

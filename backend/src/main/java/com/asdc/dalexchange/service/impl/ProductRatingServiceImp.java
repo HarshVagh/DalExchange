@@ -1,5 +1,6 @@
 package com.asdc.dalexchange.service.impl;
 
+import com.asdc.dalexchange.dto.ProductRatingDTO;
 import com.asdc.dalexchange.model.ProductRating;
 import com.asdc.dalexchange.repository.ProductRatingRepository;
 import com.asdc.dalexchange.service.ProductRatingService;
@@ -16,5 +17,10 @@ public class ProductRatingServiceImp implements ProductRatingService {
     @Override
     public List<ProductRating> getProductRatingsByUserId(Long userId) {
         return productRatingRepository.findByIdUserId(userId);
+    }
+
+    @Override
+    public List<ProductRatingDTO> GetAllProductRating(Long userid) {
+        return List.of();
     }
 }

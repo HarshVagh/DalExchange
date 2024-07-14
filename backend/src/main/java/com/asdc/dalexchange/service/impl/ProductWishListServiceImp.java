@@ -87,6 +87,11 @@ public class ProductWishListServiceImp implements ProductWishlistService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public boolean removeProductFromFavorite(long userId, long productId) {
+        return false;
+    }
+
 
     @Override
     public List<PurchaseProductDTO> GetallPurchasedProduct(Long userid) {
@@ -101,6 +106,11 @@ public class ProductWishListServiceImp implements ProductWishlistService {
         Specification<ProductWishlist> spec = ProductWishlistSpecification.byUserIdAndProductId(userId, productId);
         long count = productWishlistRepository.count(spec);
         return count > 0;
+    }
+
+    @Override
+    public List<Product> getProductIdsByUserId(Long userId) {
+        return List.of();
     }
 
 }

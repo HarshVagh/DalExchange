@@ -1,7 +1,6 @@
 package com.asdc.dalexchange.service.impl;
 
 import com.asdc.dalexchange.dto.SellerDTO;
-import com.asdc.dalexchange.mappers.impl.SellerDetailsMapperImpl;
 import com.asdc.dalexchange.model.Seller;
 import com.asdc.dalexchange.repository.SellerRepository;
 

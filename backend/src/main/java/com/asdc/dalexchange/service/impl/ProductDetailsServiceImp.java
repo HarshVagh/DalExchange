@@ -1,239 +1,88 @@
 package com.asdc.dalexchange.service.impl;
 
-import com.asdc.dalexchange.dto.ProductDTO;
 import com.asdc.dalexchange.dto.ProductDetailsDTO;
-import com.asdc.dalexchange.dto.SellerDTO;
 import com.asdc.dalexchange.mappers.Mapper;
-import com.asdc.dalexchange.mappers.impl.ProductMapperImpl;
 import com.asdc.dalexchange.model.Product;
+import com.asdc.dalexchange.model.ProductImage;
+import com.asdc.dalexchange.model.ProductWishlist;
+import com.asdc.dalexchange.repository.ProductImageRepository;
+import com.asdc.dalexchange.repository.ProductRepository;
+import com.asdc.dalexchange.repository.ProductWishlistRepository;
+import com.asdc.dalexchange.specifications.ProductImageSpecification;
+import com.asdc.dalexchange.specifications.ProductWishlistSpecification;
+import com.asdc.dalexchange.util.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import com.asdc.dalexchange.service.ProductDetailsService;
-import com.asdc.dalexchange.service.ProductImageService;
-import com.asdc.dalexchange.service.ProductService;
-import com.asdc.dalexchange.service.ProductWishlistService;
-import com.asdc.dalexchange.service.SellerService;
 
 
 @Service
 public class ProductDetailsServiceImp implements ProductDetailsService {
 
-    private final ProductService productService;
-    private final SellerService sellerService;
-    private final ProductImageService productImageService;
-    private final ProductWishlistService productWishlistService;
-    private final Mapper<Product, ProductDetailsDTO> productDetailsMapper;
-    private final ProductMapperImpl productMapper;
+    @Autowired
+    private ProductRepository productRepository;
 
     @Autowired
-    public ProductDetailsServiceImp(ProductService productService, SellerService sellerService, ProductImageService productImageService,
-                                    ProductWishlistService productWishlistService, Mapper<Product, ProductDetailsDTO> productDetailsMapper,
-                                    ProductMapperImpl productMapper) {
-        this.productService = productService;
-        this.sellerService = sellerService;
-        this.productImageService = productImageService;
-        this.productWishlistService = productWishlistService;
+    private ProductImageRepository productImageRepository;
+    private final ProductWishlistRepository productWishlistRepository;
+    private final Mapper<Product, ProductDetailsDTO> productDetailsMapper;
+
+    @Autowired
+    public ProductDetailsServiceImp(ProductRepository productRepository,
+                                    ProductImageRepository productImageRepository,
+                                    ProductWishlistRepository productWishlistRepository,
+                                    Mapper<Product, ProductDetailsDTO> productDetailsMapper) {
+        this.productRepository = productRepository;
+        this.productImageRepository = productImageRepository;
+        this.productWishlistRepository = productWishlistRepository;
         this.productDetailsMapper = productDetailsMapper;
-        this.productMapper = productMapper;
     }
 
     @Override
     public ProductDetailsDTO getDetails(Long userId, Long productId) {
         // Get all the details of the product
-        ProductDTO productDetails = productService.getProductById(productId);
-
-        // Find the seller ID
-        Long sellerId = productDetails.getSeller().getUserId();
-
-        // Get the seller details
-        Optional<SellerDTO> sellerDTO = sellerService.getSellerById(sellerId);
+        Product product = getProductById(productId);
 
         // Get all image URLs of the given product
-        List<String> productImageUrl = productImageService.getProductAllImages(productId);
-
-        // Map ProductDTO to Product
-        Product product = productMapper.mapFrom(productDetails);
+        List<String> productImageUrls = getImageUrls(productId);
 
         // Map Product to ProductDetailsDTO
         ProductDetailsDTO productDetailsDTO = productDetailsMapper.mapTo(product);
 
         // Set the image URLs to ProductDetailsDTO
-        productDetailsDTO.setImageurl(productImageUrl);
+        productDetailsDTO.setImageurl(productImageUrls);
 
         // Set the seller joining date and rating
-            productDetailsDTO.setSellerJoiningDate(sellerDTO.get().getSellerJoiningDate());
-            productDetailsDTO.setRating(sellerDTO.get().getSellerRating());
+        productDetailsDTO.setSellerJoiningDate(product.getSeller().getJoinedAt());
+        productDetailsDTO.setRating(product.getSeller().getSellerRating());
 
         // Set the favorite status
-        productDetailsDTO.setFavorite(productWishlistService.checkProductIsFavoriteByGivenUser(userId, productId));
+        productDetailsDTO.setFavorite(getFavoriteStatus(userId, productId));
 
         return productDetailsDTO;
     }
-}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*@Service
-public class ProductDetailsServiceImp implements ProductDetailsService {
-
-    @Autowired
-    private ProductService productService;
-
-    @Autowired
-    private SellerService sellerService;
-
-    @Autowired
-    private ProductImageService productImageService;
-
-    @Autowired
-    private ProductWishlistService productWishlistService;
-
-    @Autowired
-    private Mapper<Product, ProductDetailsDTO> productDetailsMapper; // Inject the mapper
-
-    @Autowired
-    private ProductMapperImpl productMapper ; // Inject the mapper
-
-    @Override
-    public ProductDetailsDTO DetailsOfProduct(Long userId, Long productId) {
-        // get all the details of the product
-        ProductDTO productDetails = productService.getProductById(productId);
-
-        // find the seller id
-        Long sellerId = productDetails.getSeller().getUserId();
-
-        // seller
-        Optional<SellerDTO> sellerDTO = sellerService.getSellerById(sellerId);
-
-        //get the all image url of given product
-        List<String> productImageUrl = productImageService.getProductAllImages(productId);
-
-        // Map product to ProductDetailsDTO
-         Product product = productMapper.mapFrom(productDetails);
-
-        ProductDetailsDTO productDetailsDTO = productDetailsMapper.mapTo(product);
-
-        // Set the all image URL to the ProductDetailsDTO
-        productDetailsDTO.setImageurl(productImageUrl);
-
-        productDetailsDTO.setSellerJoiningDate(sellerDTO.get().getSellerJoiningDate());
-
-        //
-        productDetailsDTO.setRating(sellerDTO.get().getSellerRating());
-
-        // set the favorite
-        productDetailsDTO.setFavorite(productWishlistService.checkProductIsFavoriteByGivenUser(userId, productId));
-
-        return productDetailsDTO;
-    }
-}*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-package com.asdc.dalexchange.service.imp;
-
-import com.asdc.dalexchange.dto.ProductDTO;
-import com.asdc.dalexchange.dto.ProductDetailsDTO;
-import com.asdc.dalexchange.service.ProductDetailsService;
-import com.asdc.dalexchange.service.ProductImageService;
-import com.asdc.dalexchange.service.ProductService;
-import com.asdc.dalexchange.service.ProductWishlistService;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-
-@Service
-public class ProductDetailsServiceImp implements ProductDetailsService {
-
-    @Autowired
-    ProductService productService;
-
-    @Autowired
-    ProductImageService productImageService;
-
-    @Autowired
-    ProductWishlistService productWishlistService;
-
-    @Autowired
-    ModelMapper modelMapper;
-
-    @Override
-    public ProductDetailsDTO DetailsOfProduct(Long userId, Long productId) {
-        // get all the details of the product
-        ProductDTO prodcutDetails = productService.getProductById(productId);
-
-        //get the all image url of given product
-        List<String> productImageUrl = productImageService.getProductAllImages(productId);
-
-        // convert the model to DTO
-        ProductDetailsDTO productDetailsDTO = modelMapper.map(prodcutDetails, ProductDetailsDTO.class);
-
-        // Set The all Image URl To Given Product
-        productDetailsDTO.setImageurl(productImageUrl);
-
-        // set the seller joining date to DTO
-        productDetailsDTO.setSellerJoiningDate(prodcutDetails.getSeller().getJoinedAt());
-
-        // set the category name of the  product DTO
-        productDetailsDTO.setCategory(prodcutDetails.getCategory().getName());
-
-        // set the favorite
-        productDetailsDTO.setFavorite(productWishlistService.checkProductIsFavoriteByGivenUser(userId, productId));
-
-        return  productDetailsDTO;
+    private Product getProductById(Long productId) {
+        return this.productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
     }
 
+    private List<String> getImageUrls(Long productId) {
+        Specification<ProductImage> spec = ProductImageSpecification.byProductId(productId);
+        List<ProductImage> productImages = productImageRepository.findAll(spec);
+
+        // Extract image URLs from the productImages list
+        return productImages.stream()
+                .map(ProductImage::getImageUrl)
+                .toList();
+    }
+
+    private boolean getFavoriteStatus(long userId, long productId) {
+        Specification<ProductWishlist> spec = ProductWishlistSpecification.byUserIdAndProductId(userId, productId);
+        long count = productWishlistRepository.count(spec);
+        return count > 0;
+    }
 }
-*/
