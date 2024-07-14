@@ -16,7 +16,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
@@ -27,7 +30,7 @@ public class AuthController {
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
-    private UserServiceImpl userServiceImpl;
+    private UserService userService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -47,7 +50,7 @@ public class AuthController {
             String encodedPassword = passwordEncoder.encode(user.getPassword());
             user.setPassword(encodedPassword);
 
-            userServiceImpl.registerUser(user);
+            userService.registerUser(user);
             // Send verification code logic
             return ResponseEntity.ok("User registered successfully. Please check your email for verification code.");
         } catch (Exception e) {
@@ -77,7 +80,7 @@ public class AuthController {
         logger.info("Received verification request: {}", request);
         try {
             logger.info("Verifying user with email: {} and code: {}", request.getEmail(), request.getCode());
-            boolean isVerified = userServiceImpl.verifyUser(request.getEmail(), request.getCode());
+            boolean isVerified = userService.verifyUser(request.getEmail(), request.getCode());
             if (isVerified) {
                 logger.info("Verification successful for email: {}", request.getEmail());
                 return ResponseEntity.ok("User verified successfully");
