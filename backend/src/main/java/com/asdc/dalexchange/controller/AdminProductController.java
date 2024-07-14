@@ -2,7 +2,7 @@ package com.asdc.dalexchange.controller;
 
 import com.asdc.dalexchange.dto.ProductDTO;
 import com.asdc.dalexchange.model.Product;
-import com.asdc.dalexchange.service.impl.ProductServiceImp;
+import com.asdc.dalexchange.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,10 +12,10 @@ import java.util.List;
 @RequestMapping("/admin/products")
 public class AdminProductController {
 
-    private final ProductServiceImp productService;
+    private final ProductService productService;
 
     @Autowired
-    public AdminProductController(ProductServiceImp productService) {
+    public AdminProductController(ProductService productService) {
         this.productService = productService;
     }
 

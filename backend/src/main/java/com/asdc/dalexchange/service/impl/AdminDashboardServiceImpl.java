@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AdminDashboardServiceServiceImpl implements AdminDashboardService {
+public class AdminDashboardServiceImpl implements AdminDashboardService {
 
     @Autowired
     private final UserServiceImpl userServiceImpl;
@@ -15,7 +15,7 @@ public class AdminDashboardServiceServiceImpl implements AdminDashboardService {
     @Autowired
     private final OrderServiceImpl orderServiceImpl;
 
-    public AdminDashboardServiceServiceImpl(UserServiceImpl userServiceImpl, OrderServiceImpl orderServiceImpl) {
+    public AdminDashboardServiceImpl(UserServiceImpl userServiceImpl, OrderServiceImpl orderServiceImpl) {
         this.userServiceImpl = userServiceImpl;
         this.orderServiceImpl = orderServiceImpl;
     }

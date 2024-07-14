@@ -13,10 +13,10 @@ import java.util.Optional;
 @RequestMapping("/admin/users")
 public class AdminUserController {
 
-    private final UserServiceImpl userService;
+    private final UserService userService;
 
     @Autowired
-    public AdminUserController(UserServiceImpl userService) {
+    public AdminUserController(UserService userService) {
         this.userService = userService;
     }
 
