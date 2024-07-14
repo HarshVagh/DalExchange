@@ -2,6 +2,7 @@ package com.asdc.dalexchange.service;
 
 import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.repository.UserRepository;
+import com.asdc.dalexchange.service.impl.CustomUserDetailsServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -19,7 +20,7 @@ import static org.mockito.Mockito.when;
 public class CustomUserDetailsServiceTest {
 
     @InjectMocks
-    private CustomUserDetailsService customUserDetailsService;
+    private CustomUserDetailsServiceImpl customUserDetailsService;
 
     @Mock
     private UserRepository userRepository;

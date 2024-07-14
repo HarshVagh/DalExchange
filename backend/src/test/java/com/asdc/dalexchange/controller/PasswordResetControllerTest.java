@@ -1,6 +1,6 @@
 package com.asdc.dalexchange.controller;
 
-import com.asdc.dalexchange.entity.PasswordResetToken;
+import com.asdc.dalexchange.model.PasswordResetToken;
 import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.repository.PasswordResetTokenRepository;
 import com.asdc.dalexchange.repository.UserRepository;
