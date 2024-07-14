@@ -50,4 +50,7 @@ public class Product {
 
     @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
+
+    @Column(name = "unlisted", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean unlisted;
 }
