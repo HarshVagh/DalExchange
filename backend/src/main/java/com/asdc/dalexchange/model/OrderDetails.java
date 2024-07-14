@@ -34,4 +34,14 @@ public class OrderDetails {
     @Column(name = "transaction_datetime")
     private LocalDateTime transactionDatetime;
 
+    @OneToOne
+    @JoinColumn(name = "shipping_address")
+    private ShippingAddress shippingAddress;
+
+    @OneToOne
+    @JoinColumn(name = "payment_id")
+    private Payment payment;
+
+    @Column(name = "admin_comments")
+    private String adminComments;
 }

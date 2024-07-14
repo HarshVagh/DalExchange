@@ -3,6 +3,7 @@ package com.asdc.dalexchange.controller;
 import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.model.VerificationRequest;
 import com.asdc.dalexchange.service.UserService;
+import com.asdc.dalexchange.service.impl.UserServiceImpl;
 import com.asdc.dalexchange.util.JwtUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,7 +31,7 @@ public class AuthControllerTest {
     private AuthController authController;
 
     @Mock
-    private UserService userService;
+    private UserServiceImpl userService;
 
     @Mock
     private PasswordEncoder passwordEncoder;
