@@ -17,5 +17,17 @@ export const TradeRequestApi = {
     } finally {
       setters.isLoading(false);
     }
+  },
+  updateStatus: async (id, status) => {
+    try {
+      await axios.put(BASE_URL+"/update_trade_status/"+id, null, {
+        params: {
+          status: status
+        }
+      });
+    } catch (error) {
+      console.error("Error updating trade request status: ", error);
+      alert("Error updating trade request status!");
+    }
   }
 };

@@ -72,17 +72,17 @@ const ProductList = () => {
     fetchProducts();
   }, [fetchProducts]);
 
-  const handlePageChange = (newPage) => {
-    fetchProducts(newPage);
+  const handlePageChange = async (newPage) =>  {
+    await fetchProducts(newPage);
   };
 
   const handleSearchUpdate = (newSearch) => {
     setTempSearch(newSearch);
   };
 
-  const handleSearchSubmit = () => {
+  const handleSearchSubmit = async () => {
     setSearch(tempSearch);
-    fetchProducts();
+    await fetchProducts();
   };
 
   const handleFilterSubmit = () => {
