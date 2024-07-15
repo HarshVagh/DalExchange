@@ -2,7 +2,9 @@ package com.asdc.dalexchange.service.impl;
 
 import com.asdc.dalexchange.enums.OrderStatus;
 import com.asdc.dalexchange.model.OrderDetails;
+import com.asdc.dalexchange.model.ShippingAddress;
 import com.asdc.dalexchange.repository.OrderRepository;
+import com.asdc.dalexchange.repository.ShippingRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -10,6 +12,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,6 +24,9 @@ class OrderServiceImplTest {
 
     @Mock
     private OrderRepository orderRepository;
+
+    @Mock
+    private ShippingRepository shippingRepository;
 
     @InjectMocks
     private OrderServiceImpl orderService;
@@ -75,7 +82,6 @@ class OrderServiceImplTest {
 
         assertEquals(25.0, result);
 
-        // Additional checks to ensure line coverage for null values
         when(orderRepository.getAvgOrderValueSince(any(LocalDateTime.class))).thenReturn(null);
         when(orderRepository.getAvgOrderValueBetween(any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(null);
 
@@ -201,5 +207,85 @@ class OrderServiceImplTest {
         });
 
         assertEquals("Order not found", exception.getMessage());
+    }
+
+    @Test
+    public void testUpdateShippingAddress_Success() {
+        // Arrange
+        Long addressId = 1L;
+        ShippingAddress existingAddress = new ShippingAddress();
+        existingAddress.setBillingName("Old Name");
+        existingAddress.setCountry("Old Country");
+        existingAddress.setLine1("Old Line1");
+        existingAddress.setLine2("Old Line2");
+        existingAddress.setCity("Old City");
+        existingAddress.setState("Old State");
+        existingAddress.setPostalCode("Old PostalCode");
+
+        ShippingAddress updatedAddress = new ShippingAddress();
+        updatedAddress.setBillingName("New Name");
+        updatedAddress.setCountry("New Country");
+        updatedAddress.setLine1("New Line1");
+        updatedAddress.setLine2("New Line2");
+        updatedAddress.setCity("New City");
+        updatedAddress.setState("New State");
+        updatedAddress.setPostalCode("New PostalCode");
+
+        when(shippingRepository.findById(addressId)).thenReturn(Optional.of(existingAddress));
+
+        // Act
+        orderService.updateShippingAddress(addressId, updatedAddress);
+
+        // Assert
+        assertEquals("New Name", existingAddress.getBillingName());
+        assertEquals("New Country", existingAddress.getCountry());
+        assertEquals("New Line1", existingAddress.getLine1());
+        assertEquals("New Line2", existingAddress.getLine2());
+        assertEquals("New City", existingAddress.getCity());
+        assertEquals("New State", existingAddress.getState());
+        assertEquals("New PostalCode", existingAddress.getPostalCode());
+
+        verify(shippingRepository).save(existingAddress);
+    }
+
+    @Test
+    public void testUpdateShippingAddress_NotFound() {
+        // Arrange
+        Long addressId = 1L;
+        ShippingAddress updatedAddress = new ShippingAddress();
+
+        when(shippingRepository.findById(addressId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            orderService.updateShippingAddress(addressId, updatedAddress);
+        });
+
+        assertEquals("Shipping Address not found", exception.getMessage());
+    }
+
+    @Test
+    public void testGetAllOrders() {
+        // Create some sample orders
+        OrderDetails order1 = new OrderDetails();
+        order1.setOrderId(1L);
+        order1.setTotalAmount(100.0);
+
+        OrderDetails order2 = new OrderDetails();
+        order2.setOrderId(2L);
+        order2.setTotalAmount(200.0);
+
+        List<OrderDetails> orders = Arrays.asList(order1, order2);
+
+        // Mock the repository response
+        when(orderRepository.findAll()).thenReturn(orders);
+
+        // Call the service method
+        List<OrderDetails> result = orderService.getAllOrders();
+
+        // Verify the results
+        assertEquals(2, result.size());
+        assertEquals(100.0, result.get(0).getTotalAmount());
+        assertEquals(200.0, result.get(1).getTotalAmount());
     }
 }
