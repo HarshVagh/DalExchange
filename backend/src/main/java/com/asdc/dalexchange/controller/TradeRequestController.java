@@ -6,7 +6,14 @@ import com.asdc.dalexchange.model.TradeRequest;
 import com.asdc.dalexchange.service.TradeRequestService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -44,5 +51,24 @@ public class TradeRequestController {
         return tradeRequests.stream()
                 .map(tradeRequestMapper::mapTo)
                 .collect(Collectors.toList());
+    }
+
+    @PostMapping
+    public ResponseEntity<TradeRequestDTO> createTradeRequest(@RequestBody TradeRequestDTO tradeRequestDTO) {
+        log.info("createTradeRequest api endpoint called with data: {}", tradeRequestDTO);
+        TradeRequest tradeRequest = tradeRequestMapper.mapFrom(tradeRequestDTO);
+        TradeRequest createdTradeRequest = tradeRequestService.createTradeRequest(tradeRequest);
+        TradeRequestDTO createdTradeRequestDTO = tradeRequestMapper.mapTo(createdTradeRequest);
+        return new ResponseEntity<>(createdTradeRequestDTO, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/update_trade_status/{id}")
+    public ResponseEntity<TradeRequestDTO> updateTradeRequestStatus(
+            @PathVariable Long id,
+            @RequestParam String status) {
+        log.info("updateTradeRequestStatus api endpoint called with id: {} and status: {}", id, status);
+        TradeRequest updatedTradeRequest = tradeRequestService.updateTradeRequestStatus(id, status);
+        TradeRequestDTO tradeRequestDTO = tradeRequestMapper.mapTo(updatedTradeRequest);
+        return ResponseEntity.ok(tradeRequestDTO);
     }
 }

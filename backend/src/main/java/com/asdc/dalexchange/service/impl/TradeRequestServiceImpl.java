@@ -4,6 +4,7 @@ import com.asdc.dalexchange.model.TradeRequest;
 import com.asdc.dalexchange.repository.TradeRequestRepository;
 import com.asdc.dalexchange.service.TradeRequestService;
 import com.asdc.dalexchange.specifications.TradeRequestSpecification;
+import com.asdc.dalexchange.util.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -34,5 +35,21 @@ public class TradeRequestServiceImpl implements TradeRequestService {
         log.info("getSellerTradeRequests call started in the TradeRequestServiceImpl");
         Specification<TradeRequest> spec = TradeRequestSpecification.hasSellerId(sellerId);
         return tradeRequestRepository.findAll(spec);
+    }
+
+    @Override
+    public TradeRequest updateTradeRequestStatus(Long requestId, String status) {
+        log.info("updateTradeRequestStatus call started in the TradeRequestServiceImpl with requestId: {} and status: {}", requestId, status);
+        TradeRequest tradeRequest = tradeRequestRepository.findById(requestId)
+                .orElseThrow(() -> new ResourceNotFoundException("TradeRequest id: "+requestId));
+
+        tradeRequest.setRequestStatus(status);
+        return tradeRequestRepository.save(tradeRequest);
+    }
+
+    @Override
+    public TradeRequest createTradeRequest(TradeRequest tradeRequest) {
+        log.info("createTradeRequest call started in the TradeRequestServiceImpl with data: {}", tradeRequest);
+        return tradeRequestRepository.save(tradeRequest);
     }
 }
