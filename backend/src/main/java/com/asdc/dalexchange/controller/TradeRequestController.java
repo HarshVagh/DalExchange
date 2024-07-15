@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -53,12 +54,9 @@ public class TradeRequestController {
                 .collect(Collectors.toList());
     }
 
-    @PostMapping
-    public ResponseEntity<TradeRequestDTO> createTradeRequest(@RequestBody TradeRequestDTO tradeRequestDTO) {
-        log.info("createTradeRequest api endpoint called with data: {}", tradeRequestDTO);
-        TradeRequest tradeRequest = tradeRequestMapper.mapFrom(tradeRequestDTO);
-        TradeRequest createdTradeRequest = tradeRequestService.createTradeRequest(tradeRequest);
-        TradeRequestDTO createdTradeRequestDTO = tradeRequestMapper.mapTo(createdTradeRequest);
+    @PostMapping("/create_trade_request")
+    public ResponseEntity<TradeRequestDTO> createTradeRequest(@RequestBody Map<String, Object> requestBody) {
+        TradeRequestDTO createdTradeRequestDTO = tradeRequestService.createTradeRequest(requestBody);
         return new ResponseEntity<>(createdTradeRequestDTO, HttpStatus.CREATED);
     }
 
