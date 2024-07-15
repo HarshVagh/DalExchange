@@ -17,7 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -72,28 +74,6 @@ public class TradeRequestControllerTest {
     }
 
     @Test
-    public void testCreateTradeRequest() {
-        TradeRequestDTO tradeRequestDTO = new TradeRequestDTO();
-        TradeRequest tradeRequest = new TradeRequest();
-        TradeRequest createdTradeRequest = new TradeRequest();
-        TradeRequestDTO createdTradeRequestDTO = new TradeRequestDTO();
-
-        when(tradeRequestMapper.mapFrom(tradeRequestDTO)).thenReturn(tradeRequest);
-        when(tradeRequestService.createTradeRequest(tradeRequest)).thenReturn(createdTradeRequest);
-        when(tradeRequestMapper.mapTo(createdTradeRequest)).thenReturn(createdTradeRequestDTO);
-
-        ResponseEntity<TradeRequestDTO> response = tradeRequestController.createTradeRequest(tradeRequestDTO);
-
-        assertNotNull(response);
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(createdTradeRequestDTO, response.getBody());
-
-        verify(tradeRequestMapper, times(1)).mapFrom(tradeRequestDTO);
-        verify(tradeRequestService, times(1)).createTradeRequest(tradeRequest);
-        verify(tradeRequestMapper, times(1)).mapTo(createdTradeRequest);
-    }
-
-    @Test
     public void testUpdateTradeRequestStatus() {
         Long requestId = 1L;
         String status = "approved";
@@ -111,5 +91,25 @@ public class TradeRequestControllerTest {
 
         verify(tradeRequestService, times(1)).updateTradeRequestStatus(requestId, status);
         verify(tradeRequestMapper, times(1)).mapTo(updatedTradeRequest);
+    }
+
+    @Test
+    public void testCreateTradeRequest() {
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("productId", 1L);
+        requestBody.put("sellerId", 1L);
+        requestBody.put("requestedPrice", 100.0);
+
+        TradeRequestDTO createdTradeRequestDTO = new TradeRequestDTO();
+
+        when(tradeRequestService.createTradeRequest(requestBody)).thenReturn(createdTradeRequestDTO);
+
+        ResponseEntity<TradeRequestDTO> response = tradeRequestController.createTradeRequest(requestBody);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(createdTradeRequestDTO, response.getBody());
+
+        verify(tradeRequestService, times(1)).createTradeRequest(requestBody);
     }
 }
