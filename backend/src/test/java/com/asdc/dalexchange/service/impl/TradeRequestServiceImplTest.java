@@ -14,8 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -59,5 +59,41 @@ public class TradeRequestServiceImplTest {
         assertEquals(tradeRequest, result.get(0));
 
         verify(tradeRequestRepository, times(1)).findAll(any(Specification.class));
+    }
+
+    @Test
+    public void testCreateTradeRequest() {
+        TradeRequest tradeRequest = new TradeRequest();
+        TradeRequest createdTradeRequest = new TradeRequest();
+
+        when(tradeRequestRepository.save(tradeRequest)).thenReturn(createdTradeRequest);
+
+        TradeRequest result = tradeRequestService.createTradeRequest(tradeRequest);
+
+        assertNotNull(result);
+        assertEquals(createdTradeRequest, result);
+
+        verify(tradeRequestRepository, times(1)).save(tradeRequest);
+    }
+
+    @Test
+    public void testUpdateTradeRequestStatus() {
+        Long requestId = 1L;
+        String status = "approved";
+        TradeRequest tradeRequest = new TradeRequest();
+        tradeRequest.setRequestStatus("pending");
+        TradeRequest updatedTradeRequest = new TradeRequest();
+        updatedTradeRequest.setRequestStatus(status);
+
+        when(tradeRequestRepository.findById(requestId)).thenReturn(Optional.of(tradeRequest));
+        when(tradeRequestRepository.save(tradeRequest)).thenReturn(updatedTradeRequest);
+
+        TradeRequest result = tradeRequestService.updateTradeRequestStatus(requestId, status);
+
+        assertNotNull(result);
+        assertEquals(status, result.getRequestStatus());
+
+        verify(tradeRequestRepository, times(1)).findById(requestId);
+        verify(tradeRequestRepository, times(1)).save(tradeRequest);
     }
 }
