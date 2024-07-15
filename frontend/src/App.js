@@ -10,6 +10,10 @@ import LandingPage from './features/authentication/LandingPage';
 import ForgotPassword from './features/authentication/ForgotPassword';
 import ResetPassword from './features/authentication/ResetPassword';
 import PrivateRoute from './features/authentication/PrivateRoute';
+import ViewOrders from './features/order_moderation/ViewOrders';
+import OrderDetails from './features/order_moderation/OrderDetails';
+import Layout from './features/order_moderation/Layout'; 
+
 
 function App() {
   return (
@@ -24,6 +28,8 @@ function App() {
         <Route path="/products" element={<PrivateRoute> <ProductList /> </PrivateRoute> } />
         <Route path="/products/:productId" element={<PrivateRoute> <ProductDetails/> </PrivateRoute> } />
         <Route path="/trade_requests" element={<PrivateRoute> <TradeRequests/> </PrivateRoute> } />
+        <Route path="/admin-moderation/orders" element={<Layout><ViewOrders /></Layout>} /> 
+        <Route path="/admin-moderation/orders/:orderId" element={<Layout><OrderDetails /></Layout>} /> 
       </Routes>
     </div>
   );

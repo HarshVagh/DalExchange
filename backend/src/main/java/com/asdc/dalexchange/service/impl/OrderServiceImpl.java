@@ -2,13 +2,18 @@ package com.asdc.dalexchange.service.impl;
 
 import com.asdc.dalexchange.enums.OrderStatus;
 import com.asdc.dalexchange.model.OrderDetails;
+import com.asdc.dalexchange.model.Product;
+import com.asdc.dalexchange.model.ShippingAddress;
 import com.asdc.dalexchange.repository.OrderRepository;
+import com.asdc.dalexchange.repository.ShippingRepository;
 import com.asdc.dalexchange.service.OrderService;
 import jakarta.transaction.Transactional;
+import org.hibernate.query.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Service
@@ -16,6 +21,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private ShippingRepository shippingRepository;
+
+    public List<OrderDetails> getAllOrders() {
+        return orderRepository.findAll();
+    }
 
     public double salesChange() {
         LocalDateTime now = getCurrentDateTime();
@@ -118,12 +130,11 @@ public class OrderServiceImpl implements OrderService {
             order.setAdminComments(updatedOrderDetails.getAdminComments());
         }
         if (updatedOrderDetails.getShippingAddress() != null) {
-            order.setShippingAddress(updatedOrderDetails.getShippingAddress());
+            updateShippingAddress(order.getShippingAddress().getAddressId(), updatedOrderDetails.getShippingAddress());
         }
         if (updatedOrderDetails.getPayment() != null) {
             order.setPayment(updatedOrderDetails.getPayment());
         }
-
         return orderRepository.save(order);
     }
 
@@ -142,6 +153,22 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         order.setTotalAmount(order.getTotalAmount() - refundAmount);
         return orderRepository.save(order);
+    }
+
+    @Transactional
+    public void updateShippingAddress(Long addressId, ShippingAddress updatedShippingAddress) {
+        ShippingAddress existingAddress = shippingRepository.findById(addressId)
+                .orElseThrow(() -> new RuntimeException("Shipping Address not found"));
+
+        existingAddress.setBillingName(updatedShippingAddress.getBillingName());
+        existingAddress.setCountry(updatedShippingAddress.getCountry());
+        existingAddress.setLine1(updatedShippingAddress.getLine1());
+        existingAddress.setLine2(updatedShippingAddress.getLine2());
+        existingAddress.setCity(updatedShippingAddress.getCity());
+        existingAddress.setState(updatedShippingAddress.getState());
+        existingAddress.setPostalCode(updatedShippingAddress.getPostalCode());
+
+        shippingRepository.save(existingAddress);
     }
 
 
