@@ -17,5 +17,25 @@ export const TradeRequestApi = {
     } finally {
       setters.isLoading(false);
     }
+  },
+  updateStatus: async (id, status) => {
+    try {
+      await axios.put(BASE_URL+"/update_trade_status/"+id, null, {
+        params: {
+          status: status
+        }
+      });
+    } catch (error) {
+      console.error("Error updating trade request status: ", error);
+      alert("Error updating trade request status!");
+    }
+  },
+  create: async (body) => {
+    try {
+      const response = await axios.post(BASE_URL+"/create_trade_request", body);
+      console.log("Trade request created successfully:", response.data);
+    } catch (error) {
+      console.error("Error creating trade request:", error);
+    }
   }
 };
