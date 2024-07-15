@@ -11,6 +11,10 @@ import LandingPage from './features/authentication/LandingPage';
 import ForgotPassword from './features/authentication/ForgotPassword';
 import ResetPassword from './features/authentication/ResetPassword';
 import PrivateRoute from './features/authentication/PrivateRoute';
+import ViewOrders from './features/order_moderation/ViewOrders';
+import OrderDetails from './features/order_moderation/OrderDetails';
+import Layout from './features/order_moderation/Layout'; 
+
 import ProfilePage from './features/Profile_page/Profile';
 import SoldItems from "./features/Profile_page/SoldItems";
 import SavedItems from "./features/Profile_page/SavedItems";
@@ -39,6 +43,8 @@ function App() {
         <Route path="/profile/saved-items" element={<SavedItems />} />
         <Route path="/profile/edit-profile" element={<EditProfile />} />
         <Route path="/profile/reviews" element={<Reviews />} />
+        <Route path="/admin-moderation/orders" element={<Layout><ViewOrders /></Layout>} /> 
+        <Route path="/admin-moderation/orders/:orderId" element={<Layout><OrderDetails /></Layout>} /> 
       </Routes>
     </div>
   );
