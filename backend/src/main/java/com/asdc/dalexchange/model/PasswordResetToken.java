@@ -1,4 +1,4 @@
-package com.asdc.dalexchange.entity;
+package com.asdc.dalexchange.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

@@ -1,5 +1,6 @@
 package com.asdc.dalexchange.service;
 
+import com.asdc.dalexchange.service.impl.EmailServiceImpl;
 import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,7 @@ public class EmailServiceTest {
     private JavaMailSender emailSender;
 
     @InjectMocks
-    private EmailService emailService;
+    private EmailServiceImpl emailService;
 
     private MimeMessage mimeMessage;
 
