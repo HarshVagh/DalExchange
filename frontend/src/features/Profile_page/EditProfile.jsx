@@ -1,9 +1,10 @@
 import React, { useState,useEffect } from "react";
-import Header from "../../components/AppHeader";
+import Header from "../../components/Header";
 import axios from "axios";
 import toast, { Toaster } from 'react-hot-toast';
 
 import { useNavigate } from "react-router-dom";
+import SubHeader from "../../components/SubHeader";
 
 const EditProfile = () => {
   const [formData, setFormData] = useState({
@@ -102,17 +103,7 @@ const EditProfile = () => {
   return (
     <>
       <Header />
-      <div className="py-2 px-4">
-        <button
-          type="button"
-          class="text-white bg-black border border-gray-300 focus:outline-none hover:bg-white hover:text-black focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 my-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-          onClick={() => {
-            navigate("/profile");
-          }}
-        >
-          Back to Profile
-        </button>
-      </div>
+      <SubHeader title={'Back to Profile'} backPath={'/profile'} />
       <div className="min-h-screen bg-gray-100 flex items-center justify-center py-8 pt-14">
         <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
           <h2 className="text-2xl font-bold mb-6 text-center">Edit Profile</h2>

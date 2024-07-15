@@ -34,13 +34,6 @@ public class ProfilePageController {
         return ResponseEntity.ok(updatedUser);
     }
 
-   /* public ResponseEntity<ProfilePageDTO> profilledetails(@PathVariable Long userId) {
-        ProfilePageDTO ProfilePageDTOs = profilePageService.ProfileDetails(userId);
-        return ResponseEntity.ok(ProfilePageDTOs);
-    }
-*/
-
-
     @GetMapping("/saved_products/{userId}")
     public ResponseEntity<List<SavedProductDTO>> getAllSavedProducts(@PathVariable Long userId) {
         List<SavedProductDTO> savedProductDTOs = productWishlistService.GetAllsavedProduct(userId);
@@ -77,12 +70,6 @@ public class ProfilePageController {
         EditProfileDTO updatedUser = profilePageService.editUserDetails(userId,editProfileDTO);
         return ResponseEntity.ok().body("Profile Edited Sucessfully");
     }
-
-    /*@GetMapping("/edit_user/{userId}")
-    public ResponseEntity<EditProfileDTO> editUserDetails(@PathVariable long userId) {
-        EditProfileDTO updatedUser = profilePageService.editGetUserDetails(userId);
-        return ResponseEntity.ok(updatedUser);
-    }*/
 
     @PostMapping("/{userid}/{productid}/removesaved")
     public ResponseEntity<String> unmarkAsFavorite(@PathVariable long userid, @PathVariable long productid) {

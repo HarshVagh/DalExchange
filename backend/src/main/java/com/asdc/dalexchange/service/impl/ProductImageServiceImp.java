@@ -29,7 +29,7 @@ public class ProductImageServiceImp implements ProductImageService {
         // Extract image URLs from the productImages list
         return productImages.stream()
                 .map(ProductImage::getImageUrl)
-                .toList(); // Requires Java 16+, use .collect(Collectors.toList()) for older versions
+                .toList();
     }
 }
 

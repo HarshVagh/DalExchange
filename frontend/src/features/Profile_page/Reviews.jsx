@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Header from "../../components/AppHeader";
+import Header from "../../components/Header";
 import { useNavigate } from "react-router-dom";
 import DataNotFound from "../../components/DataNotFound";
 import Loader from "../../components/Loader";
+import SubHeader from "../../components/SubHeader";
 
 export default function Reviews() {
   const navigate = useNavigate();
@@ -46,24 +47,9 @@ export default function Reviews() {
   return (
     <div className="bg-gray-100 dark:bg-gray-950 py-8 h-screen max-h-100">
       <Header />
-      <div className="py-2 px-4">
-        <button
-          type="button"
-          class="text-white bg-black border border-gray-300 focus:outline-none hover:bg-white hover:text-black focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 my-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-          onClick={() => {
-            navigate("/profile");
-          }}
-        >
-          Back to Profile
-        </button>
-      </div>
-      <div className="py-8">
-        <div className="flex items-center justify-between mb-4 mx-4">
-          <h3 className="text-lg font-semibold dark:text-white">Reviews</h3>
-          {/* <button className="dark:text-white" size="sm" variant="link">
-                  View More
-                </button> */}
-        </div>
+      <SubHeader title={'Reviews'} backPath={'/profile'} />
+      
+      <div className="py-8 mt-50">
         {loading ? ( // Conditionally render the loading indicator
           <div className="my-50">
             <Loader />
@@ -74,7 +60,7 @@ export default function Reviews() {
             <DataNotFound message={"Oops! No reviews found."} />
           </div>
         ) : (
-          <div className="border rounded-lg shadow-sm dark:border-gray-800 mx-4">
+          <div className="border rounded-lg shadow-sm dark:border-gray-800 m-4">          
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 dark:text-white">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>

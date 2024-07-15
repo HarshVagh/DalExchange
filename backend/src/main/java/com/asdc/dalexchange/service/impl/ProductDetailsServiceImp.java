@@ -65,12 +65,15 @@ public class ProductDetailsServiceImp implements ProductDetailsService {
         return productDetailsDTO;
     }
 
-    private Product getProductById(Long productId) {
+    @Override
+    public Product getProductById(Long productId) {
         return this.productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
     }
 
-    private List<String> getImageUrls(Long productId) {
+    @Override
+
+    public List<String> getImageUrls(Long productId) {
         Specification<ProductImage> spec = ProductImageSpecification.byProductId(productId);
         List<ProductImage> productImages = productImageRepository.findAll(spec);
 
@@ -80,7 +83,8 @@ public class ProductDetailsServiceImp implements ProductDetailsService {
                 .toList();
     }
 
-    private boolean getFavoriteStatus(long userId, long productId) {
+    @Override
+    public boolean getFavoriteStatus(long userId, long productId) {
         Specification<ProductWishlist> spec = ProductWishlistSpecification.byUserIdAndProductId(userId, productId);
         long count = productWishlistRepository.count(spec);
         return count > 0;

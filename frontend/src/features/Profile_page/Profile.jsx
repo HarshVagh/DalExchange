@@ -1,12 +1,9 @@
 import React,{useState, useEffect} from "react";
-import Header from "../../components/AppHeader";
+import Header from "../../components/Header";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import DataNotFound from "../../components/DataNotFound";
 import Loader from "../../components/Loader"
-
-
-
 
 export default function Profile() {
   const navigate = useNavigate();
