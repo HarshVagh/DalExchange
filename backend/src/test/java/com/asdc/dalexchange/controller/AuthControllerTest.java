@@ -17,12 +17,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 public class AuthControllerTest {
@@ -48,6 +48,9 @@ public class AuthControllerTest {
     @Mock
     private UserDetails userDetails;
 
+    @Mock
+    private MultipartFile profilePicture;
+
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
@@ -55,27 +58,36 @@ public class AuthControllerTest {
 
     @Test
     public void signupTest() {
-        User user = new User();
-        user.setEmail("test@dal.ca");
-        user.setPassword("password");
-
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
         doAnswer(invocation -> null).when(userService).registerUser(any(User.class));
 
-        ResponseEntity<?> response = authController.signup(user);
+        ResponseEntity<?> response = authController.signup(
+                "testuser",
+                "password",
+                "test@dal.ca",
+                "Test User",
+                "1234567890",
+                profilePicture,
+                "student",
+                "This is a bio"
+        );
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("User registered successfully. Please check your email for verification code.", response.getBody());
     }
 
-
     @Test
     public void signupTest_InvalidEmail() {
-        User user = new User();
-        user.setEmail("test@gmail.com");
-        user.setPassword("password");
-
-        ResponseEntity<?> response = authController.signup(user);
+        ResponseEntity<?> response = authController.signup(
+                "testuser",
+                "password",
+                "test@gmail.com",
+                "Test User",
+                "1234567890",
+                profilePicture,
+                "student",
+                "This is a bio"
+        );
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Email must be a @dal.ca address", response.getBody());
@@ -83,13 +95,18 @@ public class AuthControllerTest {
 
     @Test
     public void signupTest_Exception() {
-        User user = new User();
-        user.setEmail("test@dal.ca");
-        user.setPassword("password");
-
         when(passwordEncoder.encode(anyString())).thenThrow(new RuntimeException());
 
-        ResponseEntity<?> response = authController.signup(user);
+        ResponseEntity<?> response = authController.signup(
+                "testuser",
+                "password",
+                "test@dal.ca",
+                "Test User",
+                "1234567890",
+                profilePicture,
+                "student",
+                "This is a bio"
+        );
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertEquals("Error registering user.", response.getBody());
