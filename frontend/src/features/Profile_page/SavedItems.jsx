@@ -1,19 +1,26 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "../../components/Header";
-import { useNavigate } from "react-router-dom";
-import DataNotFound from "../../components/DataNotFound";
 import toast from 'react-hot-toast';
 import Loader from "../../components/Loader";
 import SubHeader from "../../components/SubHeader";
+import ErrorAlert from "../../components/ErrorAlert";
+import DataNotFound from "../../components/DataNotFound";
 
 export default function SavedItems() {
-  const navigate = useNavigate();
   const userid = 1;
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [savedProducts, setSavedProducts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
+  const [error, setError] = useState(null);
+  const headerConfig = {
+    search: false,
+    requests: true,
+    notifications: true,
+    add: true,
+    profile: true
+  };
 
   useEffect(() => {
     fetchedSavedProducts();
@@ -22,8 +29,8 @@ export default function SavedItems() {
   const fetchedSavedProducts = async () => {
     try {
       const params = new URLSearchParams(window.location.search);
-      const productId = params.get("id");
-      setLoading(true);
+     // const productId = params.get("id");
+      setIsLoading(true);
       const response = await axios.get(
         `http://localhost:8080/saved_products/${userid}`,
         {
@@ -35,10 +42,9 @@ export default function SavedItems() {
       setSavedProducts(data);
     } catch (error) {
       console.error("Failed to fetch product data", error);
+      setError(error);
     } finally {
-      setTimeout(() => {
-        setLoading(false);
-      }, 800);
+      setIsLoading(false);
     }
   };
 
@@ -56,9 +62,6 @@ export default function SavedItems() {
   };
 
   async function removeFavorite(userid, productId) {
-    const headers = {
-      "Content-Type": "application/json",
-    };
     const params = new URLSearchParams(window.location.search);
 
     const updatePromise = axios.post(
@@ -102,17 +105,11 @@ export default function SavedItems() {
   return (
     <>
       <div className="bg-gray-100 dark:bg-gray-950 py-8 h-screen max-h-100">
-        <Header />
+        <Header config={headerConfig}/>
         <SubHeader title={'Saved Items'} backPath={'/profile'} />
-        {loading ? (
-          <div className="my-50">
-            <Loader />
-          </div>
-        ) : savedProducts.length === 0 ? (
-          <div className="my-20">
-            <DataNotFound message={"Sorry, no saved items found."} />
-          </div>
-        ) : (
+        {isLoading && <Loader title={'Saved Items Loading...'} />}
+        {!isLoading && error && <ErrorAlert message={error.message} />}
+        {!isLoading && !error && savedProducts && savedProducts.length > 0 ? ( 
           <div className="border rounded-lg shadow-sm dark:border-gray-800 m-4">
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 dark:text-white">
               <thead className="px-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -157,7 +154,10 @@ export default function SavedItems() {
               </tbody>
             </table>
           </div>
-        )}
+        ): (
+          <div className="my-20 bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white p-8 rounded-lg shadow-md">
+            <DataNotFound message={"Oops! No items sold yet."} />
+          </div> )} 
       </div>
       {isModalOpen && (
         <ConfirmationModal
@@ -169,25 +169,6 @@ export default function SavedItems() {
     </>
   );
 }
-
-const HeartIcon = (props) => {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-    </svg>
-  );
-};
 
 const FilledHeartIcon = (props) => {
   return (

@@ -1,22 +1,30 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "../../components/Header";
-import { useNavigate } from "react-router-dom";
 import DataNotFound from "../../components/DataNotFound";
 import Loader from "../../components/Loader"
 import SubHeader from "../../components/SubHeader";
+import ErrorAlert from "../../components/ErrorAlert";
 
 export default function PurchaseHistory() {
-  const navigate = useNavigate();
   const userid = 1;
 
   const [purchaseHistory, setPurchaseHistory] = useState([]);
-  const [loading, setLoading] = useState(false); // Add loading state
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null); 
+
+  const headerConfig = {
+    search: false,
+    requests: true,
+    notifications: true,
+    add: true,
+    profile: true
+  };
 
   useEffect(() => {
     const fetchPurchasedHistory = async () => {
       try {
-        setLoading(true); // Set loading to true before fetching
+        setIsLoading(true);
         const params = new URLSearchParams(window.location.search);
         const productId = params.get("id");
         console.log({ productId });
@@ -29,11 +37,9 @@ export default function PurchaseHistory() {
         console.log(data, "purchased_products");
       } catch (error) {
         console.error("Failed to fetch product data", error);
+        setError(error);
       } finally {
-         setTimeout(()=>{
-          setLoading(false)
-         },800)
-        ; // Set loading to false after fetching
+        setIsLoading(false);
       }
     };
     fetchPurchasedHistory();
@@ -42,19 +48,13 @@ export default function PurchaseHistory() {
   return (
     <>
       <div className="bg-gray-100 dark:bg-gray-950 py-8 h-full h-screen max-h-100">
-        <Header />
+        <Header config={headerConfig} />
         <SubHeader title={'Purchase History'} backPath={'/profile'} />
+        {isLoading && <Loader title={'Loading Profile Details...'} />}
+        {!isLoading && error && <ErrorAlert message={error.message} />}
+        {!isLoading && !error && purchaseHistory && purchaseHistory.length >0 ?(
         <div className="py-8 mt-50">
-        {loading ? ( // Conditionally render the loading indicator
-          <div className="my-50">
-           <Loader/>
-          </div>
-        ) : purchaseHistory.length === 0 ? (
-          <div className="my-20">
-            <DataNotFound message={"Sorry, you have not purchased any items."} />
-          </div>
-        ) : (
-          <div className="border rounded-lg shadow-sm dark:border-gray-800 ">
+        <div className="border rounded-lg shadow-sm dark:border-gray-800 ">
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 dark:text-white">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
@@ -82,8 +82,11 @@ export default function PurchaseHistory() {
               </tbody>
             </table>
           </div>
-        )}
         </div>
+        ) : (
+          <div className="my-20">
+            <DataNotFound message={"Oops! No items sold yet."} />
+          </div> )}
       </div>
     </>
   );

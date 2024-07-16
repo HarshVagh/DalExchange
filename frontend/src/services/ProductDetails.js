@@ -1,6 +1,6 @@
 import React from 'react'
 
-const analytics = () => {
+const ProductDetails = () => {
   return (
     <div>
       
@@ -8,4 +8,4 @@ const analytics = () => {
   )
 }
 
-export default analytics
+export default ProductDetails

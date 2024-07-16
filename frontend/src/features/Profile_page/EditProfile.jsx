@@ -1,10 +1,11 @@
 import React, { useState,useEffect } from "react";
 import Header from "../../components/Header";
 import axios from "axios";
-import toast, { Toaster } from 'react-hot-toast';
-
-import { useNavigate } from "react-router-dom";
+import toast from 'react-hot-toast';
 import SubHeader from "../../components/SubHeader";
+import Loader from "../../components/Loader";
+import ErrorAlert from "../../components/ErrorAlert";
+import DataNotFound from "../../components/DataNotFound";
 
 const EditProfile = () => {
   const [formData, setFormData] = useState({
@@ -16,14 +17,23 @@ const EditProfile = () => {
     profilePicture: "",
     bio: "",
   });
-  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const userid = 1;
 
   const [profileData, setProfileData] = useState([])
+  const headerConfig = {
+    search: false,
+    requests: true,
+    notifications: true,
+    add: true,
+    profile: true
+  };
 
   const fetchUserProfile = async () => {
     try {
+      setIsLoading(true);
       const params = new URLSearchParams(window.location.search);
       const productId = params.get("id");
       console.log({ productId });
@@ -39,9 +49,12 @@ const EditProfile = () => {
     
     } catch (error) {
       console.error("Failed to fetch product data", error);
-      // setError(error);
-      // setLoading(false);
+       setError(error);
+       setIsLoading(false);
+    }finally {
+      setIsLoading(false);
     }
+
   };
   const updateUserProfile = async (payload) => {
     const params = new URLSearchParams(window.location.search);
@@ -102,8 +115,11 @@ const EditProfile = () => {
 
   return (
     <>
-      <Header />
+      <Header config={headerConfig} />
       <SubHeader title={'Back to Profile'} backPath={'/profile'} />
+      {isLoading && <Loader title={'Loading Profile Details...'} />}
+      {!isLoading && error && <ErrorAlert message={error.message} />}
+      {!isLoading && !error && profileData && profileData.length > 0 ? (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center py-8 pt-14">
         <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
           <h2 className="text-2xl font-bold mb-6 text-center">Edit Profile</h2>
@@ -189,6 +205,10 @@ const EditProfile = () => {
           </form>
         </div>
       </div>
+      ) : (
+        <div className="my-20">
+          <DataNotFound message={"Oops! No items sold yet."} />
+        </div> )}
       {/* <Toaster/> */}
 
     </>

@@ -1,26 +1,25 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import Header from "../../components/Header";
-import { useNavigate } from "react-router-dom";
 import DataNotFound from "../../components/DataNotFound";
 import Loader from "../../components/Loader"
 import SubHeader from "../../components/SubHeader";
+import ErrorAlert from "../../components/ErrorAlert";
 
 
 
 export default function SoldItems() {
-  const navigate = useNavigate();
   const userid = 1;
-//   {
-//     "soldItemId": 1,
-//     "title": "Laptop",
-//     "price": 999.99,
-//     "soldDate": null
-// }
-
-
   const [soldItems, setSoldItems] = useState([])
-  const [loading, setLoading] = useState(false); // Add loading state
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null); 
+  const headerConfig = {
+    search: false,
+    requests: true,
+    notifications: true,
+    add: true,
+    profile: true
+  };
 
   useEffect(() => {
     const fetchSoldItems = async () => {
@@ -28,9 +27,7 @@ export default function SoldItems() {
         const params = new URLSearchParams(window.location.search);
         const productId = params.get("id");
         console.log({ productId });
-        //const userid = params.get("userid")
-        //console.log({userid})
-        setLoading(true); // Set loading to true before fetching
+        setIsLoading(true);
 
         const response = await axios.get(`http://localhost:8080/sold_products/${userid}`, { 
           params: params,
@@ -39,17 +36,12 @@ export default function SoldItems() {
         const data = response.data;
         setSoldItems(data)
         console.log(data, "sold_products");
-        // setProduct(data);
-        // setLoading(false);
       } catch (error) {
         console.error("Failed to fetch product data", error);
-        // setError(error);
-        // setLoading(false);
+         setError(error);
+         setIsLoading(false);
       }finally {
-        setTimeout(()=>{
-         setLoading(false)
-        },800)
-       ; // Set loading to false after fetching
+        setIsLoading(false);
      }
     };
     fetchSoldItems();
@@ -58,17 +50,11 @@ export default function SoldItems() {
   return (
     <>
       <div className="bg-gray-100 dark:bg-gray-950 py-8 h-screen max-h-100">
-      <Header />
+      <Header config={headerConfig}/>
       <SubHeader title={'Sold Items'} backPath={'/profile'} />
-       { loading ? ( // Conditionally render the loading indicator
-          <div className="my-50">
-           <Loader/>
-          </div>
-        ) :soldItems.length === 0 ? 
-       
-       <div className="my-20"> <DataNotFound message={"Oops! No items sold yet."}/></div>
-       :
-       
+      {isLoading && <Loader title={'Loading Profile Details...'} />}
+      {!isLoading && error && <ErrorAlert message={error.message} />}
+      {!isLoading && !error && soldItems && soldItems.length > 0 ? (
        <div className="border rounded-lg shadow-sm dark:border-gray-800 m-4">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 dark:text-white">
             <thead className="px-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -78,8 +64,6 @@ export default function SoldItems() {
                 <th className="px-6 py-3">Title</th>
                 <th className="px-6 py-3">Price</th>
                 <th className="px-6 py-3">Date</th>
-                {/* <th className="px-6 py-3">Profit</th>
-                <th className="px-6 py-3">Average Review</th> */}
               </tr>
             </thead>
             <tbody>
@@ -94,137 +78,17 @@ export default function SoldItems() {
                 </td>
                 <td className="px-6 py-4">{item.price}</td>
             <td className="px-6 py-4 ">15-07-2024</td>
-                {/* <td className="px-6 py-4">{item.price}</td>
-                <td className="px-6 py-3">$9.01</td> */}
-                {/* <td className="px-6 py-3">
-                  <div className="flex items-center gap-px">
-                    <StarIcon className="w-4 h-4 fill-primary" />
-                    <StarIcon className="w-4 h-4 fill-primary" />
-                    <StarIcon className="w-4 h-4 fill-primary" />
-                    <StarIcon className="w-4 h-4 fill-muted stroke-muted-foreground" />
-                    <StarIcon className="w-4 h-4 fill-muted stroke-muted-foreground" />
-                  </div>
-                </td> */}
               </tr>
               ))}
-              {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                  <div className="flex items-center gap-3">
-                    <img
-                      alt="Sold Item"
-                      className="rounded-lg object-cover"
-                      height={50}
-                      src="/placeholder.png"
-                      style={{
-                        aspectRatio: "50/50",
-                        objectFit: "cover",
-                      }}
-                      width={50}
-                    />
-                    <div>Retro Sunglasses</div>
-                  </div>
-                </td>
-                <td className="px-6 py-4">$35.00</td>
-                <td className="px-6 py-4">April 15, 2023</td>
-                <td className="px-6 py-3">$10.01</td>
-                <td className="px-6 py-3">
-                  <div className="flex items-center gap-px">
-                    <StarIcon className="w-4 h-4 fill-primary" />
-                    <StarIcon className="w-4 h-4 fill-primary" />
-                    <StarIcon className="w-4 h-4 fill-primary" />
-                    <StarIcon className="w-4 h-4 fill-primary" />
-                    <StarIcon className="w-4 h-4 fill-muted stroke-muted-foreground" />
-                  </div>
-                </td>
-              </tr>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                  <div className="flex items-center gap-3">
-                    <img
-                      alt="Sold Item"
-                      className="rounded-lg object-cover"
-                      height={50}
-                      src="/placeholder.png"
-                      style={{
-                        aspectRatio: "50/50",
-                        objectFit: "cover",
-                      }}
-                      width={50}
-                    />
-                    <div>Vintage Denim Jacket</div>
-                  </div>
-                </td>
-                <td className="px-6 py-4">$49.00</td>
-                <td className="px-6 py-4">March 20, 2023</td>
-                <td className="px-6 py-3">$9.01</td>
-                <td className="px-6 py-3">
-                  <div className="flex items-center gap-px">
-                    <StarIcon className="w-4 h-4 fill-primary" />
-                    <StarIcon className="w-4 h-4 fill-primary" />
-                    <StarIcon className="w-4 h-4 fill-primary" />
-                    <StarIcon className="w-4 h-4 fill-muted stroke-muted-foreground" />
-                    <StarIcon className="w-4 h-4 fill-muted stroke-muted-foreground" />
-                  </div>
-                </td>
-              </tr>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                  <div className="flex items-center gap-3">
-                    <img
-                      alt="Sold Item"
-                      className="rounded-lg object-cover"
-                      height={50}
-                      src="/placeholder.png"
-                      style={{
-                        aspectRatio: "50/50",
-                        objectFit: "cover",
-                      }}
-                      width={50}
-                    />
-                    <div>Vintage Leather Bag</div>
-                  </div>
-                </td>
-                <td className="px-6 py-4">$69.00</td>
-                <td className="px-6 py-4">February 28, 2023</td>
-                <td className="px-6 py-3">$9.01</td>
-                <td className="px-6 py-3">
-                  <div className="flex items-center gap-px">
-                    <StarIcon className="w-4 h-4 fill-primary" />
-                    <StarIcon className="w-4 h-4 fill-primary" />
-                    <StarIcon className="w-4 h-4 fill-primary" />
-                    <StarIcon className="w-4 h-4 fill-primary" />
-                    <StarIcon className="w-4 h-4 fill-muted stroke-muted-foreground" />
-                  </div>
-                </td>
-              </tr> */}
             </tbody>
           </table>
-        </div>}
-        {/* <div className="mt-4 text-right mx-4">
-          <div className="bg-gray-200 dark:bg-gray-800 px-3 py-1 rounded-full text-sm font-medium text-gray-700 dark:text-gray-300">
-            Total Profit: $37.04
-          </div>
-        </div> */}
+        </div>
+      ) : (
+        <div className="my-20">
+          <DataNotFound message={"Oops! No items sold yet."} />
+        </div>
+      )}
       </div>
     </>
   );
 }
-
-const StarIcon = (props) => {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-    </svg>
-  );
-};

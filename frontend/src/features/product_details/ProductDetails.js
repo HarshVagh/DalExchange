@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState , useEffect } from "react";
 import Header from "../../components/Header";
 import axios from "axios";
 import placeholder from "../../assets/images/placeholder.png";
@@ -20,6 +20,14 @@ const ProductDetails = () => {
   const [showModal, setShowModal] = useState(false);
   const [requestedAmount, setRequestedAmount] = useState('');
   const [amountError, setAmountError] = useState('');
+  
+  const headerConfig = {
+    search: false,
+    requests: true,
+    notifications: true,
+    add: true,
+    profile: true
+  };
 
   function capitalizeFirstLetter(str) {
     if (!str) return "";
@@ -112,7 +120,7 @@ const ProductDetails = () => {
 
   return (
     <div>
-      <Header />
+      <Header config={headerConfig} />
       <SubHeader title={'Product Details'} backPath={'/products'} />
       {!loading && (
         <main className="flex-1 p-6">

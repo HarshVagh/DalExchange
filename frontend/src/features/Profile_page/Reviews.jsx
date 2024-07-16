@@ -1,22 +1,29 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "../../components/Header";
-import { useNavigate } from "react-router-dom";
-import DataNotFound from "../../components/DataNotFound";
 import Loader from "../../components/Loader";
 import SubHeader from "../../components/SubHeader";
+import ErrorAlert from "../../components/ErrorAlert";
+import DataNotFound from "../../components/DataNotFound";
 
 export default function Reviews() {
-  const navigate = useNavigate();
   const userid = 1;
 
   const [reviews, setReviews] = useState([]);
-  const [loading, setLoading] = useState(false); // Add loading state
+  const [isLoading, setIsLoading] = useState(false); 
+  const [error, setError] = useState(null);
+  const headerConfig= {
+    search: false,
+    requests: true,
+    notifications: true,
+    add: true,
+    profile: true
+  };
 
   useEffect(() => {
     const fetchProductsRatings = async () => {
       try {
-        setLoading(true); // Set loading to true before fetching
+        setIsLoading(true); 
         const params = new URLSearchParams(window.location.search);
         const productId = params.get("id");
         console.log({ productId });
@@ -33,39 +40,27 @@ export default function Reviews() {
         console.log(data, "product_ratings");
       } catch (error) {
         console.error("Failed to fetch product data", error);
-        // setError(error);
-        // setLoading(false);
+         setError(error);
+         setIsLoading(false);
       } finally {
-        setTimeout(() => {
-          setLoading(false);
-        }, 800); // Set loading to false after fetching
+        setIsLoading(false); // Set loading to false after fetching
       }
     };
     fetchProductsRatings();
   }, []);
-
   return (
     <div className="bg-gray-100 dark:bg-gray-950 py-8 h-screen max-h-100">
-      <Header />
-      <SubHeader title={'Reviews'} backPath={'/profile'} />
-      
-      <div className="py-8 mt-50">
-        {loading ? ( // Conditionally render the loading indicator
-          <div className="my-50">
-            <Loader />
-          </div>
-        ) : reviews.length === 0 ? (
-          <div>
-            {" "}
-            <DataNotFound message={"Oops! No reviews found."} />
-          </div>
-        ) : (
-          <div className="border rounded-lg shadow-sm dark:border-gray-800 m-4">          
+      <Header config={headerConfig} />
+      <SubHeader title={"Reviews"} backPath={"/profile"} />
+      {isLoading && <Loader title={"There is no Review"} />}
+      {!isLoading && error && <ErrorAlert message={error.message} />}
+      {!isLoading && !error && reviews && reviews.length > 0 ? (
+        <div className="py-8 mt-50">
+          <div className="border rounded-lg shadow-sm dark:border-gray-800 m-4">
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 dark:text-white">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                   <th className="px-6 py-3">No.</th>
-
                   <th className="px-6 py-3">Title</th>
                   <th className="px-6 py-3">Review</th>
                   <th className="px-6 py-3">Rating</th>
@@ -78,25 +73,12 @@ export default function Reviews() {
                     key={index}
                   >
                     <td className="px-6 py-4">{index + 1}</td>
-
                     <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                       <div className="flex items-center gap-3">
-                        {/* <img
-                    alt="Sold Item"
-                    className="rounded-lg object-cover"
-                    height={50}
-                    src="/placeholder.png"
-                    style={{
-                      aspectRatio: "50/50",
-                      objectFit: "cover",
-                    }}
-                    width={50}
-                  /> */}
                         <div>{item?.title}</div>
                       </div>
                     </td>
                     <td className="px-6 py-4">{item?.review}</td>
-
                     <td className="px-6 py-3">
                       <div className="flex items-center gap-px">
                         <StarRating starCount={item?.rating} />
@@ -104,98 +86,14 @@ export default function Reviews() {
                     </td>
                   </tr>
                 ))}
-                {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-              <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                <div className="flex items-center gap-3">
-                  <img
-                    alt="Sold Item"
-                    className="rounded-lg object-cover"
-                    height={50}
-                    src="/placeholder.png"
-                    style={{
-                      aspectRatio: "50/50",
-                      objectFit: "cover",
-                    }}
-                    width={50}
-                  />
-                  <div>Retro Sunglasses</div>
-                </div>
-              </td>
-              <td className="px-6 py-4">Very good</td>
-            
-              <td className="px-6 py-3">
-                <div className="flex items-center gap-px">
-                  <StarIcon className="w-4 h-4 fill-primary" />
-                  <StarIcon className="w-4 h-4 fill-primary" />
-                  <StarIcon className="w-4 h-4 fill-primary" />
-                  <StarIcon className="w-4 h-4 fill-primary" />
-                  <StarIcon className="w-4 h-4 fill-muted stroke-muted-foreground" />
-                </div>
-              </td>
-            </tr>
-            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-              <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                <div className="flex items-center gap-3">
-                  <img
-                    alt="Sold Item"
-                    className="rounded-lg object-cover"
-                    height={50}
-                    src="/placeholder.png"
-                    style={{
-                      aspectRatio: "50/50",
-                      objectFit: "cover",
-                    }}
-                    width={50}
-                  />
-                  <div>Vintage Denim Jacket</div>
-                </div>
-              </td>
-              <td className="px-6 py-4">Average</td>
-              
-              <td className="px-6 py-3">
-                <div className="flex items-center gap-px">
-                  <StarIcon className="w-4 h-4 fill-primary" />
-                  <StarIcon className="w-4 h-4 fill-primary" />
-                  <StarIcon className="w-4 h-4 fill-primary" />
-                  <StarIcon className="w-4 h-4 fill-muted stroke-muted-foreground" />
-                  <StarIcon className="w-4 h-4 fill-muted stroke-muted-foreground" />
-                </div>
-              </td>
-            </tr>
-            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-              <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                <div className="flex items-center gap-3">
-                  <img
-                    alt="Sold Item"
-                    className="rounded-lg object-cover"
-                    height={50}
-                    src="/placeholder.png"
-                    style={{
-                      aspectRatio: "50/50",
-                      objectFit: "cover",
-                    }}
-                    width={50}
-                  />
-                  <div>Vintage Leather Bag</div>
-                </div>
-              </td>
-              <td className="px-6 py-4">Good</td>
-              
-              <td className="px-6 py-3">
-                <div className="flex items-center gap-px">
-                  <StarIcon className="w-4 h-4 fill-primary" />
-                  <StarIcon className="w-4 h-4 fill-primary" />
-                  <StarIcon className="w-4 h-4 fill-primary" />
-                  <StarIcon className="w-4 h-4 fill-primary" />
-                  <StarIcon className="w-4 h-4 fill-muted stroke-muted-foreground" />
-                </div>
-              </td>
-            </tr> */}
               </tbody>
             </table>
           </div>
-        )}
-      </div>
+        </div>
+      ): (
+        <div className="my-20">
+          <DataNotFound message={"Oops! No items sold yet."} />
+        </div> )}
     </div>
   );
 }
