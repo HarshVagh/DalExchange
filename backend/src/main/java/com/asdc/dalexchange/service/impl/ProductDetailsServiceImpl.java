@@ -20,7 +20,7 @@ import com.asdc.dalexchange.service.ProductDetailsService;
 
 
 @Service
-public class ProductDetailsServiceImp implements ProductDetailsService {
+public class ProductDetailsServiceImpl implements ProductDetailsService {
 
     @Autowired
     private ProductRepository productRepository;
@@ -31,10 +31,10 @@ public class ProductDetailsServiceImp implements ProductDetailsService {
     private final Mapper<Product, ProductDetailsDTO> productDetailsMapper;
 
     @Autowired
-    public ProductDetailsServiceImp(ProductRepository productRepository,
-                                    ProductImageRepository productImageRepository,
-                                    ProductWishlistRepository productWishlistRepository,
-                                    Mapper<Product, ProductDetailsDTO> productDetailsMapper) {
+    public ProductDetailsServiceImpl(ProductRepository productRepository,
+                                     ProductImageRepository productImageRepository,
+                                     ProductWishlistRepository productWishlistRepository,
+                                     Mapper<Product, ProductDetailsDTO> productDetailsMapper) {
         this.productRepository = productRepository;
         this.productImageRepository = productImageRepository;
         this.productWishlistRepository = productWishlistRepository;

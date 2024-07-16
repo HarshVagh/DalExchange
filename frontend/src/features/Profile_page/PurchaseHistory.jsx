@@ -44,6 +44,7 @@ export default function PurchaseHistory() {
       <div className="bg-gray-100 dark:bg-gray-950 py-8 h-full h-screen max-h-100">
         <Header />
         <SubHeader title={'Purchase History'} backPath={'/profile'} />
+        <div className="py-8 mt-50">
         {loading ? ( // Conditionally render the loading indicator
           <div className="my-50">
            <Loader/>
@@ -82,6 +83,7 @@ export default function PurchaseHistory() {
             </table>
           </div>
         )}
+        </div>
       </div>
     </>
   );

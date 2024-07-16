@@ -12,7 +12,7 @@ import java.util.Optional;
 
 
 @Service
-public class ProfilePageServiceImp implements ProfilePageService {
+public class ProfilePageServiceImpl implements ProfilePageService {
 
 
 

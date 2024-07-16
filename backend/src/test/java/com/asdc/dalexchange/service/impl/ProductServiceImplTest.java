@@ -18,7 +18,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class ProductServiceImpTest {
+public class ProductServiceImplTest {
 
     @Mock
     private ProductRepository productRepository;
@@ -27,7 +27,7 @@ public class ProductServiceImpTest {
     private Mapper<Product, ProductDTO> productMapper;
 
     @InjectMocks
-    private ProductServiceImp productService;
+    private ProductServiceImpl productService;
 
     @BeforeEach
     public void setUp() {

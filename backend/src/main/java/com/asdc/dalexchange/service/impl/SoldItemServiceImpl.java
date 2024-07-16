@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class SoldItemServiceImp implements SoldItemService {
+public class SoldItemServiceImpl implements SoldItemService {
 
     @Autowired
     private SoldItemRepository soldItemRepository;
@@ -24,10 +24,11 @@ public class SoldItemServiceImp implements SoldItemService {
 
     @Override
     public List<SoldItemDTO> GetallSoldProduct(Long userid) {
-        List<SoldItem> allSoldItems = soldItemRepository.findAll(SoldItemSpecification.bySellerUserId(userid));;
+        List<SoldItem> allSoldItems = soldItemRepository.findAll(SoldItemSpecification.bySellerUserId(userid));
 
         return allSoldItems.stream()
                 .map(soldItemMapper::mapTo)
                 .collect(Collectors.toList());
     }
+
 }

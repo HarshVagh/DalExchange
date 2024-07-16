@@ -18,11 +18,7 @@ public interface ProductWishlistService {
 
     public boolean checkProductIsFavoriteByGivenUser(long userId, long productId);
 
-      List<Product> getProductIdsByUserId(Long userId);
 
     public List<SavedProductDTO> GetAllsavedProduct(Long userId);
-
-    
-     public boolean removeProductFromFavorite(long userId, long productId);
 
 }

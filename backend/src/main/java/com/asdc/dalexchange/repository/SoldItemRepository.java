@@ -11,7 +11,6 @@ public interface SoldItemRepository extends JpaRepository<SoldItem, Integer>, Jp
 
     // Method using the specification
     List<SoldItem> findAll(Specification<SoldItem> specification);
-
 }
 
 

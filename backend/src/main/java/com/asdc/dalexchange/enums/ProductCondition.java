@@ -5,5 +5,5 @@ public enum ProductCondition {
     LIKE_NEW,
     GOOD,
     FAIR,
-    POOR
+    USED, POOR
 }

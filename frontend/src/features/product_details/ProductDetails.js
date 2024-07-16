@@ -16,95 +16,106 @@ const ProductDetails = () => {
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+ const [errors, setError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [requestedAmount, setRequestedAmount] = useState('');
+  const [amountError, setAmountError] = useState('');
 
   function capitalizeFirstLetter(str) {
     if (!str) return "";
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   }
 
-  async function addtoFavorite(productId) {
+  async function fetchProductData(productId) {
     try {
-      const response = await axios.get(
-        `http://localhost:8080/product_details/favorite`, {
-          params: {
-            productId: productId
-          },
-          paramsSerializer: {indexes: null }
+      const response = await axios.get(`http://localhost:8080/product_details`, {
+        params: {
+          productId: productId
         }
-      );
-      console.log(response, "response");
-      if (response.status === 200) {
-        setProduct({...product, favorite: !product.favorite});
-      }
-    } catch (error) {}
+      });
+      const data = response.data;
+      setProduct(data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Failed to fetch product data", error);
+      setError(error);
+      setLoading(false);
+      console.log(errors)
+    }
   }
 
   useEffect(() => {
-    const fetchProductData = async () => {
-      try {
-        console.log({ productId });
-        const response = await axios.get('http://localhost:8080/product_details', { 
-          params: {
-            productId: productId
-          },
-          paramsSerializer: {indexes: null }
-        });
-        const data = response.data;
-        console.log(data, "product data");
-        setProduct(data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Failed to fetch product data", error);
-        setError(error);
-        setLoading(false);
-      }
-    };
-    fetchProductData();
+    fetchProductData(productId);
   }, [productId]);
 
+  async function addtoFavorite(productId) {
+    try {
+      const response = await axios.get(`http://localhost:8080/product_details/favorite`, {
+        params: {
+          productId: productId
+        }
+      });
+      if (response.status === 200) {
+        setProduct({ ...product, favorite: !product.favorite });
+      }
+    } catch (error) {
+      console.error("Failed to add to favorites", error);
+    }
+  }
+
   const createTradeRequest = async () => {
+    if (!requestedAmount.trim()) {
+      setAmountError('Please enter a valid amount');
+      return;
+    }
+
+    if (isNaN(requestedAmount) || Number(requestedAmount) <= 0) {
+      setAmountError('Please enter a valid positive number');
+      return;
+    }
+
     const requestBody = {
       productId: product.productId,
-      sellerId: 1, // TODO: Add add product seller user ID
-      requestedPrice: product.price // TODO: replace with actual requested price
+      sellerId: 1, // TODO: Add actual seller ID
+      requestedPrice: requestedAmount // Replace with input value
     };
     await TradeRequestApi.create(requestBody);
+    setShowModal(false); // Close modal after request is sent
+    setRequestedAmount('');
+    setAmountError('');
   }
 
   const StarRating = ({ starCount }) => {
     const totalStars = 5;
     const stars = [];
-  
+
     for (let i = 0; i < totalStars; i++) {
       if (i < starCount) {
         stars.push(
-          <img key={i} src={FilledStarIcon} alt="star" className="h-6 w-6"></img>
+          <img key={i} src={FilledStarIcon} alt="star" className="h-6 w-6" />
         );
       } else {
         stars.push(
-          <img key={i} src={StarIcon} alt="star" className="h-6 w-6"></img>
+          <img key={i} src={StarIcon} alt="star" className="h-6 w-6" />
         );
       }
     }
-  
+
     return <div className="flex flex-row">{stars}</div>;
   };
 
+  const toggleModal = () => {
+    setShowModal(!showModal);
+    setRequestedAmount(''); // Reset input field on modal open/close
+    setAmountError('');
+  };
+
   return (
-    !loading && <div>
+    <div>
       <Header />
       <SubHeader title={'Product Details'} backPath={'/products'} />
-      <div className="flex flex-1">
-        {error && <div className="flex justify-center h-16 w-full" >
-            <div className="flex items-center py-4 px-12 mt-4 text-sm text-red-600 rounded-lg bg-red-50 border-2 border-red-600" role="alert">
-              <span className="sr-only">Error</span>
-              <div>
-                <span className="font-medium">Error!</span> {error.message}
-              </div>
-            </div>
-          </div>}
-        {!error && <main className="flex-1 p-6">
+      {!loading && (
+        <main className="flex-1 p-6">
           <div className="grid grid-cols-1 md:grid-cols-10 gap-8">
             <div className="md:col-span-3">
               <img
@@ -119,42 +130,17 @@ const ProductDetails = () => {
                 width={600}
               />
               <div className="grid grid-cols-4 gap-4 mt-4">
-                <button className="border rounded-lg overflow-hidden">
-                  <img
-                    alt=""
-                    className="w-full aspect-square object-cover"
-                    height={100}
-                    src={placeholder}
-                    width={100}
-                  />
-                </button>
-                <button className="border rounded-lg overflow-hidden">
-                  <img
-                    alt="Thumbnail 2"
-                    className="w-full aspect-square object-cover"
-                    height={100}
-                    src={placeholder}
-                    width={100}
-                  />
-                </button>
-                <button className="border rounded-lg overflow-hidden">
-                  <img
-                    alt="Thumbnail 3"
-                    className="w-full aspect-square object-cover"
-                    height={100}
-                    src={placeholder}
-                    width={100}
-                  />
-                </button>
-                <button className="border rounded-lg overflow-hidden">
-                  <img
-                    alt="Thumbnail 4"
-                    className="w-full aspect-square object-cover"
-                    height={100}
-                    src={placeholder}
-                    width={100}
-                  />
-                </button>
+                {[1, 2, 3, 4].map((index) => (
+                  <button key={index} className="border rounded-lg overflow-hidden">
+                    <img
+                      alt={`Thumbnail ${index}`}
+                      className="w-full aspect-square object-cover"
+                      height={100}
+                      src={placeholder}
+                      width={100}
+                    />
+                  </button>
+                ))}
               </div>
             </div>
             <div className="md:col-span-7">
@@ -166,14 +152,17 @@ const ProductDetails = () => {
                 <div className="flex items-center gap-4 mr-12">
                   <button
                     className="flex flex-end gap-2 bg-transparent text-700 font-semibold py-2 px-4 border-2 border-gray-300 rounded"
-                    onClick={() => addtoFavorite(product?.productId)}>
-                    {product.favorite ? 
-                      (<img src={FilledHeartIcon} alt="heart" className="h-6 w-6"></img>) : 
-                      <img src={HeartIcon} alt="heart" className="h-6 w-6"></img>} Favorite
+                    onClick={() => addtoFavorite(product?.productId)}
+                  >
+                    {product.favorite ?
+                      (<img src={FilledHeartIcon} alt="heart" className="h-6 w-6" />) :
+                      <img src={HeartIcon} alt="heart" className="h-6 w-6" />}
+                    Favorite
                   </button>
                   <button
-                    onClick={() => createTradeRequest()}
-                    className="bg-transparent text-700 font-semibold py-2 px-4 border-2 border-gray-300 rounded">
+                    onClick={toggleModal}
+                    className="bg-transparent text-700 font-semibold py-2 px-4 border-2 border-gray-300 rounded hover:bg-gray-100"
+                  >
                     Send Buy Request
                   </button>
                 </div>
@@ -188,7 +177,7 @@ const ProductDetails = () => {
                   <p className="text-gray-600">
                     {product?.quantityAvailable > 0
                       ? "Available"
-                      : "UnAvailable"}
+                      : "Unavailable"}
                   </p>
                 </div>
                 <div>
@@ -208,9 +197,7 @@ const ProductDetails = () => {
               </div>
               <div className="grid grid-cols-2 gap-4 mt-10">
                 <div>
-                  <h3 className="text-base font-bold font-medium mb-2">
-                    Seller
-                  </h3>
+                  <h3 className="text-base font-bold font-medium mb-2">Seller</h3>
                   <div className="flex items-center gap-2">
                     <div>
                       <p className="font-medium">{product?.sellerName}</p>
@@ -226,10 +213,63 @@ const ProductDetails = () => {
               </div>
             </div>
           </div>
-        </main>}
-      </div>
+        </main>
+      )}
+
+      {/* Request Modal */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75">
+          <div className="relative p-4 w-full max-w-md">
+            <div className="relative bg-white rounded-lg shadow">
+              <button
+                type="button"
+                className="absolute top-3 right-3 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 flex justify-center items-center"
+                onClick={toggleModal}
+              >
+                <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6-6m-6 6 6 6m-6 6-6-6"></path>
+                </svg>
+              </button>
+              <div className="p-4">
+                <h2 className="text-xl font-semibold mb-4">Send Buy Request</h2>
+                <div className="mb-4">
+                  <label htmlFor="requestedAmount" className="block text-sm font-medium text-gray-700 mb-1">
+                    Enter Amount:
+                  </label>
+                  <input
+                    type="text"
+                    id="requestedAmount"
+                    name="requestedAmount"
+                    value={requestedAmount}
+                    onChange={(e) => setRequestedAmount(e.target.value)}
+                    placeholder="Enter price"
+                    className={`border border-gray-300 rounded-lg py-2 px-3 w-full focus:outline-none focus:border-blue-500 ${amountError ? 'border-red-500' : ''}`}
+                  />
+                  {amountError && (
+                    <p className="text-red-500 text-xs mt-1">{amountError}</p>
+                  )}
+                </div>
+                <div className="flex justify-end">
+                  <button
+                    className="bg-blue-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-600 mr-2"
+                    onClick={createTradeRequest}
+                  >
+                    Send Request
+                  </button>
+                  <button
+                    className="bg-red-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-red-600"
+                    onClick={toggleModal}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-};
+}; 
 
 export default ProductDetails;

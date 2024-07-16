@@ -1,7 +1,6 @@
 package com.asdc.dalexchange.specifications;
 
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 import com.asdc.dalexchange.model.Product;
 
@@ -16,6 +15,15 @@ public class ProductSpecification {
             }
             Join<Object, Object> categoryJoin = root.join("category");
             return categoryJoin.get("name").in(categories);
+        };
+    }
+
+    public static Specification<Product> bySellerUserId(Long userId) {
+        return new Specification<Product>() {
+            @Override
+            public Predicate toPredicate(Root<Product> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                return criteriaBuilder.equal(root.get("seller").get("userId"), userId);
+            }
         };
     }
 

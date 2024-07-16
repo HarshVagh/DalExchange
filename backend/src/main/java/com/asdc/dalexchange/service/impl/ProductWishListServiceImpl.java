@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ProductWishListServiceImp implements ProductWishlistService {
+public class ProductWishListServiceImpl implements ProductWishlistService {
 
     @Autowired
     private ProductWishlistRepository productWishlistRepository;
@@ -87,10 +87,6 @@ public class ProductWishListServiceImp implements ProductWishlistService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public boolean removeProductFromFavorite(long userId, long productId) {
-        return false;
-    }
 
 
     @Override
@@ -108,9 +104,5 @@ public class ProductWishListServiceImp implements ProductWishlistService {
         return count > 0;
     }
 
-    @Override
-    public List<Product> getProductIdsByUserId(Long userId) {
-        return List.of();
-    }
 
 }

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ProductImageServiceImp implements ProductImageService {
+public class ProductImageServiceImpl implements ProductImageService {
 
     @Autowired
     private ProductImageRepository productImageRepository;
