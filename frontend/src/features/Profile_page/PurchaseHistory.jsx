@@ -1,38 +1,33 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import fetchPurchasedHistory from "../../services/PurchasedHistoryApi"; 
 import Header from "../../components/Header";
 import DataNotFound from "../../components/DataNotFound";
-import Loader from "../../components/Loader"
+import Loader from "../../components/Loader";
 import SubHeader from "../../components/SubHeader";
 import ErrorAlert from "../../components/ErrorAlert";
 
 export default function PurchaseHistory() {
-  const userid = 1;
+  const userId = 1;
 
   const [purchaseHistory, setPurchaseHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null); 
+  const [error, setError] = useState(null);
 
   const headerConfig = {
     search: false,
     requests: true,
     notifications: true,
     add: true,
-    profile: true
+    profile: true,
   };
 
   useEffect(() => {
-    const fetchPurchasedHistory = async () => {
+    const fetchHistory = async () => {
       try {
         setIsLoading(true);
         const params = new URLSearchParams(window.location.search);
         const productId = params.get("id");
-        console.log({ productId });
-        const response = await axios.get(`http://localhost:8080/purchased_products/${userid}`, {
-          params: params,
-          paramsSerializer: { indexes: null }
-        });
-        const data = response.data;
+        const data = await fetchPurchasedHistory(userId, productId);
         setPurchaseHistory(data);
         console.log(data, "purchased_products");
       } catch (error) {
@@ -42,19 +37,18 @@ export default function PurchaseHistory() {
         setIsLoading(false);
       }
     };
-    fetchPurchasedHistory();
+    fetchHistory();
   }, []);
 
   return (
-    <>
-      <div className="bg-gray-100 dark:bg-gray-950 py-8 h-full h-screen max-h-100">
-        <Header config={headerConfig} />
-        <SubHeader title={'Purchase History'} backPath={'/profile'} />
-        {isLoading && <Loader title={'Loading Profile Details...'} />}
-        {!isLoading && error && <ErrorAlert message={error.message} />}
-        {!isLoading && !error && purchaseHistory && purchaseHistory.length >0 ?(
+    <div className="bg-gray-100 dark:bg-gray-950 py-8 h-full h-screen max-h-100">
+      <Header config={headerConfig} />
+      <SubHeader title={"Purchase History"} backPath={"/profile"} />
+      {isLoading && <Loader title={"Loading Profile Details..."} />}
+      {!isLoading && error && <ErrorAlert message={error.message} />}
+      {!isLoading && !error && purchaseHistory && purchaseHistory.length > 0 ? (
         <div className="py-8 mt-50">
-        <div className="border rounded-lg shadow-sm dark:border-gray-800 ">
+          <div className="border rounded-lg shadow-sm dark:border-gray-800 ">
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 dark:text-white">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
@@ -83,11 +77,11 @@ export default function PurchaseHistory() {
             </table>
           </div>
         </div>
-        ) : (
-          <div className="my-20">
-            <DataNotFound message={"Oops! No items sold yet."} />
-          </div> )}
-      </div>
-    </>
+      ) : (
+        <div className="my-20">
+          <DataNotFound message={"Oops! No items sold yet."} />
+        </div>
+      )}
+    </div>
   );
 }

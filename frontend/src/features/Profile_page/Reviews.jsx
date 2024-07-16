@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import ReviewsApi from "../../services/ReviewsApi"; 
 import Header from "../../components/Header";
 import Loader from "../../components/Loader";
 import SubHeader from "../../components/SubHeader";
@@ -7,47 +7,40 @@ import ErrorAlert from "../../components/ErrorAlert";
 import DataNotFound from "../../components/DataNotFound";
 
 export default function Reviews() {
-  const userid = 1;
+  const userId = 1;
 
   const [reviews, setReviews] = useState([]);
-  const [isLoading, setIsLoading] = useState(false); 
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const headerConfig= {
+  const headerConfig = {
     search: false,
     requests: true,
     notifications: true,
     add: true,
-    profile: true
+    profile: true,
   };
 
   useEffect(() => {
-    const fetchProductsRatings = async () => {
+    const fetchProductRatings = async () => {
       try {
-        setIsLoading(true); 
+        setIsLoading(true);
         const params = new URLSearchParams(window.location.search);
         const productId = params.get("id");
         console.log({ productId });
 
-        const response = await axios.get(
-          `http://localhost:8080/product_ratings/${userid}`,
-          {
-            params: params,
-            paramsSerializer: { indexes: null },
-          }
-        );
-        const data = response.data;
+        const data = await ReviewsApi.fetchProductRatings(userId, productId);
         setReviews(data);
         console.log(data, "product_ratings");
       } catch (error) {
         console.error("Failed to fetch product data", error);
-         setError(error);
-         setIsLoading(false);
+        setError(error);
       } finally {
-        setIsLoading(false); // Set loading to false after fetching
+        setIsLoading(false);
       }
     };
-    fetchProductsRatings();
+    fetchProductRatings();
   }, []);
+
   return (
     <div className="bg-gray-100 dark:bg-gray-950 py-8 h-screen max-h-100">
       <Header config={headerConfig} />
@@ -90,10 +83,11 @@ export default function Reviews() {
             </table>
           </div>
         </div>
-      ): (
+      ) : (
         <div className="my-20">
           <DataNotFound message={"Oops! No items sold yet."} />
-        </div> )}
+        </div>
+      )}
     </div>
   );
 }

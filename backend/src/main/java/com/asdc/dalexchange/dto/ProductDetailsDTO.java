@@ -34,6 +34,7 @@ public class ProductDetailsDTO {
  private  boolean  Favorite;
 
  //seller
+ private Long SellerId;
  private String SellerName;
  private double Rating;
  private LocalDateTime sellerJoiningDate;

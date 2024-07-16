@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import Header from "../../components/Header";
-import toast from 'react-hot-toast';
 import Loader from "../../components/Loader";
 import SubHeader from "../../components/SubHeader";
 import ErrorAlert from "../../components/ErrorAlert";
 import DataNotFound from "../../components/DataNotFound";
+import SavedItemsApi from "../../services/SavedItemsApi";
+import toast from 'react-hot-toast';
 
 export default function SavedItems() {
-  const userid = 1;
+  const userId = 1;
   const [isLoading, setIsLoading] = useState(false);
   const [savedProducts, setSavedProducts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,7 +19,7 @@ export default function SavedItems() {
     requests: true,
     notifications: true,
     add: true,
-    profile: true
+    profile: true,
   };
 
   useEffect(() => {
@@ -28,20 +28,11 @@ export default function SavedItems() {
 
   const fetchedSavedProducts = async () => {
     try {
-      const params = new URLSearchParams(window.location.search);
-     // const productId = params.get("id");
       setIsLoading(true);
-      const response = await axios.get(
-        `http://localhost:8080/saved_products/${userid}`,
-        {
-          params: params,
-          paramsSerializer: { indexes: null },
-        }
-      );
-      const data = response.data;
+      const data = await SavedItemsApi.fetchSavedItems(userId);
       setSavedProducts(data);
     } catch (error) {
-      console.error("Failed to fetch product data", error);
+      console.error("Failed to fetch saved products", error);
       setError(error);
     } finally {
       setIsLoading(false);
@@ -55,61 +46,31 @@ export default function SavedItems() {
 
   const confirmRemoveFavorite = async (confirm) => {
     if (confirm) {
-      await removeFavorite(userid, selectedProductId);
+      await removeFavorite(userId, selectedProductId);
     }
     setIsModalOpen(false);
     setSelectedProductId(null);
   };
 
-  async function removeFavorite(userid, productId) {
-    const params = new URLSearchParams(window.location.search);
-
-    const updatePromise = axios.post(
-      `http://localhost:8080/${userid}/${productId}/removesaved`,
-      {
-        params: params,
-        paramsSerializer: { indexes: null },
-      }
-    );
-
-    toast.promise(
-      updatePromise,
-      {
-        loading: "Updating SavedItems...",
-        success: "SavedItems updated successfully!",
-        error: "Failed to update SavedItems.",
-      },
-      {
-        style: {
-          minWidth: "250px",
-        },
-        success: {
-          duration: 1000,
-          icon: "👏",
-        },
-      }
-    );
-
+  const removeFavorite = async (userId, productId) => {
     try {
-      const response = await updatePromise;
-      const data = response;
-      if (response.status === 200) {
-        fetchedSavedProducts();
-      }
-      console.log(data.data, "profile details");
+      await SavedItemsApi.removeSavedItem(userId, productId);
+      toast.success("Saved item removed successfully!");
+      fetchedSavedProducts(); // Refresh saved items after removal
     } catch (error) {
-      console.error("Failed to update profile", error);
+      console.error("Failed to remove saved item", error);
+      toast.error("Failed to remove saved item.");
     }
-  }
+  };
 
   return (
     <>
       <div className="bg-gray-100 dark:bg-gray-950 py-8 h-screen max-h-100">
-        <Header config={headerConfig}/>
-        <SubHeader title={'Saved Items'} backPath={'/profile'} />
-        {isLoading && <Loader title={'Saved Items Loading...'} />}
+        <Header config={headerConfig} />
+        <SubHeader title={"Saved Items"} backPath={"/profile"} />
+        {isLoading && <Loader title={"Loading Saved Items..."} />}
         {!isLoading && error && <ErrorAlert message={error.message} />}
-        {!isLoading && !error && savedProducts && savedProducts.length > 0 ? ( 
+        {!isLoading && !error && savedProducts && savedProducts.length > 0 ? (
           <div className="border rounded-lg shadow-sm dark:border-gray-800 m-4">
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 dark:text-white">
               <thead className="px-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -144,7 +105,7 @@ export default function SavedItems() {
                     <td
                       className="px-6 py-3 cursor-pointer"
                       onClick={() => {
-                        handleRemoveClick(item?.productId);
+                        handleRemoveClick(item.productId);
                       }}
                     >
                       <FilledHeartIcon />
@@ -154,10 +115,11 @@ export default function SavedItems() {
               </tbody>
             </table>
           </div>
-        ): (
-          <div className="my-20 bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white p-8 rounded-lg shadow-md">
-            <DataNotFound message={"Oops! No items sold yet."} />
-          </div> )} 
+        ) : (
+          <div className="my-20">
+            <DataNotFound message={"Oops! No saved items yet."} />
+          </div>
+        )}
       </div>
       {isModalOpen && (
         <ConfirmationModal
