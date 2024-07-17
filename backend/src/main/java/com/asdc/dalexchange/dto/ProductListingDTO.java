@@ -3,7 +3,6 @@ package com.asdc.dalexchange.dto;
 import com.asdc.dalexchange.enums.ProductCondition;
 import com.asdc.dalexchange.enums.ShippingType;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Data

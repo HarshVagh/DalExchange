@@ -13,7 +13,7 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 
 @Service
-public class ProductServiceImp implements ProductService {
+public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductRepository productRepository;

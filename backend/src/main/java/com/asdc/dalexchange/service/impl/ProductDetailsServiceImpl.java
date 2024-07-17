@@ -20,7 +20,7 @@ import com.asdc.dalexchange.service.ProductDetailsService;
 
 
 @Service
-public class ProductDetailsServiceImp implements ProductDetailsService {
+public class ProductDetailsServiceImpl implements ProductDetailsService {
 
     @Autowired
     private ProductRepository productRepository;
@@ -31,10 +31,10 @@ public class ProductDetailsServiceImp implements ProductDetailsService {
     private final Mapper<Product, ProductDetailsDTO> productDetailsMapper;
 
     @Autowired
-    public ProductDetailsServiceImp(ProductRepository productRepository,
-                                    ProductImageRepository productImageRepository,
-                                    ProductWishlistRepository productWishlistRepository,
-                                    Mapper<Product, ProductDetailsDTO> productDetailsMapper) {
+    public ProductDetailsServiceImpl(ProductRepository productRepository,
+                                     ProductImageRepository productImageRepository,
+                                     ProductWishlistRepository productWishlistRepository,
+                                     Mapper<Product, ProductDetailsDTO> productDetailsMapper) {
         this.productRepository = productRepository;
         this.productImageRepository = productImageRepository;
         this.productWishlistRepository = productWishlistRepository;
@@ -56,6 +56,7 @@ public class ProductDetailsServiceImp implements ProductDetailsService {
         productDetailsDTO.setImageurl(productImageUrls);
 
         // Set the seller joining date and rating
+        productDetailsDTO.setSellerId(product.getSeller().getUserId());
         productDetailsDTO.setSellerJoiningDate(product.getSeller().getJoinedAt());
         productDetailsDTO.setRating(product.getSeller().getSellerRating());
 
@@ -65,12 +66,15 @@ public class ProductDetailsServiceImp implements ProductDetailsService {
         return productDetailsDTO;
     }
 
-    private Product getProductById(Long productId) {
+    @Override
+    public Product getProductById(Long productId) {
         return this.productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
     }
 
-    private List<String> getImageUrls(Long productId) {
+    @Override
+
+    public List<String> getImageUrls(Long productId) {
         Specification<ProductImage> spec = ProductImageSpecification.byProductId(productId);
         List<ProductImage> productImages = productImageRepository.findAll(spec);
 
@@ -80,7 +84,8 @@ public class ProductDetailsServiceImp implements ProductDetailsService {
                 .toList();
     }
 
-    private boolean getFavoriteStatus(long userId, long productId) {
+    @Override
+    public boolean getFavoriteStatus(long userId, long productId) {
         Specification<ProductWishlist> spec = ProductWishlistSpecification.byUserIdAndProductId(userId, productId);
         long count = productWishlistRepository.count(spec);
         return count > 0;
