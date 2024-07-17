@@ -19,11 +19,8 @@ public class ProductSpecification {
     }
 
     public static Specification<Product> bySellerUserId(Long userId) {
-        return new Specification<Product>() {
-            @Override
-            public Predicate toPredicate(Root<Product> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-                return criteriaBuilder.equal(root.get("seller").get("userId"), userId);
-            }
+        return (root, query, criteriaBuilder) -> {
+            return criteriaBuilder.equal(root.get("seller").get("userId"), userId);
         };
     }
 

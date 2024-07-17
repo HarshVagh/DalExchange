@@ -1,6 +1,5 @@
 package com.asdc.dalexchange.service.impl;
 
-
 import com.asdc.dalexchange.model.ProductImage;
 import com.asdc.dalexchange.repository.ProductImageRepository;
 import com.asdc.dalexchange.service.ProductImageService;
@@ -20,13 +19,9 @@ public class ProductImageServiceImpl implements ProductImageService {
     @Autowired
     ModelMapper modelMapper;
 
-
     @Override
     public List<String> getProductAllImages(Long productId) {
-        // Use the Specification to fetch images for the given productId
         List<ProductImage> productImages = productImageRepository.findAll(ProductImageSpecification.byProductId(productId));
-
-        // Extract image URLs from the productImages list
         return productImages.stream()
                 .map(ProductImage::getImageUrl)
                 .toList();

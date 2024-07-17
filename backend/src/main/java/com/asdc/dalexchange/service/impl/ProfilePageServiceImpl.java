@@ -1,4 +1,5 @@
 package com.asdc.dalexchange.service.impl;
+
 import com.asdc.dalexchange.dto.*;
 import com.asdc.dalexchange.mappers.impl.*;
 import com.asdc.dalexchange.model.*;
@@ -10,11 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-
 @Service
 public class ProfilePageServiceImpl implements ProfilePageService {
-
-
 
     @Autowired
     private UserRepository userRepository;
@@ -38,7 +36,7 @@ public class ProfilePageServiceImpl implements ProfilePageService {
         }
     }
 
-        @Override
+    @Override
     public EditProfileDTO editGetUserDetails(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         return modelMapper.map(user, EditProfileDTO.class);

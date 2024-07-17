@@ -27,7 +27,7 @@ public class ProductRatingServiceImpl implements ProductRatingService {
     private ProductRatingMapperImpl productRatingMapper;
 
     @Override
-    public List<ProductRatingDTO> AllReviewOfAllSoldItemsOfUser(Long userid) {
+    public List<ProductRatingDTO> allReviewOfAllSoldItemsOfUser(Long userid) {
         List<Product> products = productRepository.findAll(ProductSpecification.bySellerUserId(userid));
         List<Long> productIds = products.stream()
                 .map(Product::getProductId)

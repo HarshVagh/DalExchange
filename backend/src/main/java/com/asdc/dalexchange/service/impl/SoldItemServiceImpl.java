@@ -21,11 +21,9 @@ public class SoldItemServiceImpl implements SoldItemService {
     @Autowired
     private SoldItemMapperImpl soldItemMapper;
 
-
     @Override
     public List<SoldItemDTO> GetallSoldProduct(Long userid) {
         List<SoldItem> allSoldItems = soldItemRepository.findAll(SoldItemSpecification.bySellerUserId(userid));
-
         return allSoldItems.stream()
                 .map(soldItemMapper::mapTo)
                 .collect(Collectors.toList());

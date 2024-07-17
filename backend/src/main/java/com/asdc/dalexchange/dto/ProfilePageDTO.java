@@ -1,11 +1,8 @@
 package com.asdc.dalexchange.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-//profile home page
+@Data
 @Getter
 @Setter
 @NoArgsConstructor

@@ -1,4 +1,5 @@
 package com.asdc.dalexchange.service.impl;
+
 import com.asdc.dalexchange.dto.PurchaseProductDTO;
 import com.asdc.dalexchange.dto.SavedProductDTO;
 import com.asdc.dalexchange.mappers.impl.PurchaseProductMapperImpl;
@@ -15,7 +16,6 @@ import com.asdc.dalexchange.service.ProductWishlistService;
 import com.asdc.dalexchange.specifications.ProductWishlistSpecification;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.data.jpa.domain.Specification;
@@ -44,9 +44,6 @@ public class ProductWishListServiceImpl implements ProductWishlistService {
     @Autowired
     private ProductRepository productRepository;
 
-    @Autowired
-    private ModelMapper modelMapper;
-
     @Transactional
     public boolean markProductAsFavorite(long userId, long productId) {
         User user = userRepository.findById(userId)
@@ -71,7 +68,7 @@ public class ProductWishListServiceImpl implements ProductWishlistService {
 
 
     @Override
-    public List<SavedProductDTO> GetAllsavedProduct(Long userId) {
+    public List<SavedProductDTO> getAllSavedProducts(Long userId) {
         Specification<ProductWishlist> spec = ProductWishlistSpecification.byUserId(userId);
         List<ProductWishlist> allWishlistedProducts = productWishlistRepository.findAll(spec);
 
@@ -90,7 +87,7 @@ public class ProductWishListServiceImpl implements ProductWishlistService {
 
 
     @Override
-    public List<PurchaseProductDTO> GetallPurchasedProduct(Long userid) {
+    public List<PurchaseProductDTO> getAllPurchasedProduct(Long userid) {
         List<OrderDetails> orderDetailsList = orderRepository.findByBuyerUserId(userid);
         return orderDetailsList.stream()
                 .map(purchaseProductMapper::mapTo)

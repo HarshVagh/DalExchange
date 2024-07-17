@@ -130,7 +130,7 @@ class ProductWishListServiceImplTest {
     }
 
     @Test
-    void testGetAllsavedProduct() {
+    void testGetAllSavedProducts() {
         long userId = 1L;
 
         ProductWishlist productWishlist1 = new ProductWishlist();
@@ -154,7 +154,7 @@ class ProductWishListServiceImplTest {
         when(savedProductMapper.mapTo(product1)).thenReturn(savedProductDTO1);
         when(savedProductMapper.mapTo(product2)).thenReturn(savedProductDTO2);
 
-        List<SavedProductDTO> result = productWishListService.GetAllsavedProduct(userId);
+        List<SavedProductDTO> result = productWishListService.getAllSavedProducts(userId);
 
         assertEquals(2, result.size());
         verify(productWishlistRepository, times(1)).findAll(any(Specification.class));
@@ -164,7 +164,7 @@ class ProductWishListServiceImplTest {
     }
 
         @Test
-        void testGetallPurchasedProduct_whenOrdersExist() {
+        void testGetAllPurchasedProduct_whenOrdersExist() {
             // Arrange
             long userId = 1L;
             OrderDetails orderDetails1 = new OrderDetails();
@@ -182,7 +182,7 @@ class ProductWishListServiceImplTest {
             when(purchaseProductMapper.mapTo(eq(orderDetails2))).thenReturn(purchaseProductDTO2);
 
             // Act
-            List<PurchaseProductDTO> result = productWishListService.GetallPurchasedProduct(userId);
+            List<PurchaseProductDTO> result = productWishListService.getAllPurchasedProduct(userId);
 
             // Assert
             assertEquals(2, result.size());
@@ -191,14 +191,14 @@ class ProductWishListServiceImplTest {
         }
 
         @Test
-        void testGetallPurchasedProduct_whenNoOrders() {
+        void testGetAllPurchasedProduct_whenNoOrders() {
             // Arrange
             long userId = 1L;
             when(orderRepository.findByBuyerUserId(userId))
                     .thenReturn(Collections.emptyList());
 
             // Act
-            List<PurchaseProductDTO> result = productWishListService.GetallPurchasedProduct(userId);
+            List<PurchaseProductDTO> result = productWishListService.getAllPurchasedProduct(userId);
 
             // Assert
             assertEquals(0, result.size());
