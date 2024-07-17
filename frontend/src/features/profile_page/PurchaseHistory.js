@@ -7,8 +7,6 @@ import SubHeader from "../../components/SubHeader";
 import ErrorAlert from "../../components/ErrorAlert";
 
 export default function PurchaseHistory() {
-  const userId = 1;
-
   const [purchaseHistory, setPurchaseHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -27,7 +25,7 @@ export default function PurchaseHistory() {
         setIsLoading(true);
         const params = new URLSearchParams(window.location.search);
         const productId = params.get("id");
-        const data = await fetchPurchasedHistory(userId, productId);
+        const data = await fetchPurchasedHistory( productId);
         setPurchaseHistory(data);
         console.log(data, "purchased_products");
       } catch (error) {

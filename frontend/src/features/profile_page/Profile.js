@@ -22,15 +22,13 @@ export default function Profile() {
     profile: true
   };
 
-  const setters = {
-    isLoading: setIsLoading,
-    error: setError,
-    profileData: setProfileData
-  };
-
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    ProfileApi.getProfile(userId, setters, params);
+    ProfileApi.getProfile(userId, {
+      isLoading: setIsLoading,
+      error: setError,
+      profileData: setProfileData
+    }, params);
   }, [userId]);
 
   return (

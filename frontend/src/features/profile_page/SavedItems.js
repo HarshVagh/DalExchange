@@ -8,7 +8,6 @@ import SavedItemsApi from "../../services/SavedItemsApi";
 import toast from 'react-hot-toast';
 
 export default function SavedItems() {
-  const userId = 1;
   const [isLoading, setIsLoading] = useState(false);
   const [savedProducts, setSavedProducts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -29,7 +28,7 @@ export default function SavedItems() {
   const fetchedSavedProducts = async () => {
     try {
       setIsLoading(true);
-      const data = await SavedItemsApi.fetchSavedItems(userId);
+      const data = await SavedItemsApi.fetchSavedItems();
       setSavedProducts(data);
     } catch (error) {
       console.error("Failed to fetch saved products", error);
@@ -46,15 +45,15 @@ export default function SavedItems() {
 
   const confirmRemoveFavorite = async (confirm) => {
     if (confirm) {
-      await removeFavorite(userId, selectedProductId);
+      await removeFavorite(selectedProductId);
     }
     setIsModalOpen(false);
     setSelectedProductId(null);
   };
 
-  const removeFavorite = async (userId, productId) => {
+  const removeFavorite = async (productId) => {
     try {
-      await SavedItemsApi.removeSavedItem(userId, productId);
+      await SavedItemsApi.removeSavedItem(productId);
       toast.success("Saved item removed successfully!");
       fetchedSavedProducts(); // Refresh saved items after removal
     } catch (error) {

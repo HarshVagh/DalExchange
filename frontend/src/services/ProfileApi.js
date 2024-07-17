@@ -7,7 +7,7 @@ export const ProfileApi = {
     try {
       setters.isLoading(true);
       setters.error(null);
-      const response = await axios.get(`${BASE_URL}/${userId}/profiledetails`, {
+      const response = await axios.get(`${BASE_URL}/profile`, {
         params: params,
         paramsSerializer: { indexes: null }
       });

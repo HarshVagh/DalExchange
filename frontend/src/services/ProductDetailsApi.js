@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:8080'; // Update with your API base URL
+const BASE_URL = 'http://localhost:8080'; 
 
 const ProductDetailsApi = {
   fetchProductDetails: async (productId) => {
@@ -23,7 +23,7 @@ const ProductDetailsApi = {
           productId: productId
         }
       });
-      return response.data; // You can adjust the response handling as per your needs
+      return response.data;
     } catch (error) {
       throw new Error('Failed to add to favorites');
     }
@@ -31,7 +31,7 @@ const ProductDetailsApi = {
 
   createTradeRequest: async (requestBody) => {
     try {
-      const response = await axios.post(`${BASE_URL}/trade_requests`, requestBody);
+      const response = await axios.post(`${BASE_URL}/create_trade_request`, requestBody);
       return response.data; // Adjust as per API response format
     } catch (error) {
       throw new Error('Failed to create trade request');

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import ReviewsApi from "../../services/ReviewsApi"; 
+import { ReviewsApi } from "../../services/ReviewsApi"; 
 import Header from "../../components/Header";
 import Loader from "../../components/Loader";
 import SubHeader from "../../components/SubHeader";
@@ -7,8 +7,6 @@ import ErrorAlert from "../../components/ErrorAlert";
 import DataNotFound from "../../components/DataNotFound";
 
 export default function Reviews() {
-  const userId = 1;
-
   const [reviews, setReviews] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -28,7 +26,7 @@ export default function Reviews() {
         const productId = params.get("id");
         console.log({ productId });
 
-        const data = await ReviewsApi.fetchProductRatings(userId, productId);
+        const data = await ReviewsApi.fetchProductRatings(productId);
         setReviews(data);
         console.log(data, "product_ratings");
       } catch (error) {

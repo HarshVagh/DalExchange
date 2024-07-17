@@ -1,15 +1,17 @@
 import axios from "axios";
 
-const fetchProductRatings = async (userId, productId) => {
-  try {
-    const response = await axios.get(`http://localhost:8080/product_ratings/${userId}`, {
-      params: { id: productId },
-      paramsSerializer: { indexes: null },
-    });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
+const BASE_URL = "http://localhost:8080";
 
-export default fetchProductRatings ;
+export const ReviewsApi = {
+  fetchProductRatings: async (productId) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/profile/product_ratings`, {
+        params: { id: productId },
+        paramsSerializer: { indexes: null },
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+};

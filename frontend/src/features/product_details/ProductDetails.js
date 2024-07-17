@@ -9,6 +9,7 @@ import StarIcon from '../../assets/icons/star-regular.svg';
 import FilledStarIcon from '../../assets/icons/star-solid.svg';
 import ErrorAlert from '../../components/ErrorAlert';
 import ProductDetailsApi from '../../services/ProductDetailsApi'; // Import the new service
+import { TradeRequestApi } from '../../services/TradeRequestApi';
 
 const ProductDetails = () => {
   const { productId } = useParams();
@@ -70,12 +71,12 @@ const ProductDetails = () => {
 
     const requestBody = {
       productId: product.productId,
-      sellerId: 1, // TODO: Add actual seller ID
+      sellerId: product.sellerId, // TODO: Add actual seller ID
       requestedPrice: requestedAmount // Replace with input value
     };
     try {
-      await ProductDetailsApi.createTradeRequest(requestBody);
-      setShowModal(false); // Close modal after request is sent
+      await TradeRequestApi.create(requestBody);
+      setShowModal(false); 
       setRequestedAmount('');
       setAmountError('');
     } catch (error) {

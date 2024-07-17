@@ -7,7 +7,6 @@ import SubHeader from "../../components/SubHeader";
 import ErrorAlert from "../../components/ErrorAlert";
 
 export default function SoldItems() {
-  const userId = 1;
   const [soldItems, setSoldItems] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -27,7 +26,7 @@ export default function SoldItems() {
         console.log({ productId });
         setIsLoading(true);
 
-        const data = await SoldProductsApi.fetchSoldItems(userId, productId);
+        const data = await SoldProductsApi.fetchSoldItems(productId);
         setSoldItems(data);
         console.log(data, "sold_products");
       } catch (error) {

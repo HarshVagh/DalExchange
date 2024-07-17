@@ -21,21 +21,20 @@ const EditProfile = () => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const userId = 1; // Replace with your actual userId
 
   const [profileData, setProfileData] = useState([]);
   const headerConfig = {
-        search: false,
-        requests: true,
-        notifications: true,
-        add: true,
-        profile: true
-      };
+    search: false,
+    requests: true,
+    notifications: true,
+    add: true,
+    profile: true,
+  };
 
   const fetchUserProfile = async () => {
     try {
       setIsLoading(true);
-      const data = await EditProfileApi.fetchUserProfile(userId);
+      const data = await EditProfileApi.fetchUserProfile();
       setProfileData(data);
       setFormData(data);
     } catch (error) {
@@ -47,7 +46,7 @@ const EditProfile = () => {
 
   const updateUserProfile = async (payload) => {
     try {
-      await EditProfileApi.updateUserProfile(userId, payload);
+      await EditProfileApi.updateUserProfile( payload);
       toast.success('Profile updated successfully!');
     } catch (error) {
       toast.error('Failed to update profile.');
@@ -69,11 +68,9 @@ const EditProfile = () => {
       newErrors.password = "Password cannot be empty.";
     }
 
-
     if (!formData.email.includes("@")) {
       newErrors.email = "Invalid email format.";
     }
-
 
     if (formData.phoneNo.length > 10) {
       newErrors.phoneNo = "Phone number cannot exceed 10 digits.";
@@ -83,12 +80,9 @@ const EditProfile = () => {
       newErrors.phoneNo = "Phone number is not valid";
     }
 
-  
     if (formData.fullName.trim() === "") {
       newErrors.fullName = "Full Name cannot be empty.";
     }
-    
-    
 
     setErrors(newErrors);
 
@@ -98,7 +92,6 @@ const EditProfile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate form before submission
     if (!validateForm()) {
       toast.error('Please fill out all fields correctly.');
       return;
@@ -126,7 +119,7 @@ const EditProfile = () => {
       <SubHeader title={'Back to Profile'} backPath={'/profile'} />
       {isLoading && <Loader title={'Loading Profile Details...'} />}
       {!isLoading && error && <ErrorAlert message={error.message} />}
-      {!isLoading && !error && profileData && profileData.length !== 0 ? (
+      {!isLoading && !error && profileData && Object.keys(profileData).length !== 0 ? (
         <div className="min-h-screen bg-gray-100 flex items-center justify-center py-8 pt-14">
           <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
             <h2 className="text-2xl font-bold mb-6 text-center">Edit Profile</h2>
@@ -224,4 +217,3 @@ const EditProfile = () => {
 };
 
 export default EditProfile;
-

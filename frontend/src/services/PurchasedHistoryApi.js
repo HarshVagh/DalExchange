@@ -1,8 +1,10 @@
 import axios from "axios";
 
-const PurchasedHistoryApi = async (userId, productId) => {
+const BASE_URL = "http://localhost:8080";
+
+const PurchasedHistoryApi = async (productId) => {
   try {
-    const response = await axios.get(`http://localhost:8080/purchased_products/${userId}`, {
+    const response = await axios.get(`${BASE_URL}/profile/purchased_products`, {
       params: { id: productId },
       paramsSerializer: { indexes: null },
     });
