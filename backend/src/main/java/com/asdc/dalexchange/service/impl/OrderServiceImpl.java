@@ -1,9 +1,13 @@
 package com.asdc.dalexchange.service.impl;
 
+import com.asdc.dalexchange.dto.OrderDTO;
+import com.asdc.dalexchange.dto.UserDTO;
 import com.asdc.dalexchange.enums.OrderStatus;
+import com.asdc.dalexchange.mappers.Mapper;
 import com.asdc.dalexchange.model.OrderDetails;
 import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.model.ShippingAddress;
+import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.repository.OrderRepository;
 import com.asdc.dalexchange.repository.ShippingRepository;
 import com.asdc.dalexchange.service.OrderService;
@@ -14,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -25,9 +30,8 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private ShippingRepository shippingRepository;
 
-    public List<OrderDetails> getAllOrders() {
-        return orderRepository.findAll();
-    }
+    @Autowired
+    private Mapper<OrderDetails, OrderDTO> orderMapper;
 
     public double salesChange() {
         LocalDateTime now = getCurrentDateTime();
@@ -109,14 +113,22 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
+    @Override
+    public List<OrderDTO> getAllOrders() {
+        return orderRepository.findAll().stream()
+                .map(orderMapper::mapTo)
+                .collect(Collectors.toList());
+    }
+
     // Order Moderation
-    public OrderDetails getOrderById(int orderId) {
-        return orderRepository.findById(orderId)
+    public OrderDTO getOrderById(int orderId) {
+        OrderDetails order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
+        return orderMapper.mapTo(order);
     }
 
     @Transactional
-    public OrderDetails updateOrder(int orderId, OrderDetails updatedOrderDetails) {
+    public OrderDTO updateOrder(int orderId, OrderDetails updatedOrderDetails) {
         OrderDetails order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
@@ -135,7 +147,8 @@ public class OrderServiceImpl implements OrderService {
         if (updatedOrderDetails.getPayment() != null) {
             order.setPayment(updatedOrderDetails.getPayment());
         }
-        return orderRepository.save(order);
+        OrderDetails updatedOrder = orderRepository.save(order);
+        return orderMapper.mapTo(updatedOrder);
     }
 
     @Transactional
@@ -148,11 +161,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Transactional
-    public OrderDetails processRefund(int orderId, double refundAmount) {
+    public OrderDTO processRefund(int orderId, double refundAmount) {
         OrderDetails order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         order.setTotalAmount(order.getTotalAmount() - refundAmount);
-        return orderRepository.save(order);
+        OrderDetails updatedOrder = orderRepository.save(order);
+        return orderMapper.mapTo(updatedOrder);
     }
 
     @Transactional
@@ -170,7 +184,5 @@ public class OrderServiceImpl implements OrderService {
 
         shippingRepository.save(existingAddress);
     }
-
-
 
 }
