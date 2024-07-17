@@ -12,4 +12,4 @@ const fetchProductRatings = async (userId, productId) => {
   }
 };
 
-export default { fetchProductRatings };
+export default fetchProductRatings ;

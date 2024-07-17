@@ -21,7 +21,6 @@ import SavedItems from "./features/Profile_page/SavedItems";
 import EditProfile from "./features/Profile_page/EditProfile";
 import Reviews from './features/Profile_page/Reviews';
 import PurchaseHistory from './features/Profile_page/PurchaseHistory';
-import toast, { Toaster } from 'react-hot-toast';
 
 
 function App() {
