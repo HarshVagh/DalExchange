@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Header from '../../components/Header';
 
-
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -66,6 +65,11 @@ const Login = () => {
                                 required
                             />
                         </div>
+                        <div className="flex items-center justify-between">
+                            <Link to="/forgot-password" className="text-sm text-blue-500 hover:underline">
+                                Forgot Password?
+                            </Link>
+                        </div>
                         <button type="submit" className="w-full bg-black text-white py-2 rounded">
                             Sign in
                         </button>
@@ -78,5 +82,3 @@ const Login = () => {
 };
 
 export default Login;
-
-

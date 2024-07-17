@@ -15,15 +15,15 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-public class ProductImageServiceImpTest {
+public class ProductImageServiceImplTest {
 
     @Mock
     private ProductImageRepository productImageRepository;
 
     @InjectMocks
-    private ProductImageServiceImp productImageService;
+    private ProductImageServiceImpl productImageService;
 
-    public ProductImageServiceImpTest() {
+    public ProductImageServiceImplTest() {
         MockitoAnnotations.openMocks(this);
     }
 

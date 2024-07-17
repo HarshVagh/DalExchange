@@ -10,11 +10,9 @@ import java.util.List;
 @Service
 public interface ProductService {
 
-    //get all the product by id
     ProductDTO getProductById(Long productId);
     List<ProductModerationDTO> getAllProducts();
     ProductModerationDTO updateProduct(Long productId, ProductModerationDTO updatedProductDetails);
     void unlistProduct(Long productId);
-
 
 }
