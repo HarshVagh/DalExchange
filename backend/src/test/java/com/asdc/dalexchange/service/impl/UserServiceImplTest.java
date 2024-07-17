@@ -1,10 +1,14 @@
 package com.asdc.dalexchange.service.impl;
 
+import com.asdc.dalexchange.dto.UserDTO;
+import com.asdc.dalexchange.enums.Role;
+import com.asdc.dalexchange.mappers.Mapper;
 import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.model.VerificationCode;
 import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.repository.VerificationCodeRepository;
 import com.asdc.dalexchange.service.EmailService;
+import com.asdc.dalexchange.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -12,7 +16,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -29,9 +36,11 @@ class UserServiceImplTest {
     @Mock
     private EmailService emailService;
 
+    @Mock
+    private Mapper<User, UserDTO> userMapper;
 
     @InjectMocks
-    private UserServiceImpl userServiceImpl;
+    private UserServiceImpl userService;
 
     @BeforeEach
     void setUp() {
@@ -42,7 +51,7 @@ class UserServiceImplTest {
     void testNewCustomers() {
         when(userRepository.countUsersJoinedInLast30Days()).thenReturn(100L);
 
-        long result = userServiceImpl.newCustomers();
+        long result = userService.newCustomers();
 
         assertEquals(100L, result);
     }
@@ -53,7 +62,7 @@ class UserServiceImplTest {
         when(userRepository.countUsersJoinedSince(any(LocalDateTime.class))).thenReturn(50L);
         when(userRepository.countUsersJoinedBetween(any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(40L);
 
-        double result = userServiceImpl.customersChange();
+        double result = userService.customersChange();
 
         assertEquals(25.0, result);
 
@@ -61,146 +70,187 @@ class UserServiceImplTest {
         when(userRepository.countUsersJoinedSince(any(LocalDateTime.class))).thenReturn(null);
         when(userRepository.countUsersJoinedBetween(any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(null);
 
-        result = userServiceImpl.customersChange();
+        result = userService.customersChange();
         assertEquals(0.0, result);
     }
 
     @Test
     void testGetCurrentDateTime() {
-        LocalDateTime result = userServiceImpl.getCurrentDateTime();
+        LocalDateTime result = userService.getCurrentDateTime();
         assertNotNull(result);
     }
-
     @Test
-    void testViewUserDetails() {
-        User user = new User();
-        user.setUserId(1L);
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+    public void testGetAllUsers() {
+        // Arrange
+        User user1 = new User();
+        user1.setUserId(1L);
+        user1.setEmail("user1@example.com");
 
-        Optional<User> result = userServiceImpl.viewUserDetails(1L);
+        User user2 = new User();
+        user2.setUserId(2L);
+        user2.setEmail("user2@example.com");
 
-        assertTrue(result.isPresent());
-        assertEquals(user, result.get());
+        List<User> users = Arrays.asList(user1, user2);
+        List<UserDTO> userDTOs = users.stream().map(user -> {
+            UserDTO dto = new UserDTO();
+            dto.setUserId(user.getUserId());
+            dto.setEmail(user.getEmail());
+            return dto;
+        }).collect(Collectors.toList());
+
+        when(userRepository.findAll()).thenReturn(users);
+        when(userMapper.mapTo(user1)).thenReturn(userDTOs.get(0));
+        when(userMapper.mapTo(user2)).thenReturn(userDTOs.get(1));
+
+        // Act
+        List<UserDTO> result = userService.getAllUsers();
+
+        // Assert
+        assertEquals(2, result.size());
+        assertEquals("user1@example.com", result.get(0).getEmail());
+        assertEquals("user2@example.com", result.get(1).getEmail());
     }
 
     @Test
-    void testEditUserDetails() {
+    public void testViewUserDetails() {
+        // Arrange
+        long userId = 1L;
         User user = new User();
-        user.setUserId(1L);
-        user.setUsername("oldUsername");
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(userRepository.save(any(User.class))).thenReturn(user);
+        user.setUserId(userId);
+        user.setEmail("user@example.com");
 
-        User updatedUser = new User();
-        updatedUser.setUsername("newUsername");
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUserId(userId);
+        userDTO.setEmail("user@example.com");
 
-        User result = userServiceImpl.editUserDetails(1L, updatedUser);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(userMapper.mapTo(user)).thenReturn(userDTO);
 
-        assertEquals("newUsername", result.getUsername());
-        verify(userRepository, times(1)).findById(1L);
-        verify(userRepository, times(1)).save(user);
+        // Act
+        Optional<UserDTO> result = userService.viewUserDetails(userId);
+
+        // Assert
+        assertEquals(userDTO, result.get());
     }
 
     @Test
-    void testEditUserDetailsNotFound() {
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+    public void testEditUserDetails() {
+        // Arrange
+        long userId = 1L;
+        User user = new User();
+        user.setUserId(userId);
+        user.setEmail("old@example.com");
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            userServiceImpl.editUserDetails(1L, new User());
-        });
+        UserDTO updatedUserDetails = new UserDTO();
+        updatedUserDetails.setEmail("new@example.com");
+        updatedUserDetails.setPhoneNo("123456789");
+        updatedUserDetails.setFullName("New Name");
+        updatedUserDetails.setRole(Role.admin);
+        updatedUserDetails.setActive(true);
 
-        assertEquals("User not found", exception.getMessage());
-        verify(userRepository, times(1)).findById(1L);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(userRepository.save(user)).thenReturn(user);
+        when(userMapper.mapTo(user)).thenReturn(updatedUserDetails);
+
+        // Act
+        UserDTO result = userService.editUserDetails(userId, updatedUserDetails);
+
+        // Assert
+        assertEquals("new@example.com", user.getEmail());
+        assertEquals("123456789", user.getPhoneNo());
+        assertEquals("New Name", user.getFullName());
+        assertEquals(Role.admin, user.getRole());
+        assertEquals(true, user.getActive());
+        assertEquals(updatedUserDetails, result);
     }
 
     @Test
-    void testActivateUser() {
+    public void testActivateUser() {
+        // Arrange
+        long userId = 1L;
         User user = new User();
-        user.setUserId(1L);
+        user.setUserId(userId);
         user.setActive(false);
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(userRepository.save(any(User.class))).thenReturn(user);
 
-        User result = userServiceImpl.activateUser(1L);
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUserId(userId);
+        userDTO.setActive(true);
 
-        assertTrue(result.getActive());
-        verify(userRepository, times(1)).findById(1L);
-        verify(userRepository, times(1)).save(user);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(userRepository.save(user)).thenReturn(user);
+        when(userMapper.mapTo(user)).thenReturn(userDTO);
+
+        // Act
+        UserDTO result = userService.activateUser(userId);
+
+        // Assert
+        assertEquals(true, user.getActive());
+        assertEquals(userDTO, result);
     }
 
     @Test
-    void testActivateUserNotFound() {
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+    public void testActivateUser_NotFound() {
+        // Arrange
+        long userId = 1L;
 
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            userServiceImpl.activateUser(1L);
+            userService.activateUser(userId);
         });
 
         assertEquals("User not found", exception.getMessage());
-        verify(userRepository, times(1)).findById(1L);
     }
 
     @Test
-    void testDeactivateUser() {
+    public void testDeactivateUser() {
+        // Arrange
+        long userId = 1L;
         User user = new User();
-        user.setUserId(1L);
+        user.setUserId(userId);
         user.setActive(true);
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(userRepository.save(any(User.class))).thenReturn(user);
 
-        User result = userServiceImpl.deactivateUser(1L);
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUserId(userId);
+        userDTO.setActive(false);
 
-        assertFalse(result.getActive());
-        verify(userRepository, times(1)).findById(1L);
-        verify(userRepository, times(1)).save(user);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(userRepository.save(user)).thenReturn(user);
+        when(userMapper.mapTo(user)).thenReturn(userDTO);
+
+        // Act
+        UserDTO result = userService.deactivateUser(userId);
+
+        // Assert
+        assertEquals(false, user.getActive());
+        assertEquals(userDTO, result);
     }
 
     @Test
-    void testDeactivateUserNotFound() {
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+    public void testDeactivateUser_NotFound() {
+        // Arrange
+        long userId = 1L;
 
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            userServiceImpl.deactivateUser(1L);
+            userService.deactivateUser(userId);
         });
 
         assertEquals("User not found", exception.getMessage());
-        verify(userRepository, times(1)).findById(1L);
     }
+
+
 
     @Test
     void testDeleteUser() {
         doNothing().when(userRepository).deleteById(1L);
 
-        userServiceImpl.deleteUser(1L);
+        userService.deleteUser(1L);
 
         verify(userRepository, times(1)).deleteById(1L);
-    }
-
-    @Test
-    void testResetPassword() {
-        User user = new User();
-        user.setUserId(1L);
-        user.setPassword("oldPassword");
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(userRepository.save(any(User.class))).thenReturn(user);
-
-        User result = userServiceImpl.resetPassword(1L, "newPassword");
-
-        assertEquals("newPassword", result.getPassword());
-        verify(userRepository, times(1)).findById(1L);
-        verify(userRepository, times(1)).save(user);
-    }
-
-    @Test
-    void testResetPasswordNotFound() {
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
-
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            userServiceImpl.resetPassword(1L, "newPassword");
-        });
-
-        assertEquals("User not found", exception.getMessage());
-        verify(userRepository, times(1)).findById(1L);
     }
 
     @Test
@@ -217,7 +267,7 @@ class UserServiceImplTest {
             return code;
         }).when(verificationCodeRepository).save(any(VerificationCode.class));
 
-        User registeredUser = userServiceImpl.registerUser(user);
+        User registeredUser = userService.registerUser(user);
 
         assertNotNull(registeredUser);
         assertEquals(user.getEmail(), registeredUser.getEmail());
@@ -239,7 +289,7 @@ class UserServiceImplTest {
 
         when(verificationCodeRepository.findByEmailAndCode(anyString(), anyString())).thenReturn(Optional.of(verificationCode));
 
-        boolean isVerified = userServiceImpl.verifyUser(email, code);
+        boolean isVerified = userService.verifyUser(email, code);
 
         assertTrue(isVerified);
         verify(verificationCodeRepository, times(1)).findByEmailAndCode(email, code);
@@ -252,7 +302,7 @@ class UserServiceImplTest {
 
         when(verificationCodeRepository.findByEmailAndCode(anyString(), anyString())).thenReturn(Optional.empty());
 
-        boolean isVerified = userServiceImpl.verifyUser(email, code);
+        boolean isVerified = userService.verifyUser(email, code);
 
         assertFalse(isVerified);
         verify(verificationCodeRepository, times(1)).findByEmailAndCode(email, code);

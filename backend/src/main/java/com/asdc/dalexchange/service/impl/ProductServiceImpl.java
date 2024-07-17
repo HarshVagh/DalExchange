@@ -1,8 +1,13 @@
 package com.asdc.dalexchange.service.impl;
 
 import com.asdc.dalexchange.dto.ProductDTO;
+import com.asdc.dalexchange.dto.ProductModerationDTO;
+import com.asdc.dalexchange.dto.UserDTO;
 import com.asdc.dalexchange.mappers.Mapper;
 import com.asdc.dalexchange.model.Product;
+import com.asdc.dalexchange.model.ProductCategory;
+import com.asdc.dalexchange.model.User;
+import com.asdc.dalexchange.repository.ProductCategoryRepository;
 import com.asdc.dalexchange.repository.ProductRepository;
 import com.asdc.dalexchange.service.ProductService;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
@@ -11,6 +16,7 @@ import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -19,7 +25,13 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepository productRepository;
 
     @Autowired
-    private Mapper<Product, ProductDTO> productMapper; // Inject the mapper
+    private ProductCategoryRepository productCategoryRepository;
+
+    @Autowired
+    private Mapper<Product, ProductDTO> productMapper;
+
+    @Autowired
+    private Mapper<Product, ProductModerationDTO> productModerationMapper;
 
     @Override
     public ProductDTO getProductById(Long productId) {
@@ -28,20 +40,18 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.mapTo(product);
     }
 
-
     // Product Moderation - prashanth
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public List<ProductModerationDTO> getAllProducts() {
+        return productRepository.findAll().stream()
+                .map(productModerationMapper::mapTo)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public Product updateProduct(Long productId, Product updatedProductDetails) {
+    public ProductModerationDTO updateProduct(Long productId, ProductModerationDTO updatedProductDetails) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        if (updatedProductDetails.getSeller() != null) {
-            product.setSeller(updatedProductDetails.getSeller());
-        }
         if (updatedProductDetails.getTitle() != null) {
             product.setTitle(updatedProductDetails.getTitle());
         }
@@ -52,7 +62,9 @@ public class ProductServiceImpl implements ProductService {
             product.setPrice(updatedProductDetails.getPrice());
         }
         if (updatedProductDetails.getCategory() != null) {
-            product.setCategory(updatedProductDetails.getCategory());
+            ProductCategory category = productCategoryRepository.findById(updatedProductDetails.getCategory().getCategoryId())
+                    .orElseThrow(() -> new RuntimeException("Category not found"));
+            product.setCategory(category);
         }
         if (updatedProductDetails.getProductCondition() != null) {
             product.setProductCondition(updatedProductDetails.getProductCondition());
@@ -67,7 +79,7 @@ public class ProductServiceImpl implements ProductService {
             product.setQuantityAvailable(updatedProductDetails.getQuantityAvailable());
         }
 
-        return productRepository.save(product);
+        return productModerationMapper.mapTo(productRepository.save(product));
     }
 
     @Transactional

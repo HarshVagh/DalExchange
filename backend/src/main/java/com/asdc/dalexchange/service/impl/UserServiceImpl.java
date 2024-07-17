@@ -1,5 +1,10 @@
 package com.asdc.dalexchange.service.impl;
 
+import com.asdc.dalexchange.dto.TradeRequestDTO;
+import com.asdc.dalexchange.dto.UserDTO;
+import com.asdc.dalexchange.mappers.Mapper;
+import com.asdc.dalexchange.model.OrderDetails;
+import com.asdc.dalexchange.model.TradeRequest;
 import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.model.VerificationCode;
 import com.asdc.dalexchange.repository.UserRepository;
@@ -10,8 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -24,6 +31,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private Mapper<User, UserDTO> userMapper;
 
     public long newCustomers(){
         return userRepository.countUsersJoinedInLast30Days();
@@ -60,22 +70,25 @@ public class UserServiceImpl implements UserService {
     }
 
     //new
-    // View User Details
-    public Optional<User> viewUserDetails(long userId) {
-        return userRepository.findById(userId);
+
+    @Override
+    public List<UserDTO> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(userMapper::mapTo)
+                .collect(Collectors.toList());
     }
 
-    // Edit User Details
-    public User editUserDetails(long userId, User updatedUserDetails) {
+    @Override
+    public Optional<UserDTO> viewUserDetails(long userId) {
+        return userRepository.findById(userId)
+                .map(userMapper::mapTo);
+    }
+
+    @Override
+    public UserDTO editUserDetails(long userId, UserDTO updatedUserDetails) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (updatedUserDetails.getUsername() != null) {
-            user.setUsername(updatedUserDetails.getUsername());
-        }
-        if (updatedUserDetails.getPassword() != null) {
-            user.setPassword(updatedUserDetails.getPassword());
-        }
         if (updatedUserDetails.getEmail() != null) {
             user.setEmail(updatedUserDetails.getEmail());
         }
@@ -85,44 +98,35 @@ public class UserServiceImpl implements UserService {
         if (updatedUserDetails.getFullName() != null) {
             user.setFullName(updatedUserDetails.getFullName());
         }
-        if (updatedUserDetails.getProfilePicture() != null) {
-            user.setProfilePicture(updatedUserDetails.getProfilePicture());
-        }
         if (updatedUserDetails.getRole() != null) {
             user.setRole(updatedUserDetails.getRole());
-        }
-        if (updatedUserDetails.getBio() != null) {
-            user.setBio(updatedUserDetails.getBio());
         }
         if (updatedUserDetails.getActive() != null) {
             user.setActive(updatedUserDetails.getActive());
         }
-        if (updatedUserDetails.getSellerRating() != null) {
-            user.setSellerRating(updatedUserDetails.getSellerRating());
-        }
 
-        return userRepository.save(user);
+        return userMapper.mapTo(userRepository.save(user));
     }
 
-    // Activate User Account
-    public User activateUser(long userId) {
+    @Override
+    public UserDTO activateUser(long userId) {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             user.setActive(true);
-            return userRepository.save(user);
+            return userMapper.mapTo(userRepository.save(user));
         } else {
             throw new RuntimeException("User not found");
         }
     }
 
-    // Deactivate User Account
-    public User deactivateUser(long userId) {
+    @Override
+    public UserDTO deactivateUser(long userId) {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             user.setActive(false);
-            return userRepository.save(user);
+            return userMapper.mapTo(userRepository.save(user));
         } else {
             throw new RuntimeException("User not found");
         }
@@ -134,16 +138,16 @@ public class UserServiceImpl implements UserService {
     }
 
     // Reset Password
-    public User resetPassword(long userId, String newPassword) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            user.setPassword(newPassword);
-            return userRepository.save(user);
-        } else {
-            throw new RuntimeException("User not found");
-        }
-    }
+//    public User resetPassword(long userId, String newPassword) {
+//        Optional<User> optionalUser = userRepository.findById(userId);
+//        if (optionalUser.isPresent()) {
+//            User user = optionalUser.get();
+//            user.setPassword(newPassword);
+//            return userRepository.save(user);
+//        } else {
+//            throw new RuntimeException("User not found");
+//        }
+//    }
 
     public User registerUser(User user) {
         User registeredUser = userRepository.save(user);

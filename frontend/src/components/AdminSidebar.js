@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import StoreIcon from "../../assets/icons/store-solid.svg";
+import StoreIcon from "../assets/icons/store-solid.svg";
 
 function Sidebar() {
   const location = useLocation();
@@ -34,10 +34,10 @@ function Sidebar() {
             Orders
           </button>
         </Link>
-        <Link to="/admin/users">
+        <Link to="/admin-moderation/users">
           <button
             className={`w-full py-2 px-4 text-center rounded ${
-              location.pathname === "/admin/users"
+              location.pathname === "/admin-moderation/users"
                 ? "bg-blue-700"
                 : "bg-blue-500 hover:bg-blue-600 transition"
             }`}
@@ -45,10 +45,10 @@ function Sidebar() {
             Users
           </button>
         </Link>
-        <Link to="/admin/products">
+        <Link to="/admin-moderation/products">
           <button
             className={`w-full py-2 px-4 text-center rounded ${
-              location.pathname === "/admin/products"
+              location.pathname === "/admin-moderation/products"
                 ? "bg-blue-700"
                 : "bg-blue-500 hover:bg-blue-600 transition"
             }`}

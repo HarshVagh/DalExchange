@@ -27,4 +27,10 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
                 .map(ProductCategory::getName)
                 .toList();
     }
+
+    @Override
+    public List<ProductCategory> findAllCategories() {
+        return productCategoryRepository.findAll();
+    }
+
 }

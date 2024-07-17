@@ -1,6 +1,7 @@
 package com.asdc.dalexchange.controller;
 
 import com.asdc.dalexchange.dto.ProductDTO;
+import com.asdc.dalexchange.dto.ProductModerationDTO;
 import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class AdminProductController {
     }
 
     @GetMapping
-    public List<Product> getAllProducts() {
+    public List<ProductModerationDTO> getAllProducts() {
         return productService.getAllProducts();
     }
 
@@ -30,9 +31,9 @@ public class AdminProductController {
     }
 
     @PutMapping("/update/{productId}")
-    public Product updateProduct(
+    public ProductModerationDTO updateProduct(
             @PathVariable Long productId,
-            @RequestBody Product updatedProductDetails) {
+            @RequestBody ProductModerationDTO updatedProductDetails) {
         return productService.updateProduct(productId, updatedProductDetails);
     }
 
