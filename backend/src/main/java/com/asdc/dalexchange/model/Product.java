@@ -31,7 +31,7 @@ public class Product {
     private double price;
 
     @ManyToOne
-    @JoinColumn(name = "category")
+    @JoinColumn(name = "category_id")
     private ProductCategory category;
 
     @Enumerated(EnumType.STRING)
@@ -53,4 +53,14 @@ public class Product {
 
     @Column(name = "unlisted", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean unlisted;
+
+    @Column(name = "image_path")
+    private String imagePath;
+
+    public void setId(long l) {
+        this.productId = l;
+    }
+    public long getId(){
+        return this.productId;
+    }
 }
