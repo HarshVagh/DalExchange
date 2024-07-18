@@ -16,7 +16,6 @@ cache:
 before_script:
   - cd frontend/
   - npm cache clean --force
-  - npm install -g npm@latest
 
 backend_build:
   stage: build
@@ -43,7 +42,7 @@ frontend_build:
     - cd frontend/
   script:
     - echo "Frontend Build Started"
-    - npm install
+    - npm install || (cat /root/.npm/_logs/*-debug-*.log && exit 1)
     - npm run build
     - echo "Frontend Build Completed"
   artifacts:
