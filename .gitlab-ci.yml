@@ -42,7 +42,7 @@ frontend_build:
     - cd frontend/
   script:
     - echo "Frontend Build Started"
-    - echo npm --version
+    - npm --version
     - npm install
     - npm run build
     - echo "Frontend Build Completed"
