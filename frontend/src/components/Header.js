@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import StoreIcon from "../assets/icons/store-solid.svg";
 import SearchIcon from "../assets/icons/magnifying-glass-solid.svg";
 import PlusIcon from "../assets/icons/plus-solid.svg";
@@ -9,6 +9,8 @@ import UserPlaceholder from "../assets/images/placeholder-user.jpg";
 import Notification from "../features/notification/Notification";
 
 const Header = ({config, search, setSearch, onSearchSubmit}) => {
+	
+	const navigate = useNavigate();
 
 	const [notificationVisible, setNotificationVisible] = useState(false);
 
@@ -63,8 +65,8 @@ const Header = ({config, search, setSearch, onSearchSubmit}) => {
 				{config?.add && <button type="button" className="flex px-2.5 py-2.5 text-sm text-white font-medium bg-blue-700 hover:bg-blue-800 rounded-full dark:bg-blue-600 focus:outline-none">
           <img alt="" className="h-5 w-5" src={PlusIcon}/>
         </button>}
-        
-				{config?.profile && <img alt="" className="w-10 h-10 rounded-full" src={UserPlaceholder} />}
+				
+				{config?.profile && <img alt="" className="w-10 h-10 rounded-full cursor-pointer" src={UserPlaceholder} onClick={() => navigate("/profile")} />}
 			</div>
 		</header>
 		{notificationVisible && <Notification/>}

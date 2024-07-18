@@ -36,7 +36,7 @@ public class User {
     @Column(name = "phone_no")
     private String phoneNo;
 
-    @Column(name = "full_name", nullable = true)
+    @Column(name = "full_name", nullable = false)
     private String fullName;
 
     @Column(name = "profile_picture")

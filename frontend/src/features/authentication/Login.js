@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Header from '../../components/Header';
-
+import { useUser } from './UserContext';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
+    const { setUser } = useUser();  // Get the setUser function from the context
     const headerConfig = {
         search: false,
         requests: false,
@@ -23,12 +24,21 @@ const Login = () => {
             const response = await axios.post('http://localhost:8080/auth/login', { email, password });
             setMessage('Login successful.');
             localStorage.setItem('jwtToken', response.data.token);
+
+            const userResponse = await axios.get('http://localhost:8080/auth/current-user', {
+                headers: {
+                    'Authorization': `Bearer ${response.data.token}`
+                }
+            });
+            console.log(userResponse);
+            setUser(userResponse.data); 
             navigate('/products');
         } catch (error) {
             setMessage('Invalid credentials.');
         }
     };
 
+   
     return (
         <div className="flex flex-col min-h-screen">
             <Header config={headerConfig}></Header>
@@ -38,7 +48,7 @@ const Login = () => {
                         <h2 className="text-3xl font-bold tracking-tight">Sign in to your account</h2>
                         <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
                             Don&apos;t have an account?{" "}
-                            <Link to="/register" className="font-medium hover:underline">
+                            <Link to="/signup" className="font-medium hover:underline">
                                 Register
                             </Link>
                         </p>
@@ -66,6 +76,11 @@ const Login = () => {
                                 required
                             />
                         </div>
+                        <div className="flex items-center justify-between">
+                            <Link to="/forgot-password" className="text-sm text-blue-500 hover:underline">
+                                Forgot Password?
+                            </Link>
+                        </div>
                         <button type="submit" className="w-full bg-black text-white py-2 rounded">
                             Sign in
                         </button>
@@ -78,5 +93,3 @@ const Login = () => {
 };
 
 export default Login;
-
-

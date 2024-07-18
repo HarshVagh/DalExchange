@@ -1,8 +1,10 @@
 package com.asdc.dalexchange.service;
 
+import com.asdc.dalexchange.dto.UserDTO;
 import com.asdc.dalexchange.model.User;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
@@ -11,24 +13,21 @@ public interface UserService {
     double customersChange();
     LocalDateTime getCurrentDateTime();
 
-    // View User Details
-    Optional<User> viewUserDetails(long userId);
 
-    // Edit User Details
-    User editUserDetails(long userId, User updatedUserDetails);
-
-    // Activate User Account
-    User activateUser(long userId);
-
-    // Deactivate User Account
-    User deactivateUser(long userId);
-
-    // Delete User Account
+    List<UserDTO> getAllUsers();
+    Optional<UserDTO> viewUserDetails(long userId);
+    UserDTO editUserDetails(long userId, UserDTO updatedUserDetails);
+    UserDTO activateUser(long userId);
+    UserDTO deactivateUser(long userId);
     void deleteUser(long userId);
-
-    // Reset Password
-    User resetPassword(long userId, String newPassword);
-
     User registerUser(User user);
     boolean verifyUser(String email, String code);
+
+
+    // Reset Password
+    //User resetPassword(long userId, String newPassword);
+
+
+
+
 }

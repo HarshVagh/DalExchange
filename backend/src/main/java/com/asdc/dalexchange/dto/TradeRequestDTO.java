@@ -15,17 +15,13 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class TradeRequestDTO {
     private Long requestId;
-
     private ProductListingDTO product;
-
     private String buyerName;
     private double buyerRating;
     private LocalDateTime buyerJoiningDate;
-
     private String sellerName;
     private double sellerRating;
     private LocalDateTime sellerJoiningDate;
-
     private double requestedPrice;
     private String requestStatus; // 'pending', 'approved', 'rejected'
     private LocalDateTime requestedAt;

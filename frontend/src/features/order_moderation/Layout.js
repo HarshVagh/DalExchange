@@ -1,6 +1,6 @@
 // Layout.jsx
 import React from "react";
-import Sidebar from "./AdminSidebar";
+import Sidebar from "../../components/AdminSidebar";
 
 const Layout = ({ children }) => {
   return (
