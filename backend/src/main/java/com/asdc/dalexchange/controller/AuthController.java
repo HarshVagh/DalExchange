@@ -6,6 +6,7 @@ import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.model.VerificationRequest;
 import com.asdc.dalexchange.service.UserService;
 import com.asdc.dalexchange.service.impl.UserServiceImpl;
+import com.asdc.dalexchange.util.CurrentUserUtil;
 import com.asdc.dalexchange.util.JwtUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,5 +137,17 @@ public class AuthController {
             logger.error("Error verifying user: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error verifying user.");
         }
+    }
+
+    @Autowired
+    private CurrentUserUtil currentUserUtil;
+
+    @GetMapping("/current-user")
+    public ResponseEntity<?> getCurrentUser() {
+        User currentUser = currentUserUtil.getCurrentUser();
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No user is currently logged in");
+        }
+        return ResponseEntity.ok(currentUser);
     }
 }
