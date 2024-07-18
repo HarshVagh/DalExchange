@@ -37,11 +37,12 @@ backend_build:
 
 frontend_build:
   stage: build
-  image: node:alpine
+  image: node:latest
   before_script:
     - cd frontend/
   script:
     - echo "Frontend Build Started"
+    - echo npm --version
     - npm install 
     - cat /root/.npm/_logs/*-debug-*.log
     - npm run build
