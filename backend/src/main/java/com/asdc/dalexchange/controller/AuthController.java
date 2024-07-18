@@ -5,8 +5,6 @@ import com.asdc.dalexchange.enums.Role;
 import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.model.VerificationRequest;
 import com.asdc.dalexchange.service.UserService;
-import com.asdc.dalexchange.service.impl.UserServiceImpl;
-import com.asdc.dalexchange.util.CurrentUserUtil;
 import com.asdc.dalexchange.util.JwtUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,23 +40,6 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    /*@PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody User user) {
-        try {
-            if (!user.getEmail().endsWith("@dal.ca")) {
-                return ResponseEntity.badRequest().body("Email must be a @dal.ca address");
-            }
-            String encodedPassword = passwordEncoder.encode(user.getPassword());
-            user.setPassword(encodedPassword);
-
-            userService.registerUser(user);
-            // Send verification code logic
-            return ResponseEntity.ok("User registered successfully. Please check your email for verification code.");
-        } catch (Exception e) {
-            logger.error("Error registering user: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error registering user.");
-        }
-    }*/
     @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> signup(
             @RequestPart("username") String username,
@@ -139,12 +120,9 @@ public class AuthController {
         }
     }
 
-    @Autowired
-    private CurrentUserUtil currentUserUtil;
-
     @GetMapping("/current-user")
     public ResponseEntity<?> getCurrentUser() {
-        User currentUser = currentUserUtil.getCurrentUser();
+        User currentUser = userService.getCurrentUser();
         if (currentUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No user is currently logged in");
         }

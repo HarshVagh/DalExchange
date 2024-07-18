@@ -11,6 +11,7 @@ import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.repository.VerificationCodeRepository;
 import com.asdc.dalexchange.service.EmailService;
 import com.asdc.dalexchange.service.UserService;
+import com.asdc.dalexchange.util.AuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -174,6 +175,10 @@ public class UserServiceImpl implements UserService {
     private String generateVerificationCode() {
         Random random = new Random();
         return String.format("%06d", random.nextInt(999999));
+    }
+
+    public User getCurrentUser() {
+        return AuthUtil.getCurrentUser(userRepository);
     }
 
 }

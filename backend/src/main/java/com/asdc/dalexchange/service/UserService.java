@@ -8,12 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-
     long newCustomers();
     double customersChange();
     LocalDateTime getCurrentDateTime();
-
-
     List<UserDTO> getAllUsers();
     Optional<UserDTO> viewUserDetails(long userId);
     UserDTO editUserDetails(long userId, UserDTO updatedUserDetails);
@@ -22,12 +19,5 @@ public interface UserService {
     void deleteUser(long userId);
     User registerUser(User user);
     boolean verifyUser(String email, String code);
-
-
-    // Reset Password
-    //User resetPassword(long userId, String newPassword);
-
-
-
-
+    User getCurrentUser();
 }
