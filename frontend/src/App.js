@@ -13,6 +13,7 @@ import PrivateRoute from './features/authentication/PrivateRoute';
 import ViewOrders from './features/order_moderation/ViewOrders';
 import OrderDetails from './features/order_moderation/OrderDetails';
 import Layout from './features/order_moderation/Layout'; 
+import Notification from './features/notification/Notification';
 
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
         <Route path="/trade_requests" element={<PrivateRoute> <TradeRequests/> </PrivateRoute> } />
         <Route path="/admin-moderation/orders" element={<Layout><ViewOrders /></Layout>} /> 
         <Route path="/admin-moderation/orders/:orderId" element={<Layout><OrderDetails /></Layout>} /> 
+        <Route path="/notifications" element={<PrivateRoute> <Notification/> </PrivateRoute>} /> 
       </Routes>
     </div>
   );
