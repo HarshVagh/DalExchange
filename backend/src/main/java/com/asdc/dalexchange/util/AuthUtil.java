@@ -2,23 +2,25 @@ package com.asdc.dalexchange.util;
 
 import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 
-@Component
-public class CurrentUserUtil {
+public class AuthUtil {
 
-    private final UserRepository userRepository;
-
-    @Autowired
-    public CurrentUserUtil(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public static User getCurrentUser(UserRepository userRepository) {
+        return userRepository.findByEmail(getEmail()).orElse(null);
     }
 
-    public User getCurrentUser() {
+    public static Long getCurrentUserId(UserRepository userRepository) {
+        User currentUser = getCurrentUser(userRepository);
+        if(currentUser == null) {
+            return null;
+        }
+        return currentUser.getUserId();
+    }
+
+    private static String getEmail () {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return null;
@@ -32,6 +34,6 @@ public class CurrentUserUtil {
             email = principal.toString();
         }
 
-        return userRepository.findByEmail(email).orElse(null);
+        return email;
     }
 }

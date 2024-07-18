@@ -37,18 +37,19 @@ public class TradeRequestController {
     @Autowired
     private Mapper<TradeRequest, TradeRequestDTO> tradeRequestMapper;
 
-    public TradeRequestController(TradeRequestService tradeRequestService,
-                                  NotificationService notificationService,
-                                  Mapper<TradeRequest, TradeRequestDTO> tradeRequestMapper) {
+    public TradeRequestController(
+            TradeRequestService tradeRequestService,
+            NotificationService notificationService,
+            Mapper<TradeRequest, TradeRequestDTO> tradeRequestMapper) {
         this.tradeRequestService = tradeRequestService;
+        this.notificationService = notificationService;
         this.tradeRequestMapper = tradeRequestMapper;
     }
 
     @GetMapping(path = "/sell_requests")
     public List<TradeRequestDTO> getSellRequests() {
         log.info("get sell_requests api endpoint called");
-        long sellerId = 1L;
-        List<TradeRequest> tradeRequests = tradeRequestService.getSellerTradeRequests(sellerId);
+        List<TradeRequest> tradeRequests = tradeRequestService.getSellerTradeRequests();
         return tradeRequests.stream()
                 .map(tradeRequestMapper::mapTo)
                 .collect(Collectors.toList());
@@ -57,8 +58,7 @@ public class TradeRequestController {
     @GetMapping(path = "/buy_requests")
     public List<TradeRequestDTO> getBuyRequests() {
         log.info("get buy_requests api endpoint called");
-        long buyerId = 1L;
-        List<TradeRequest> tradeRequests = tradeRequestService.getBuyerTradeRequests(buyerId);
+        List<TradeRequest> tradeRequests = tradeRequestService.getBuyerTradeRequests();
         return tradeRequests.stream()
                 .map(tradeRequestMapper::mapTo)
                 .collect(Collectors.toList());

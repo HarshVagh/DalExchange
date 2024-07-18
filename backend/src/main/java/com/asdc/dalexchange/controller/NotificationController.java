@@ -21,15 +21,16 @@ public class NotificationController {
     private NotificationService notificationService;
     private Mapper<Notification, NotificationDTO> notificationMapper;
 
-    public NotificationController(NotificationService notificationService, Mapper<Notification, NotificationDTO> notificationMapper) {
+    public NotificationController(
+            NotificationService notificationService,
+            Mapper<Notification, NotificationDTO> notificationMapper) {
         this.notificationService = notificationService;
         this.notificationMapper = notificationMapper;
     }
 
     @GetMapping("")
     public List<NotificationDTO> getNotifications() {
-        Long userId = 1L; // TODO: replace with current logged in user id
-        List<Notification> notifications = notificationService.getNotifications(userId);
+        List<Notification> notifications = notificationService.getNotifications();
         return notifications.stream()
                 .map(notificationMapper::mapTo)
                 .collect(Collectors.toList());

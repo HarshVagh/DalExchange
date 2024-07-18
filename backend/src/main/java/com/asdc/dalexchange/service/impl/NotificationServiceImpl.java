@@ -2,8 +2,10 @@ package com.asdc.dalexchange.service.impl;
 
 import com.asdc.dalexchange.model.Notification;
 import com.asdc.dalexchange.repository.NotificationRepository;
+import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.service.NotificationService;
 import com.asdc.dalexchange.specifications.NotificationSpecification;
+import com.asdc.dalexchange.util.AuthUtil;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -16,10 +18,12 @@ import java.util.Optional;
 public class NotificationServiceImpl implements NotificationService {
 
     private NotificationRepository notificationRepository;
+    private UserRepository userRepository;
     private JavaMailSender mailSender;
 
-    public NotificationServiceImpl(NotificationRepository notificationRepository, JavaMailSender mailSender) {
+    public NotificationServiceImpl(NotificationRepository notificationRepository, UserRepository userRepository, JavaMailSender mailSender) {
         this.notificationRepository = notificationRepository;
+        this.userRepository = userRepository;
         this.mailSender = mailSender;
     }
 
@@ -36,7 +40,8 @@ public class NotificationServiceImpl implements NotificationService {
         mailSender.send(message);
     }
 
-    public List<Notification> getNotifications(Long userId) {
+    public List<Notification> getNotifications() {
+        Long userId = AuthUtil.getCurrentUserId(userRepository);
         Specification<Notification> spec = Specification.where(NotificationSpecification.hasUserId(userId));
         return notificationRepository.findAll(spec);
     }
