@@ -1,8 +1,5 @@
 package com.asdc.dalexchange.service.impl;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.asdc.dalexchange.dto.TradeRequestDTO;
 import com.asdc.dalexchange.mappers.Mapper;
 import com.asdc.dalexchange.model.Product;
@@ -12,12 +9,11 @@ import com.asdc.dalexchange.repository.ProductRepository;
 import com.asdc.dalexchange.repository.TradeRequestRepository;
 import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.specifications.TradeRequestSpecification;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.MockitoAnnotations;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.HashMap;
@@ -25,8 +21,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@SpringBootTest
-@ExtendWith(MockitoExtension.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 public class TradeRequestServiceImplTest {
 
     @Mock
@@ -44,6 +45,11 @@ public class TradeRequestServiceImplTest {
     @InjectMocks
     private TradeRequestServiceImpl tradeRequestService;
 
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
     @Test
     public void testGetBuyerTradeRequests() {
         Long buyerId = 1L;
@@ -52,7 +58,7 @@ public class TradeRequestServiceImplTest {
 
         when(tradeRequestRepository.findAll(any(Specification.class))).thenReturn(List.of(tradeRequest));
 
-        List<TradeRequest> result = tradeRequestService.getBuyerTradeRequests(buyerId);
+        List<TradeRequest> result = tradeRequestService.getBuyerTradeRequests();
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -69,7 +75,7 @@ public class TradeRequestServiceImplTest {
 
         when(tradeRequestRepository.findAll(any(Specification.class))).thenReturn(List.of(tradeRequest));
 
-        List<TradeRequest> result = tradeRequestService.getSellerTradeRequests(sellerId);
+        List<TradeRequest> result = tradeRequestService.getSellerTradeRequests();
 
         assertNotNull(result);
         assertEquals(1, result.size());

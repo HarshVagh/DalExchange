@@ -1,8 +1,5 @@
 package com.asdc.dalexchange.controller;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.asdc.dalexchange.dto.TradeRequestDTO;
 import com.asdc.dalexchange.mappers.Mapper;
 import com.asdc.dalexchange.model.Notification;
@@ -11,24 +8,25 @@ import com.asdc.dalexchange.model.TradeRequest;
 import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.service.NotificationService;
 import com.asdc.dalexchange.service.TradeRequestService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@SpringBootTest
-@ExtendWith(MockitoExtension.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 public class TradeRequestControllerTest {
 
     @Mock
@@ -43,13 +41,17 @@ public class TradeRequestControllerTest {
     @InjectMocks
     private TradeRequestController tradeRequestController;
 
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
     @Test
     public void testGetSellRequests() {
-        Long sellerId = 1L;
         TradeRequest tradeRequest = new TradeRequest();
         TradeRequestDTO tradeRequestDTO = new TradeRequestDTO();
 
-        when(tradeRequestService.getSellerTradeRequests(sellerId)).thenReturn(List.of(tradeRequest));
+        when(tradeRequestService.getSellerTradeRequests()).thenReturn(List.of(tradeRequest));
         when(tradeRequestMapper.mapTo(tradeRequest)).thenReturn(tradeRequestDTO);
 
         List<TradeRequestDTO> result = tradeRequestController.getSellRequests();
@@ -58,17 +60,16 @@ public class TradeRequestControllerTest {
         assertEquals(1, result.size());
         assertEquals(tradeRequestDTO, result.get(0));
 
-        verify(tradeRequestService, times(1)).getSellerTradeRequests(sellerId);
+        verify(tradeRequestService, times(1)).getSellerTradeRequests();
         verify(tradeRequestMapper, times(1)).mapTo(tradeRequest);
     }
 
     @Test
     public void testGetBuyRequests() {
-        Long buyerId = 1L;
         TradeRequest tradeRequest = new TradeRequest();
         TradeRequestDTO tradeRequestDTO = new TradeRequestDTO();
 
-        when(tradeRequestService.getBuyerTradeRequests(buyerId)).thenReturn(List.of(tradeRequest));
+        when(tradeRequestService.getBuyerTradeRequests()).thenReturn(List.of(tradeRequest));
         when(tradeRequestMapper.mapTo(tradeRequest)).thenReturn(tradeRequestDTO);
 
         List<TradeRequestDTO> result = tradeRequestController.getBuyRequests();
@@ -77,7 +78,7 @@ public class TradeRequestControllerTest {
         assertEquals(1, result.size());
         assertEquals(tradeRequestDTO, result.get(0));
 
-        verify(tradeRequestService, times(1)).getBuyerTradeRequests(buyerId);
+        verify(tradeRequestService, times(1)).getBuyerTradeRequests();
         verify(tradeRequestMapper, times(1)).mapTo(tradeRequest);
     }
 
