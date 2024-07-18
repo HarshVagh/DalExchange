@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-
-import Footer from './Footer';
 import axios from 'axios';
 import Header from '../../components/Header';
 
@@ -67,7 +65,6 @@ const ResetPassword = () => {
                     {message && <p>{message}</p>}
                 </div>
             </div>
-            <Footer />
         </div>
     );
 };

@@ -14,6 +14,7 @@ import PrivateRoute from './features/authentication/PrivateRoute';
 import ViewOrders from './features/order_moderation/ViewOrders';
 import OrderDetails from './features/order_moderation/OrderDetails';
 import Layout from './features/order_moderation/Layout'; 
+import AddProduct from './features/authentication/AddProduct';
 import UserModeration from "./features/user_moderation/UserModeration";
 import ProductModeration from "./features/product_moderation/ProductModeration";
 
@@ -39,7 +40,7 @@ function App() {
         <Route path="/products" element={<PrivateRoute> <ProductList /> </PrivateRoute> } />
         <Route path="/products/:productId" element={<PrivateRoute> <ProductDetails/> </PrivateRoute> } />
         <Route path="/trade_requests" element={<PrivateRoute> <TradeRequests/> </PrivateRoute> } />
-        <Route path="/admin-moderation/orders" element={<Layout><ViewOrders /></Layout>} /> 
+        <Route path="/admin-moderation/orders" element={<Layout><ViewOrders /></Layout>} />
         <Route path="/admin-moderation/orders/:orderId" element={<Layout><OrderDetails /></Layout>} />
         <Route path="/admin-moderation/users" element={<Layout><UserModeration /></Layout>} />
         <Route path="/admin-moderation/products" element={<Layout><ProductModeration /></Layout>} />
@@ -51,6 +52,9 @@ function App() {
         <Route path="/profile/reviews" element={<PrivateRoute> <Reviews /> </PrivateRoute>} />
         <Route path="/admin-moderation/orders" element={<Layout> <ViewOrders /> </Layout>} />
         <Route path="/admin-moderation/orders/:orderId" element={<Layout> <OrderDetails /> </Layout>} />
+        <Route path="/admin-moderation/orders" element={<Layout> <ViewOrders /> </Layout>} />
+        <Route path="/admin-moderation/orders/:orderId" element={<Layout> <OrderDetails /> </Layout>} />
+        <Route path="/add-product" element={<Layout> <AddProduct /> </Layout>}/>
       </Routes>
     </div>
   );
