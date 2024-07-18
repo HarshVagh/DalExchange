@@ -10,5 +10,5 @@ public interface TradeRequestService {
     List<TradeRequest> getBuyerTradeRequests(Long buyerId);
     List<TradeRequest> getSellerTradeRequests(Long sellerId);
     TradeRequest updateTradeRequestStatus(Long requestId, String status);
-    public TradeRequestDTO createTradeRequest(Map<String, Object> requestBody);
+    TradeRequestDTO createTradeRequest(Map<String, Object> requestBody);
 }

@@ -2,8 +2,12 @@ package com.asdc.dalexchange.controller;
 
 import com.asdc.dalexchange.dto.TradeRequestDTO;
 import com.asdc.dalexchange.mappers.Mapper;
+import com.asdc.dalexchange.model.Notification;
 import com.asdc.dalexchange.model.TradeRequest;
+import com.asdc.dalexchange.model.User;
+import com.asdc.dalexchange.service.NotificationService;
 import com.asdc.dalexchange.service.TradeRequestService;
+import com.asdc.dalexchange.util.NotificationUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,9 +32,14 @@ public class TradeRequestController {
     private TradeRequestService tradeRequestService;
 
     @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
     private Mapper<TradeRequest, TradeRequestDTO> tradeRequestMapper;
 
-    public TradeRequestController(TradeRequestService tradeRequestService, Mapper<TradeRequest, TradeRequestDTO> tradeRequestMapper) {
+    public TradeRequestController(TradeRequestService tradeRequestService,
+                                  NotificationService notificationService,
+                                  Mapper<TradeRequest, TradeRequestDTO> tradeRequestMapper) {
         this.tradeRequestService = tradeRequestService;
         this.tradeRequestMapper = tradeRequestMapper;
     }
@@ -67,6 +77,31 @@ public class TradeRequestController {
         log.info("updateTradeRequestStatus api endpoint called with id: {} and status: {}", id, status);
         TradeRequest updatedTradeRequest = tradeRequestService.updateTradeRequestStatus(id, status);
         TradeRequestDTO tradeRequestDTO = tradeRequestMapper.mapTo(updatedTradeRequest);
+        sendNotification(updatedTradeRequest, status);
         return ResponseEntity.ok(tradeRequestDTO);
+    }
+
+    private void sendNotification(TradeRequest tradeRequest, String status) {
+        User buyer = tradeRequest.getBuyer();
+        User seller = tradeRequest.getSeller();
+        Notification notification = new Notification();
+        String title = NotificationUtil.getTitle(status);
+        String message = NotificationUtil.getMessage(status, tradeRequest.getProduct().getTitle());
+
+        notification.setCreatedAt(LocalDateTime.now());
+        notification.setIsRead(false);
+        notification.setUser(buyer);
+        notification.setTitle(title);
+        notification.setMessage(message);
+        notificationService.sendNotification(notification);
+
+        if(status.equals("completed") || status.equals("canceled")) {
+            String sellerTitle = NotificationUtil.getSellerTitle(status);
+            String sellerMessage = NotificationUtil.getSellerMessage(status, tradeRequest.getProduct().getTitle());
+            notification.setUser(seller);
+            notification.setTitle(sellerTitle);
+            notification.setMessage(sellerMessage);
+            notificationService.sendNotification(notification);
+        }
     }
 }
