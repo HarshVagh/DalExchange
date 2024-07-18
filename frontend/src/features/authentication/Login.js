@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Header from '../../components/Header';
+import { useUser } from './UserContext';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
+    const { setUser } = useUser();  // Get the setUser function from the context
     const headerConfig = {
         search: false,
         requests: false,
@@ -22,12 +24,21 @@ const Login = () => {
             const response = await axios.post('http://localhost:8080/auth/login', { email, password });
             setMessage('Login successful.');
             localStorage.setItem('jwtToken', response.data.token);
-            navigate('/products');
+
+            const userResponse = await axios.get('http://localhost:8080/auth/current-user', {
+                headers: {
+                    'Authorization': `Bearer ${response.data.token}`
+                }
+            });
+            console.log(userResponse);
+            setUser(userResponse.data); 
+            navigate('/landing-page');
         } catch (error) {
             setMessage('Invalid credentials.');
         }
     };
 
+   
     return (
         <div className="flex flex-col min-h-screen">
             <Header config={headerConfig}></Header>
