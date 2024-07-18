@@ -14,6 +14,7 @@ import PrivateRoute from './features/authentication/PrivateRoute';
 import ViewOrders from './features/order_moderation/ViewOrders';
 import OrderDetails from './features/order_moderation/OrderDetails';
 import Layout from './features/order_moderation/Layout'; 
+import AddProduct from './features/authentication/AddProduct';
 
 import ProfilePage from './features/profile_page/Profile';
 import SoldItems from "./features/profile_page/SoldItems";
@@ -44,6 +45,7 @@ function App() {
         <Route path="/profile/reviews" element={<PrivateRoute> <Reviews /> </PrivateRoute>} />
         <Route path="/admin-moderation/orders" element={<Layout> <ViewOrders /> </Layout>} /> 
         <Route path="/admin-moderation/orders/:orderId" element={<Layout> <OrderDetails /> </Layout>} /> 
+        <Route path="/add-product" element={<Layout> <AddProduct /> </Layout>}/>
       </Routes>
     </div>
   );
