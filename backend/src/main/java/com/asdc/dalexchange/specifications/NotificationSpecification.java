@@ -10,6 +10,7 @@ public class NotificationSpecification {
             if (userId == null) {
                 return criteriaBuilder.conjunction();
             }
+            query.orderBy(criteriaBuilder.desc(root.get("createdAt")));
             return criteriaBuilder.equal(root.get("user").get("id"), userId);
         };
     }
