@@ -13,9 +13,9 @@ public class ShippingAddress {
     @Column(name = "address_id")
     private Long addressId;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+//    @ManyToOne
+//    @JoinColumn(name = "user_id")
+//    private User user;
 
     @Column(name = "billing_name")
     private String billingName;

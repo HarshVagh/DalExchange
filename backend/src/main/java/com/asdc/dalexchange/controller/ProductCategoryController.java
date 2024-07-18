@@ -1,5 +1,6 @@
 package com.asdc.dalexchange.controller;
 
+import com.asdc.dalexchange.model.ProductCategory;
 import com.asdc.dalexchange.service.ProductCategoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,5 +23,10 @@ public class ProductCategoryController {
     public List<String> getProductCategories() {
         log.info("get product_categories api endpoint called");
         return productCategoryService.findAll();
+    }
+
+    @GetMapping(path = "/categories")
+    public List<ProductCategory> getCategories() {
+        return productCategoryService.findAllCategories();
     }
 }

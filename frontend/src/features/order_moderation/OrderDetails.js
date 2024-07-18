@@ -109,11 +109,11 @@ function OrderDetails() {
   return (
     <div className="flex min-h-screen w-full overflow-hidden">
       <div className="flex flex-col flex-1">
-        <header className="flex h-14 lg:h-[60px] items-center gap-4 border-b bg-gray-200 px-6">
-          <div className="w-full flex-1">
-            <h1 className="text-3xl font-bold">Order Details</h1>
-          </div>
-        </header>
+      <header className="flex h-14 lg:h-[60px] items-center gap-4 border-b bg-gray-200 px-6">
+  <div className="w-full flex justify-center">
+    <h1 className="text-3xl font-bold">Order Details</h1>
+  </div>
+</header>
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
           {showMessage && (
             <div className="fixed top-0 left-0 right-0 bg-black text-white p-4 z-50 flex justify-between items-center">
@@ -134,11 +134,11 @@ function OrderDetails() {
               <div className="grid gap-4">
                 <div className="grid gap-1">
                   <div className="text-black font-bold">Customer</div>
-                  <div className="font-normal">{order.buyer.username}</div>
+                  <div className="font-normal">{order.fullName}</div>
                 </div>
                 <div className="grid gap-1">
                   <div className="text-black font-bold">Product</div>
-                  <div className="font-normal">{order.productId.title}</div>
+                  <div className="font-normal">{order.productTitle}</div>
                 </div>
                 <div className="grid gap-1">
                   <div className="text-black font-bold">Order Date</div>

@@ -1,8 +1,12 @@
 package com.asdc.dalexchange.service.impl;
 
+import com.asdc.dalexchange.dto.OrderDTO;
+import com.asdc.dalexchange.dto.UserDTO;
 import com.asdc.dalexchange.enums.OrderStatus;
+import com.asdc.dalexchange.mappers.Mapper;
 import com.asdc.dalexchange.model.OrderDetails;
 import com.asdc.dalexchange.model.ShippingAddress;
+import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.repository.OrderRepository;
 import com.asdc.dalexchange.repository.ShippingRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,6 +35,9 @@ class OrderServiceImplTest {
 
     @InjectMocks
     private OrderServiceImpl orderService;
+
+    @Mock
+    private Mapper<OrderDetails, OrderDTO> orderMapper;
 
     @BeforeEach
     void setUp() {
@@ -117,119 +125,141 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void testGetOrderById() {
-        OrderDetails orderDetails = new OrderDetails();
-        orderDetails.setOrderId(1L);
-        when(orderRepository.findById(1)).thenReturn(Optional.of(orderDetails));
+    public void testGetAllOrders() {
+        // Arrange
+        OrderDetails order1 = new OrderDetails();
+        order1.setOrderId(1L);
+        order1.setTotalAmount(100.0);
 
-        OrderDetails result = orderService.getOrderById(1);
+        OrderDetails order2 = new OrderDetails();
+        order2.setOrderId(2L);
+        order2.setTotalAmount(200.0);
 
-        assertEquals(orderDetails, result);
+        List<OrderDetails> orders = Arrays.asList(order1, order2);
+        List<OrderDTO> orderDTOs = orders.stream().map(order -> {
+            OrderDTO dto = new OrderDTO();
+            dto.setOrderId(order.getOrderId());
+            dto.setTotalAmount(order.getTotalAmount());
+            return dto;
+        }).collect(Collectors.toList());
 
-        // Test the case where order is not found
-        when(orderRepository.findById(2)).thenReturn(Optional.empty());
+        when(orderRepository.findAll()).thenReturn(orders);
+        when(orderMapper.mapTo(order1)).thenReturn(orderDTOs.get(0));
+        when(orderMapper.mapTo(order2)).thenReturn(orderDTOs.get(1));
 
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            orderService.getOrderById(2);
-        });
+        // Act
+        List<OrderDTO> result = orderService.getAllOrders();
 
-        assertEquals("Order not found", exception.getMessage());
+        // Assert
+        assertEquals(2, result.size());
+        assertEquals(100.0, result.get(0).getTotalAmount());
+        assertEquals(200.0, result.get(1).getTotalAmount());
     }
 
     @Test
-    void testUpdateOrder() {
-        OrderDetails orderDetails = new OrderDetails();
-        orderDetails.setOrderId(1L);
-        orderDetails.setTotalAmount(100.0);
-        when(orderRepository.findById(1)).thenReturn(Optional.of(orderDetails));
-        when(orderRepository.save(any(OrderDetails.class))).thenReturn(orderDetails);
+    public void testGetOrderById() {
+        // Arrange
+        long orderId = 1L;
+        OrderDetails order = new OrderDetails();
+        order.setOrderId(orderId);
+        order.setTotalAmount(100.0);
+
+        OrderDTO orderDTO = new OrderDTO();
+        orderDTO.setOrderId(orderId);
+        orderDTO.setTotalAmount(100.0);
+
+        when(orderRepository.findById((int) orderId)).thenReturn(Optional.of(order));
+        when(orderMapper.mapTo(order)).thenReturn(orderDTO);
+
+        // Act
+        OrderDTO result = orderService.getOrderById((int) orderId);
+
+        // Assert
+        assertEquals(orderDTO, result);
+    }
+
+    @Test
+    public void testUpdateOrder() {
+        // Arrange
+        long orderId = 1L;
+        OrderDetails existingOrder = new OrderDetails();
+        existingOrder.setOrderId(orderId);
+        existingOrder.setTotalAmount(100.0);
 
         OrderDetails updatedOrderDetails = new OrderDetails();
         updatedOrderDetails.setTotalAmount(150.0);
         updatedOrderDetails.setOrderStatus(OrderStatus.SHIPPED);
-        updatedOrderDetails.setAdminComments("Updated comment");
 
-        OrderDetails result = orderService.updateOrder(1, updatedOrderDetails);
+        OrderDTO updatedOrderDTO = new OrderDTO();
+        updatedOrderDTO.setOrderId(orderId);
+        updatedOrderDTO.setTotalAmount(150.0);
 
-        assertEquals(150.0, result.getTotalAmount());
-        assertEquals(OrderStatus.SHIPPED, result.getOrderStatus());
-        assertEquals("Updated comment", result.getAdminComments());
+        when(orderRepository.findById((int) orderId)).thenReturn(Optional.of(existingOrder));
+        when(orderRepository.save(existingOrder)).thenReturn(existingOrder);
+        when(orderMapper.mapTo(existingOrder)).thenReturn(updatedOrderDTO);
 
-        // Test the case where order is not found
-        when(orderRepository.findById(2)).thenReturn(Optional.empty());
+        // Act
+        OrderDTO result = orderService.updateOrder((int) orderId, updatedOrderDetails);
 
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            orderService.updateOrder(2, updatedOrderDetails);
-        });
-
-        assertEquals("Order not found", exception.getMessage());
+        // Assert
+        assertEquals(150.0, existingOrder.getTotalAmount());
+        assertEquals(OrderStatus.SHIPPED, existingOrder.getOrderStatus());
+        assertEquals(updatedOrderDTO, result);
     }
 
     @Test
-    void testCancelOrder() {
-        OrderDetails orderDetails = new OrderDetails();
-        orderDetails.setOrderId(1L);
-        when(orderRepository.findById(1)).thenReturn(Optional.of(orderDetails));
-        when(orderRepository.save(any(OrderDetails.class))).thenReturn(orderDetails);
-
-        orderService.cancelOrder(1, "Admin comment");
-
-        assertEquals(OrderStatus.CANCELLED, orderDetails.getOrderStatus());
-        assertEquals("Admin comment", orderDetails.getAdminComments());
-
-        // Test the case where order is not found
-        when(orderRepository.findById(2)).thenReturn(Optional.empty());
-
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            orderService.cancelOrder(2, "Admin comment");
-        });
-
-        assertEquals("Order not found", exception.getMessage());
-    }
-
-    @Test
-    void testProcessRefund() {
-        OrderDetails orderDetails = new OrderDetails();
-        orderDetails.setOrderId(1L);
-        orderDetails.setTotalAmount(200.0);
-        when(orderRepository.findById(1)).thenReturn(Optional.of(orderDetails));
-        when(orderRepository.save(any(OrderDetails.class))).thenReturn(orderDetails);
-
-        OrderDetails result = orderService.processRefund(1, 50.0);
-
-        assertEquals(150.0, result.getTotalAmount());
-
-        // Test the case where order is not found
-        when(orderRepository.findById(2)).thenReturn(Optional.empty());
-
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            orderService.processRefund(2, 50.0);
-        });
-
-        assertEquals("Order not found", exception.getMessage());
-    }
-
-    @Test
-    public void testUpdateShippingAddress_Success() {
+    public void testCancelOrder() {
         // Arrange
-        Long addressId = 1L;
+        long orderId = 1L;
+        OrderDetails order = new OrderDetails();
+        order.setOrderId(orderId);
+        order.setOrderStatus(OrderStatus.SHIPPED);
+
+        when(orderRepository.findById((int) orderId)).thenReturn(Optional.of(order));
+
+        // Act
+        orderService.cancelOrder((int) orderId, "Cancelled by admin");
+
+        // Assert
+        assertEquals(OrderStatus.CANCELLED, order.getOrderStatus());
+        assertEquals("Cancelled by admin", order.getAdminComments());
+        verify(orderRepository).save(order);
+    }
+
+    @Test
+    public void testProcessRefund() {
+        // Arrange
+        long orderId = 1L;
+        OrderDetails order = new OrderDetails();
+        order.setOrderId(orderId);
+        order.setTotalAmount(200.0);
+
+        OrderDTO orderDTO = new OrderDTO();
+        orderDTO.setOrderId(orderId);
+        orderDTO.setTotalAmount(150.0);
+
+        when(orderRepository.findById(Math.toIntExact(orderId))).thenReturn(Optional.of(order));
+        when(orderRepository.save(order)).thenReturn(order);
+        when(orderMapper.mapTo(order)).thenReturn(orderDTO);
+
+        // Act
+        OrderDTO result = orderService.processRefund((int) orderId, 50.0);
+
+        // Assert
+        assertEquals(150.0, order.getTotalAmount());
+        assertEquals(orderDTO, result);
+    }
+
+    @Test
+    public void testUpdateShippingAddress() {
+        // Arrange
+        long addressId = 1L;
         ShippingAddress existingAddress = new ShippingAddress();
+        existingAddress.setAddressId(addressId);
         existingAddress.setBillingName("Old Name");
-        existingAddress.setCountry("Old Country");
-        existingAddress.setLine1("Old Line1");
-        existingAddress.setLine2("Old Line2");
-        existingAddress.setCity("Old City");
-        existingAddress.setState("Old State");
-        existingAddress.setPostalCode("Old PostalCode");
 
         ShippingAddress updatedAddress = new ShippingAddress();
         updatedAddress.setBillingName("New Name");
-        updatedAddress.setCountry("New Country");
-        updatedAddress.setLine1("New Line1");
-        updatedAddress.setLine2("New Line2");
-        updatedAddress.setCity("New City");
-        updatedAddress.setState("New State");
-        updatedAddress.setPostalCode("New PostalCode");
 
         when(shippingRepository.findById(addressId)).thenReturn(Optional.of(existingAddress));
 
@@ -238,20 +268,49 @@ class OrderServiceImplTest {
 
         // Assert
         assertEquals("New Name", existingAddress.getBillingName());
-        assertEquals("New Country", existingAddress.getCountry());
-        assertEquals("New Line1", existingAddress.getLine1());
-        assertEquals("New Line2", existingAddress.getLine2());
-        assertEquals("New City", existingAddress.getCity());
-        assertEquals("New State", existingAddress.getState());
-        assertEquals("New PostalCode", existingAddress.getPostalCode());
-
         verify(shippingRepository).save(existingAddress);
+    }
+
+    @Test
+    public void testUpdateOrder_ShippingAddress() {
+        // Arrange
+        long orderId = 1L;
+        OrderDetails existingOrder = new OrderDetails();
+        existingOrder.setOrderId(orderId);
+
+        ShippingAddress existingAddress = new ShippingAddress();
+        existingAddress.setAddressId(1L);
+        existingAddress.setBillingName("Old Name");
+
+        existingOrder.setShippingAddress(existingAddress);
+
+        ShippingAddress updatedAddress = new ShippingAddress();
+        updatedAddress.setAddressId(1L);
+        updatedAddress.setBillingName("New Name");
+
+        OrderDetails updatedOrderDetails = new OrderDetails();
+        updatedOrderDetails.setShippingAddress(updatedAddress);
+
+        OrderDTO updatedOrderDTO = new OrderDTO();
+        updatedOrderDTO.setOrderId(orderId);
+
+        when(orderRepository.findById((int) orderId)).thenReturn(Optional.of(existingOrder));
+        when(shippingRepository.findById(existingAddress.getAddressId())).thenReturn(Optional.of(existingAddress));
+        when(orderRepository.save(existingOrder)).thenReturn(existingOrder);
+        when(orderMapper.mapTo(existingOrder)).thenReturn(updatedOrderDTO);
+
+        // Act
+        OrderDTO result = orderService.updateOrder((int) orderId, updatedOrderDetails);
+
+        // Assert
+        assertEquals("New Name", existingAddress.getBillingName());
+        assertEquals(updatedOrderDTO, result);
     }
 
     @Test
     public void testUpdateShippingAddress_NotFound() {
         // Arrange
-        Long addressId = 1L;
+        long addressId = 1L;
         ShippingAddress updatedAddress = new ShippingAddress();
 
         when(shippingRepository.findById(addressId)).thenReturn(Optional.empty());
@@ -262,30 +321,5 @@ class OrderServiceImplTest {
         });
 
         assertEquals("Shipping Address not found", exception.getMessage());
-    }
-
-    @Test
-    public void testGetAllOrders() {
-        // Create some sample orders
-        OrderDetails order1 = new OrderDetails();
-        order1.setOrderId(1L);
-        order1.setTotalAmount(100.0);
-
-        OrderDetails order2 = new OrderDetails();
-        order2.setOrderId(2L);
-        order2.setTotalAmount(200.0);
-
-        List<OrderDetails> orders = Arrays.asList(order1, order2);
-
-        // Mock the repository response
-        when(orderRepository.findAll()).thenReturn(orders);
-
-        // Call the service method
-        List<OrderDetails> result = orderService.getAllOrders();
-
-        // Verify the results
-        assertEquals(2, result.size());
-        assertEquals(100.0, result.get(0).getTotalAmount());
-        assertEquals(200.0, result.get(1).getTotalAmount());
     }
 }

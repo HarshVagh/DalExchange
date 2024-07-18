@@ -15,6 +15,9 @@ import ViewOrders from './features/order_moderation/ViewOrders';
 import OrderDetails from './features/order_moderation/OrderDetails';
 import Layout from './features/order_moderation/Layout'; 
 import AddProduct from './features/authentication/AddProduct';
+import UserModeration from "./features/user_moderation/UserModeration";
+import ProductModeration from "./features/product_moderation/ProductModeration";
+
 
 import ProfilePage from './features/profile_page/Profile';
 import SoldItems from "./features/profile_page/SoldItems";
@@ -37,14 +40,20 @@ function App() {
         <Route path="/products" element={<PrivateRoute> <ProductList /> </PrivateRoute> } />
         <Route path="/products/:productId" element={<PrivateRoute> <ProductDetails/> </PrivateRoute> } />
         <Route path="/trade_requests" element={<PrivateRoute> <TradeRequests/> </PrivateRoute> } />
+        <Route path="/admin-moderation/orders" element={<Layout><ViewOrders /></Layout>} />
+        <Route path="/admin-moderation/orders/:orderId" element={<Layout><OrderDetails /></Layout>} />
+        <Route path="/admin-moderation/users" element={<Layout><UserModeration /></Layout>} />
+        <Route path="/admin-moderation/products" element={<Layout><ProductModeration /></Layout>} />
         <Route path="/profile/purchase-history" element={<PurchaseHistory />} />
         <Route path="/profile" element={<PrivateRoute> <ProfilePage /> </PrivateRoute> } />
         <Route path="/profile/sold-items" element={<PrivateRoute> <SoldItems /> </PrivateRoute>} />
         <Route path="/profile/saved-items" element={<PrivateRoute> <SavedItems /> </PrivateRoute>} />
         <Route path="/profile/edit-profile" element={<PrivateRoute> <EditProfile /> </PrivateRoute>} />
         <Route path="/profile/reviews" element={<PrivateRoute> <Reviews /> </PrivateRoute>} />
-        <Route path="/admin-moderation/orders" element={<Layout> <ViewOrders /> </Layout>} /> 
-        <Route path="/admin-moderation/orders/:orderId" element={<Layout> <OrderDetails /> </Layout>} /> 
+        <Route path="/admin-moderation/orders" element={<Layout> <ViewOrders /> </Layout>} />
+        <Route path="/admin-moderation/orders/:orderId" element={<Layout> <OrderDetails /> </Layout>} />
+        <Route path="/admin-moderation/orders" element={<Layout> <ViewOrders /> </Layout>} />
+        <Route path="/admin-moderation/orders/:orderId" element={<Layout> <OrderDetails /> </Layout>} />
         <Route path="/add-product" element={<Layout> <AddProduct /> </Layout>}/>
       </Routes>
     </div>

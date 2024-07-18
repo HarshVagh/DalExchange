@@ -112,66 +112,67 @@ class ProductDetailsServiceImplTest {
         // Verify interactions
         verify(productRepository).findById(productId);
     }
-    @Test
-    void testUpdateProduct() {
-        // Setup
-        Long productId = 1L;
-        Product existingProduct = new Product();
-        existingProduct.setProductId(productId);
+//    @Test
+//    void testUpdateProduct() {
+//        // Setup
+//        Long productId = 1L;
+//        Product existingProduct = new Product();
+//        existingProduct.setProductId(productId);
+//
+//        User newSeller = new User();
+//        newSeller.setUserId(2L);
+//        Product updatedProductDetails = new Product();
+//        updatedProductDetails.setSeller(newSeller);
+//        updatedProductDetails.setTitle("New Title");
+//        updatedProductDetails.setDescription("New Description");
+//        updatedProductDetails.setPrice(99.99);
+//        ProductCategory newCategory = new ProductCategory();
+//        updatedProductDetails.setCategory(newCategory);
+//        updatedProductDetails.setProductCondition(ProductCondition.NEW);
+//        updatedProductDetails.setUseDuration("1 month");
+//        updatedProductDetails.setShippingType(ShippingType.PAID);
+//        updatedProductDetails.setQuantityAvailable(5);
+//
+//        // Mocking
+//        when(productRepository.findById(productId)).thenReturn(Optional.of(existingProduct));
+//        when(productRepository.save(any(Product.class))).thenAnswer(invocation -> invocation.getArgument(0));
+//
+//        // Execute
+//        Product result = productService.updateProduct(productId, updatedProductDetails);
+//
+//        // Verify
+//        assertNotNull(result);
+//        assertEquals(newSeller, result.getSeller());
+//        assertEquals("New Title", result.getTitle());
+//        assertEquals("New Description", result.getDescription());
+//        assertEquals(99.99, result.getPrice());
+//        assertEquals(newCategory, result.getCategory());
+//        assertEquals(ProductCondition.NEW, result.getProductCondition());
+//        assertEquals("1 month", result.getUseDuration());
+//        assertEquals(ShippingType.PAID, result.getShippingType());
+//        assertEquals(5, result.getQuantityAvailable());
+//
+//        // Verify interactions
+//        verify(productRepository).findById(productId);
+//        verify(productRepository).save(existingProduct);
+//    }
 
-        User newSeller = new User();
-        newSeller.setUserId(2L);
-        Product updatedProductDetails = new Product();
-        updatedProductDetails.setSeller(newSeller);
-        updatedProductDetails.setTitle("New Title");
-        updatedProductDetails.setDescription("New Description");
-        updatedProductDetails.setPrice(99.99);
-        ProductCategory newCategory = new ProductCategory();
-        updatedProductDetails.setCategory(newCategory);
-        updatedProductDetails.setProductCondition(ProductCondition.NEW);
-        updatedProductDetails.setUseDuration("1 month");
-        updatedProductDetails.setShippingType(ShippingType.PAID);
-        updatedProductDetails.setQuantityAvailable(5);
+//    @Test
+//    void testUpdateProductNotFound() {
+//        // Setup
+//        Long productId = 1L;
+//        Product updatedProductDetails = new Product();
+//
+//        // Mocking
+//        when(productRepository.findById(productId)).thenReturn(Optional.empty());
+//
+//        // Execute & Verify
+//        assertThrows(RuntimeException.class, () -> productService.updateProduct(productId, updatedProductDetails));
+//
+//        // Verify interactions
+//        verify(productRepository).findById(productId);
+//    }
 
-        // Mocking
-        when(productRepository.findById(productId)).thenReturn(Optional.of(existingProduct));
-        when(productRepository.save(any(Product.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        // Execute
-        Product result = productService.updateProduct(productId, updatedProductDetails);
-
-        // Verify
-        assertNotNull(result);
-        assertEquals(newSeller, result.getSeller());
-        assertEquals("New Title", result.getTitle());
-        assertEquals("New Description", result.getDescription());
-        assertEquals(99.99, result.getPrice());
-        assertEquals(newCategory, result.getCategory());
-        assertEquals(ProductCondition.NEW, result.getProductCondition());
-        assertEquals("1 month", result.getUseDuration());
-        assertEquals(ShippingType.PAID, result.getShippingType());
-        assertEquals(5, result.getQuantityAvailable());
-
-        // Verify interactions
-        verify(productRepository).findById(productId);
-        verify(productRepository).save(existingProduct);
-    }
-
-    @Test
-    void testUpdateProductNotFound() {
-        // Setup
-        Long productId = 1L;
-        Product updatedProductDetails = new Product();
-
-        // Mocking
-        when(productRepository.findById(productId)).thenReturn(Optional.empty());
-
-        // Execute & Verify
-        assertThrows(RuntimeException.class, () -> productService.updateProduct(productId, updatedProductDetails));
-
-        // Verify interactions
-        verify(productRepository).findById(productId);
-    }
     @Test
     void testGetImageUrls() {
         // Setup

@@ -1,5 +1,6 @@
 package com.asdc.dalexchange.service;
 
+import com.asdc.dalexchange.dto.OrderDTO;
 import com.asdc.dalexchange.model.OrderDetails;
 
 import java.time.LocalDateTime;
@@ -16,9 +17,9 @@ public interface OrderService {
     LocalDateTime getCurrentDateTime();
 
     // Order Moderation
-    List<OrderDetails> getAllOrders();
-    OrderDetails getOrderById(int orderId);
-    OrderDetails updateOrder(int orderId, OrderDetails updatedOrderDetails);
+    List<OrderDTO> getAllOrders();
+    OrderDTO getOrderById(int orderId);
+    OrderDTO updateOrder(int orderId, OrderDetails updatedOrderDetails);
     void cancelOrder(int orderId, String adminComments);
-    OrderDetails processRefund(int orderId, double refundAmount);
+    OrderDTO processRefund(int orderId, double refundAmount);
 }

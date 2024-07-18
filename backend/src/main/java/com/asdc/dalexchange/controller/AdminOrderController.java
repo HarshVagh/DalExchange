@@ -1,5 +1,6 @@
 package com.asdc.dalexchange.controller;
 
+import com.asdc.dalexchange.dto.OrderDTO;
 import com.asdc.dalexchange.model.OrderDetails;
 import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.service.OrderService;
@@ -20,17 +21,17 @@ public class AdminOrderController {
     }
 
     @GetMapping("/all")
-    public List<OrderDetails> getOrders() {
+    public List<OrderDTO> getOrders() {
         return orderService.getAllOrders();
     }
 
     @GetMapping("/orderDetails/{orderId}")
-    public OrderDetails getOrderById(@PathVariable int orderId) {
+    public OrderDTO getOrderById(@PathVariable int orderId) {
         return orderService.getOrderById(orderId);
     }
 
     @PutMapping("/update/{orderId}")
-    public OrderDetails updateOrder(
+    public OrderDTO updateOrder(
             @PathVariable int orderId,
             @RequestBody OrderDetails updatedOrderDetails) {
         return orderService.updateOrder(orderId, updatedOrderDetails);
@@ -44,7 +45,7 @@ public class AdminOrderController {
     }
 
     @PutMapping("/refund/{orderId}")
-    public OrderDetails processRefund(
+    public OrderDTO processRefund(
             @PathVariable int orderId,
             @RequestBody String refundAmountStr) {
         double refundAmount = Double.parseDouble(refundAmountStr);
