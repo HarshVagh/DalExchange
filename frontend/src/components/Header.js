@@ -62,7 +62,11 @@ const Header = ({config, search, setSearch, onSearchSubmit}) => {
         
 				{config?.notifications && <img alt="" className="w-6 h-6" src={BellIcon} onClick={() => toggleNotifications()} /> }
         
-				{config?.add && <button type="button" className="flex px-2.5 py-2.5 text-sm text-white font-medium bg-blue-700 hover:bg-blue-800 rounded-full dark:bg-blue-600 focus:outline-none">
+				{config?.add && 
+				<button 
+					type="button" 
+					className="flex px-2.5 py-2.5 text-sm text-white font-medium bg-blue-700 hover:bg-blue-800 rounded-full dark:bg-blue-600 focus:outline-none"
+					onClick={() => navigate("/products/add-product")}>
           <img alt="" className="h-5 w-5" src={PlusIcon}/>
         </button>}
 				
