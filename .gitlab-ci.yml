@@ -42,7 +42,8 @@ frontend_build:
     - cd frontend/
   script:
     - echo "Frontend Build Started"
-    - npm install || (cat /root/.npm/_logs/*-debug-*.log && exit 1)
+    - npm install 
+    - cat /root/.npm/_logs/*-debug-*.log
     - npm run build
     - echo "Frontend Build Completed"
   artifacts:
@@ -52,7 +53,7 @@ frontend_build:
     - main
     - develop
   tags:
-    - dalfcs_docker_kvm
+    - dalfcs_gitlab_docker_ci
 
 backend_test:
   stage: test
