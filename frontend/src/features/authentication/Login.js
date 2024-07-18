@@ -32,7 +32,7 @@ const Login = () => {
             });
             console.log(userResponse);
             setUser(userResponse.data); 
-            navigate('/landing-page');
+            navigate('/products');
         } catch (error) {
             setMessage('Invalid credentials.');
         }
