@@ -10,6 +10,13 @@ variables:
 cache:
   paths:
     - $CI_PROJECT_DIR/backend/.m2/repository
+    - frontend/node_modules/
+    - frontend/.npm/
+
+before_script:
+  - cd frontend/
+  - npm cache clean --force
+  - npm install -g npm@latest
 
 backend_build:
   stage: build
