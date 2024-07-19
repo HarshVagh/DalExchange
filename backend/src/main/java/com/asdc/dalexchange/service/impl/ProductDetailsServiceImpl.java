@@ -8,6 +8,7 @@ import com.asdc.dalexchange.model.ProductWishlist;
 import com.asdc.dalexchange.repository.ProductImageRepository;
 import com.asdc.dalexchange.repository.ProductRepository;
 import com.asdc.dalexchange.repository.ProductWishlistRepository;
+import com.asdc.dalexchange.service.ProductDetailsService;
 import com.asdc.dalexchange.specifications.ProductImageSpecification;
 import com.asdc.dalexchange.specifications.ProductWishlistSpecification;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
@@ -16,7 +17,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import com.asdc.dalexchange.service.ProductDetailsService;
 
 
 @Service
@@ -45,15 +45,19 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
     public ProductDetailsDTO getDetails(Long userId, Long productId) {
         // Get all the details of the product
         Product product = getProductById(productId);
+        System.out.println("details of the product : " + product);
 
         // Get all image URLs of the given product
         List<String> productImageUrls = getImageUrls(productId);
 
         // Map Product to ProductDetailsDTO
         ProductDetailsDTO productDetailsDTO = productDetailsMapper.mapTo(product);
+        System.out.println("productDetailsDTO : " + productDetailsDTO);
 
         // Set the image URLs to ProductDetailsDTO
         productDetailsDTO.setImageurl(productImageUrls);
+
+        productDetailsDTO .setCategory("Books");
 
         // Set the seller joining date and rating
         productDetailsDTO.setSellerId(product.getSeller().getUserId());
