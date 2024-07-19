@@ -42,8 +42,8 @@ frontend_build:
     - cd frontend/
   script:
     - echo "Frontend Build Started"
-    - npm --version
-    - npm install
+    - echo npm --version
+    - npm install --no-package-lock
     - npm run build
     - echo "Frontend Build Completed"
   artifacts:
