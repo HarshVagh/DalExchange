@@ -36,8 +36,6 @@ frontend_build:
     - cd frontend/
   script:
     - echo "Frontend Build Started"
-    - rm -rf node_modules
-    - rm package-lock.json
     - npm cache clean --force
     - npx npm@latest install
     - npm --version
