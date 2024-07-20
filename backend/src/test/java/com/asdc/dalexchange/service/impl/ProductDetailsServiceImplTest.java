@@ -1,9 +1,6 @@
 package com.asdc.dalexchange.service.impl;
 
-import com.asdc.dalexchange.dto.ProductDTO;
 import com.asdc.dalexchange.dto.ProductDetailsDTO;
-import com.asdc.dalexchange.enums.ProductCondition;
-import com.asdc.dalexchange.enums.ShippingType;
 import com.asdc.dalexchange.mappers.Mapper;
 import com.asdc.dalexchange.model.*;
 import com.asdc.dalexchange.repository.ProductImageRepository;
@@ -13,7 +10,6 @@ import com.asdc.dalexchange.util.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
-import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;
@@ -32,12 +28,6 @@ class ProductDetailsServiceImplTest {
 
     @Mock
     private ProductImageRepository productImageRepository;
-
-    @Mock
-    private Mapper<Product, ProductDTO> productMapper;
-
-    @InjectMocks
-    private ProductServiceImpl productService;
 
     @Mock
     private ProductWishlistRepository productWishlistRepository;
@@ -60,7 +50,7 @@ class ProductDetailsServiceImplTest {
         Long productId = 1L;
 
         // Mocking
-        when(productRepository.findById(productId)).thenReturn(java.util.Optional.empty());
+        when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
         // Execute & Verify
         assertThrows(ResourceNotFoundException.class, () -> productDetailsService.getDetails(userId, productId));
@@ -70,13 +60,61 @@ class ProductDetailsServiceImplTest {
         verifyNoMoreInteractions(productImageRepository, productWishlistRepository, productDetailsMapper);
     }
 
-    // Helper method to create ProductImage instances
-    private ProductImage createProductImage(Product product, String imageUrl) {
-        ProductImage productImage = new ProductImage();
-        productImage.setProduct(product);
-        productImage.setImageUrl(imageUrl);
-        return productImage;
+    @Test
+    void testGetDetailsSuccess() {
+        // Setup
+        Long userId = 1L;
+        Long productId = 1L;
+        Product product = new Product();
+        User seller = new User();
+        seller.setUserId(2L);
+        seller.setJoinedAt(LocalDateTime.now());
+        seller.setSellerRating(4.5);
+        product.setSeller(seller);
+
+        ProductDetailsDTO productDetailsDTO = new ProductDetailsDTO();
+        productDetailsDTO.setCategory("Books");
+        productDetailsDTO.setSellerId(seller.getUserId());
+        productDetailsDTO.setSellerJoiningDate(seller.getJoinedAt());
+        productDetailsDTO.setRating(seller.getSellerRating());
+        productDetailsDTO.setImageurl(List.of("url1", "url2"));
+        productDetailsDTO.setFavorite(true);
+
+        ProductImage productImage1 = new ProductImage();
+        productImage1.setProduct(product);
+        productImage1.setImageUrl("url1");
+
+        ProductImage productImage2 = new ProductImage();
+        productImage2.setProduct(product);
+        productImage2.setImageUrl("url2");
+
+        List<ProductImage> productImages = List.of(productImage1, productImage2);
+
+        // Mocking
+        when(productRepository.findById(productId)).thenReturn(Optional.of(product));
+        when(productImageRepository.findAll(any(Specification.class))).thenReturn(productImages);
+        when(productDetailsMapper.mapTo(product)).thenReturn(productDetailsDTO);
+        when(productWishlistRepository.count(any(Specification.class))).thenReturn(1L);
+
+        // Execute
+        ProductDetailsDTO result = productDetailsService.getDetails(userId, productId);
+
+        // Verify
+        assertNotNull(result);
+        assertEquals("Books", result.getCategory());
+        assertEquals(2L, result.getSellerId());
+        assertEquals(seller.getJoinedAt(), result.getSellerJoiningDate());
+        assertEquals(4.5, result.getRating());
+        assertEquals(List.of("url1", "url2"), result.getImageurl());
+        assertTrue(result.isFavorite());
+
+        // Verify interactions
+        verify(productRepository).findById(productId);
+        verify(productImageRepository).findAll(any(Specification.class));
+        verify(productDetailsMapper).mapTo(product);
+        verify(productWishlistRepository).count(any(Specification.class));
     }
+
 
     @Test
     void testGetProductById() {
@@ -112,66 +150,6 @@ class ProductDetailsServiceImplTest {
         // Verify interactions
         verify(productRepository).findById(productId);
     }
-//    @Test
-//    void testUpdateProduct() {
-//        // Setup
-//        Long productId = 1L;
-//        Product existingProduct = new Product();
-//        existingProduct.setProductId(productId);
-//
-//        User newSeller = new User();
-//        newSeller.setUserId(2L);
-//        Product updatedProductDetails = new Product();
-//        updatedProductDetails.setSeller(newSeller);
-//        updatedProductDetails.setTitle("New Title");
-//        updatedProductDetails.setDescription("New Description");
-//        updatedProductDetails.setPrice(99.99);
-//        ProductCategory newCategory = new ProductCategory();
-//        updatedProductDetails.setCategory(newCategory);
-//        updatedProductDetails.setProductCondition(ProductCondition.NEW);
-//        updatedProductDetails.setUseDuration("1 month");
-//        updatedProductDetails.setShippingType(ShippingType.PAID);
-//        updatedProductDetails.setQuantityAvailable(5);
-//
-//        // Mocking
-//        when(productRepository.findById(productId)).thenReturn(Optional.of(existingProduct));
-//        when(productRepository.save(any(Product.class))).thenAnswer(invocation -> invocation.getArgument(0));
-//
-//        // Execute
-//        Product result = productService.updateProduct(productId, updatedProductDetails);
-//
-//        // Verify
-//        assertNotNull(result);
-//        assertEquals(newSeller, result.getSeller());
-//        assertEquals("New Title", result.getTitle());
-//        assertEquals("New Description", result.getDescription());
-//        assertEquals(99.99, result.getPrice());
-//        assertEquals(newCategory, result.getCategory());
-//        assertEquals(ProductCondition.NEW, result.getProductCondition());
-//        assertEquals("1 month", result.getUseDuration());
-//        assertEquals(ShippingType.PAID, result.getShippingType());
-//        assertEquals(5, result.getQuantityAvailable());
-//
-//        // Verify interactions
-//        verify(productRepository).findById(productId);
-//        verify(productRepository).save(existingProduct);
-//    }
-
-//    @Test
-//    void testUpdateProductNotFound() {
-//        // Setup
-//        Long productId = 1L;
-//        Product updatedProductDetails = new Product();
-//
-//        // Mocking
-//        when(productRepository.findById(productId)).thenReturn(Optional.empty());
-//
-//        // Execute & Verify
-//        assertThrows(RuntimeException.class, () -> productService.updateProduct(productId, updatedProductDetails));
-//
-//        // Verify interactions
-//        verify(productRepository).findById(productId);
-//    }
 
     @Test
     void testGetImageUrls() {
