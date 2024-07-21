@@ -1,10 +1,8 @@
-import axios from "axios";
-
-const BASE_URL = "http://localhost:8080";
+import AxiosInstance from "./AxiosInstance";
 
 const PurchasedHistoryApi = async (productId) => {
   try {
-    const response = await axios.get(`${BASE_URL}/profile/purchased_products`, {
+    const response = await AxiosInstance.get("/profile/purchased_products", {
       params: { id: productId },
       paramsSerializer: { indexes: null },
     });
