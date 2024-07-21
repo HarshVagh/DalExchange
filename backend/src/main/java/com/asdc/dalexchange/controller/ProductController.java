@@ -27,7 +27,6 @@ public class ProductController {
     public ResponseEntity<Product> addProduct(
             @RequestPart("addProductDTO") AddProductDTO addProductDTO,
             @RequestPart("file") MultipartFile file) {
-        System.out.println("CATEGORY ID ----" + addProductDTO.getCategoryId());
         try {
             ProductCategory category = productService.getCategoryById(addProductDTO.getCategoryId());
             if (category == null) {
@@ -40,6 +39,7 @@ public class ProductController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @GetMapping("/{id}/image")
     public ResponseEntity<byte[]> getProductImage(@PathVariable Long id) {
         Product product = productService.getProductByID(id);

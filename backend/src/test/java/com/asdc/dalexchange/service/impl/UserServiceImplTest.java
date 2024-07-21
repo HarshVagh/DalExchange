@@ -8,12 +8,13 @@ import com.asdc.dalexchange.model.VerificationCode;
 import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.repository.VerificationCodeRepository;
 import com.asdc.dalexchange.service.EmailService;
-import com.asdc.dalexchange.service.UserService;
+import com.asdc.dalexchange.util.CloudinaryUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -41,6 +42,12 @@ class UserServiceImplTest {
 
     @InjectMocks
     private UserServiceImpl userService;
+
+    @Mock
+    private MultipartFile productImage;
+
+    @Mock
+    private CloudinaryUtil cloudinaryUtil;
 
     @BeforeEach
     void setUp() {
@@ -267,7 +274,7 @@ class UserServiceImplTest {
             return code;
         }).when(verificationCodeRepository).save(any(VerificationCode.class));
 
-        User registeredUser = userService.registerUser(user);
+        User registeredUser = userService.registerUser(user, productImage);
 
         assertNotNull(registeredUser);
         assertEquals(user.getEmail(), registeredUser.getEmail());

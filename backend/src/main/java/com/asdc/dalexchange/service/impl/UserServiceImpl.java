@@ -1,10 +1,7 @@
 package com.asdc.dalexchange.service.impl;
 
-import com.asdc.dalexchange.dto.TradeRequestDTO;
 import com.asdc.dalexchange.dto.UserDTO;
 import com.asdc.dalexchange.mappers.Mapper;
-import com.asdc.dalexchange.model.OrderDetails;
-import com.asdc.dalexchange.model.TradeRequest;
 import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.model.VerificationCode;
 import com.asdc.dalexchange.repository.UserRepository;
@@ -12,8 +9,10 @@ import com.asdc.dalexchange.repository.VerificationCodeRepository;
 import com.asdc.dalexchange.service.EmailService;
 import com.asdc.dalexchange.service.UserService;
 import com.asdc.dalexchange.util.AuthUtil;
+import com.asdc.dalexchange.util.CloudinaryUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,6 +34,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private Mapper<User, UserDTO> userMapper;
+
+    @Autowired
+    private CloudinaryUtil cloudinaryUtil;
 
     public long newCustomers(){
         return userRepository.countUsersJoinedInLast30Days();
@@ -150,7 +152,12 @@ public class UserServiceImpl implements UserService {
 //        }
 //    }
 
-    public User registerUser(User user) {
+    public User registerUser(User user, MultipartFile profilePicture) {
+
+        String profilePictureURL = cloudinaryUtil.uploadImage(profilePicture);
+
+        user.setProfilePicture(profilePictureURL);
+
         User registeredUser = userRepository.save(user);
 
         String verificationCode = generateVerificationCode();
