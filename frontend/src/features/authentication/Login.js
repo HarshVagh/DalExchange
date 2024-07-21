@@ -30,7 +30,9 @@ const Login = () => {
                     'Authorization': `Bearer ${response.data.token}`
                 }
             });
-            console.log(userResponse);
+            const userId = userResponse.data.userId
+            localStorage.setItem('UserId', userId);
+            console.log(userResponse.data,"userResponse");
             setUser(userResponse.data); 
             navigate('/products');
         } catch (error) {

@@ -10,6 +10,7 @@ import FilledStarIcon from '../../assets/icons/star-solid.svg';
 import ErrorAlert from '../../components/ErrorAlert';
 import ProductDetailsApi from '../../services/ProductDetailsApi'; // Import the new service
 import { TradeRequestApi } from '../../services/TradeRequestApi';
+import {useUser} from '../authentication/UserContext'
 
 const ProductDetails = () => {
   const { productId } = useParams();
@@ -27,6 +28,11 @@ const ProductDetails = () => {
     add: true,
     profile: true
   };
+  const { user } = useUser();  // Get the user function from the context
+  console.log("user", user)
+  console.log("product", product)
+
+
 
   function capitalizeFirstLetter(str) {
     if (!str) return "";
@@ -118,7 +124,7 @@ const ProductDetails = () => {
       <Header config={headerConfig} />
       <SubHeader title={'Products'} backPath={'/products'} />
       {errors && <ErrorAlert message={errors.message} />}
-      <main className="flex-1 p-6">
+      {!errors && <main className="flex-1 p-6">
         <div className="grid grid-cols-1 md:grid-cols-10 gap-8">
           <div className="md:col-span-3">
             <img
@@ -152,7 +158,8 @@ const ProductDetails = () => {
 
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold">${product?.price}</h2>
-              <div className="flex items-center gap-4 mr-12">
+              {console.log(product?.sellerId !== user?.userId,"product & seller id")}
+             { (product?.sellerId !== user?.userId)  ? <div className="flex items-center gap-4 mr-12">
                 <button
                   className="flex flex-end gap-2 bg-transparent text-700 font-semibold py-2 px-4 border-2 border-gray-300 rounded"
                   onClick={() => addtoFavorite(product?.productId)}
@@ -168,7 +175,7 @@ const ProductDetails = () => {
                 >
                   Send Buy Request
                 </button>
-              </div>
+              </div> :""}
             </div>
             <div className="grid grid-cols-5 gap-7">
               <div>
@@ -216,7 +223,7 @@ const ProductDetails = () => {
             </div>
           </div>
         </div>
-      </main>
+      </main>}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75">
           <div className="relative p-4 w-full max-w-md">

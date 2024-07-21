@@ -16,6 +16,43 @@ const TradeRequests = () => {
 
   const [sellRequests, setSellRequests] = useState([])
 
+  const acceptBuyReques = async () => {
+    try {
+
+      // Call the service to create a payment intent
+      const { sessionId } = await TradeRequestApi.acceptBuyRequest();
+
+      // Handle the sessionId, e.g., use it to redirect to a checkout page
+      console.log("Payment initiation successful! Session ID:", sessionId);
+
+      // Redirect the user to the payment session
+      window.location.href = `https://checkout.stripe.com/pay/${sessionId}`;
+
+    } catch (error) {
+      // Handle errors
+      console.error("Error accepting buy request:", error);
+    }
+  };
+
+
+  // const acceptBuyReques = async (amount, productId, userId) => {
+  //   try {
+
+  //     // Call the service to create a payment intent
+  //     const { sessionId } = await TradeRequestApi.acceptBuyRequest(amount, productId, userId);
+
+  //     // Handle the sessionId, e.g., use it to redirect to a checkout page
+  //     console.log("Payment initiation successful! Session ID:", sessionId);
+
+  //     // Redirect the user to the payment session
+  //     window.location.href = `https://checkout.stripe.com/pay/${sessionId}`;
+
+  //   } catch (error) {
+  //     // Handle errors
+  //     console.error("Error accepting buy request:", error);
+  //   }
+  // };
+
   const headerConfig = {
     search: false,
     requests: true,
@@ -153,12 +190,18 @@ const TradeRequests = () => {
                     </div>
                     <div>
                       <div className="flex justify-end gap-2 items-end w-full">
-                        {tradeRequest.requestStatus === 'approved' &&
+                      {tradeRequest.requestStatus === 'approved' &&
                         <button type="button" 
-                          onClick={() => acceptBuyRequest(tradeRequest.requestId)}
+                          onClick={() => acceptBuyReques()}
                           className="text-white bg-gray-900 hover:bg-gray-800 focus:outline-none font-medium rounded-lg text-sm px-8 py-2.5">
                           Buy
                         </button>}
+                        {/* {tradeRequest.requestStatus === 'approved' &&
+                        <button type="button" 
+                          onClick={() => acceptBuyReques(tradeRequest.amount,tradeRequest.productId, tradeRequest.userId)}
+                          className="text-white bg-gray-900 hover:bg-gray-800 focus:outline-none font-medium rounded-lg text-sm px-8 py-2.5">
+                          Buy
+                        </button>} */}
                         {tradeRequest.requestStatus === 'approved' &&
                         <button type="button"
                           onClick={() => rejectBuyRequest(tradeRequest.requestId)}
