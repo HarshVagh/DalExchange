@@ -21,7 +21,7 @@ const VerifyEmail = () => {
         try {
             await axios.post('http://localhost:8080/auth/verify', { email, code });
             setMessage('User verified successfully.');
-            navigate('/landing-page');
+            navigate('/products');
         } catch (error) {
             if (error.response) {
                 setMessage(error.response.data);
