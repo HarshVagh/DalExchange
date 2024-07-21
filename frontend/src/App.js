@@ -24,6 +24,7 @@ import SavedItems from "./features/profile_page/SavedItems";
 import EditProfile from "./features/profile_page/EditProfile";
 import Reviews from './features/profile_page/Reviews';
 import PurchaseHistory from './features/profile_page/PurchaseHistory';
+import { SearchFilterProvider } from './context/SearchFilterContext';
 
 
 function App() {
@@ -38,7 +39,13 @@ function App() {
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
-        <Route path="/products" element={<PrivateRoute> <ProductList /> </PrivateRoute> } />
+        <Route path="/products" element={
+          <PrivateRoute> 
+            <SearchFilterProvider> 
+              <ProductList />
+            </SearchFilterProvider>
+          </PrivateRoute> 
+        } />
         <Route path="/products/add-product" element={<AddProduct />}/>
         <Route path="/products/:productId" element={<PrivateRoute> <ProductDetails/> </PrivateRoute> } />
         
