@@ -11,8 +11,9 @@ import Notification from "../features/notification/Notification";
 
 const Header = ({ config, onSearchSubmit }) => {
   const navigate = useNavigate();
-  const search = SearchFilterContext ? SearchFilterContext.search : '';
-  const setSearch = SearchFilterContext ? SearchFilterContext.setSearch : () => {};
+  const context = useContext(SearchFilterContext);
+  const search = context ? context.search : '';
+  const setSearch = context ? context.setSearch : () => {};
   const [notificationVisible, setNotificationVisible] = useState(false);
 
   const handleKeyDown = (event) => {
