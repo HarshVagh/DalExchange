@@ -9,6 +9,7 @@ COPY package*.json ./
 
 # Copy the rest of the project (excluding node_modules)
 COPY . .
+COPY .env.prod .env
 
 # Use a smaller image for serving
 FROM nginx:alpine

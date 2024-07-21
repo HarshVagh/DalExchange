@@ -1,13 +1,11 @@
-import axios from "axios";
-
-const BASE_URL = "http://localhost:8080";
+import AxiosInstance from "./AxiosInstance";
 
 export const ProfileApi = {
   getProfile: async (userId, setters, params) => {
     try {
       setters.isLoading(true);
       setters.error(null);
-      const response = await axios.get(`${BASE_URL}/profile`, {
+      const response = await AxiosInstance.get("/profile", {
         params: params,
         paramsSerializer: { indexes: null }
       });

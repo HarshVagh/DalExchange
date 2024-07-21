@@ -1,11 +1,9 @@
-import axios from "axios";
-
-const BASE_URL = "http://localhost:8080";
+import AxiosInstance from "./AxiosInstance";
 
 const EditProfileApi = {
   fetchUserProfile: async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/profile`);
+      const response = await AxiosInstance.get("/profile");
       return response.data;
     } catch (error) {
       throw new Error("Failed to fetch user profile");
@@ -14,7 +12,7 @@ const EditProfileApi = {
 
   updateUserProfile: async (payload) => {
     try {
-      const response = await axios.put(`${BASE_URL}/profile/edit_user`, payload, {
+      const response = await AxiosInstance.put("/profile/edit_user", payload, {
         headers: {
           'Content-Type': 'application/json',
         },
