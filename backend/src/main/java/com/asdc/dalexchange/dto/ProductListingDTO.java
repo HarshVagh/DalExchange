@@ -20,5 +20,6 @@ public class ProductListingDTO {
     private String useDuration;
     private ShippingType shippingType;
     private Integer quantityAvailable;
+    public String imagePath;
     private LocalDateTime createdAt;
 }

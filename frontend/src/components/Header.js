@@ -8,6 +8,7 @@ import HandshakeIcon from "../assets/icons/handshake-solid.svg";
 import BellIcon from "../assets/icons/bell-solid.svg";
 import UserPlaceholder from "../assets/images/placeholder-user.jpg";
 import Notification from "../features/notification/Notification";
+import { useUser } from "../context/UserContext";
 
 const Header = ({ config, onSearchSubmit }) => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const Header = ({ config, onSearchSubmit }) => {
   const search = context ? context.search : '';
   const setSearch = context ? context.setSearch : () => {};
   const [notificationVisible, setNotificationVisible] = useState(false);
+  const { user } = useUser();
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
@@ -78,7 +80,7 @@ const Header = ({ config, onSearchSubmit }) => {
             <img
               alt=''
               className='w-10 h-10 rounded-full cursor-pointer'
-              src={UserPlaceholder}
+              src={user?.profilePicture ? user.profilePicture : UserPlaceholder}
               onClick={() => navigate('/profile')}
             />
           )}

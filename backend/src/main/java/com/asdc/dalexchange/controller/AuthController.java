@@ -6,6 +6,9 @@ import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.model.VerificationRequest;
 import com.asdc.dalexchange.service.UserService;
 import com.asdc.dalexchange.util.JwtUtils;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import org.hibernate.service.spi.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Map;
 
 @RestController
@@ -65,25 +69,13 @@ public class AuthController {
             user.setRole(Role.valueOf(role));
             user.setBio(bio);
 
-            if (!profilePicture.isEmpty()) {
-                String profilePicturePath = saveProfilePicture(profilePicture);
-                user.setProfilePicture(profilePicturePath);
-            }
-
-            userService.registerUser(user);
-            // Send verification code logic
+            userService.registerUser(user, profilePicture);
             return ResponseEntity.ok("User registered successfully. Please check your email for verification code.");
         } catch (Exception e) {
             logger.error("Error registering user: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error registering user.");
         }
     }
-    private String saveProfilePicture(MultipartFile profilePicture) {
-        // Implement logic to save profile picture to the server
-        // and return the file path or URL
-        return "path/to/saved/profilePicture.jpg";
-    }
-
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {

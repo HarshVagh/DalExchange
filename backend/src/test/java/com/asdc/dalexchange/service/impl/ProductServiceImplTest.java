@@ -10,6 +10,8 @@ import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.model.ProductCategory;
 import com.asdc.dalexchange.repository.ProductCategoryRepository;
 import com.asdc.dalexchange.repository.ProductRepository;
+import com.asdc.dalexchange.repository.UserRepository;
+import com.asdc.dalexchange.util.CloudinaryUtil;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,6 +43,12 @@ public class ProductServiceImplTest {
 
     @Mock
     private ProductCategoryRepository productCategoryRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private CloudinaryUtil cloudinaryUtil;
 
     @InjectMocks
     private ProductServiceImpl productService;
@@ -232,6 +240,7 @@ public class ProductServiceImplTest {
         assertEquals("Product not found", exception.getMessage());
         verify(productRepository, times(1)).findById(1L);
     }
+
     @Test
     void addProductTest() throws IOException {
         AddProductDTO addProductDTO = new AddProductDTO();
@@ -252,6 +261,9 @@ public class ProductServiceImplTest {
         when(file.isEmpty()).thenReturn(false);
         when(file.getBytes()).thenReturn(new byte[0]);
 
+        String mockImageUrl = "http://mock.cloudinary.url/test.jpg";
+        when(cloudinaryUtil.uploadImage(any(MultipartFile.class))).thenReturn(mockImageUrl);
+
         Product savedProduct = new Product();
         savedProduct.setId(1L);
         savedProduct.setTitle(addProductDTO.getTitle());
@@ -262,7 +274,7 @@ public class ProductServiceImplTest {
         savedProduct.setUseDuration(addProductDTO.getUseDuration());
         savedProduct.setShippingType(addProductDTO.getShippingType());
         savedProduct.setQuantityAvailable(addProductDTO.getQuantityAvailable());
-        savedProduct.setImagePath("/Users/shivaniuppe/Desktop/dal-exchange/group09/backend/src/uploads/" + UUID.randomUUID() + "_test.jpg");
+        savedProduct.setImagePath(mockImageUrl);
         savedProduct.setCreatedAt(LocalDateTime.now());
 
         when(productRepository.save(any(Product.class))).thenReturn(savedProduct);
@@ -278,7 +290,7 @@ public class ProductServiceImplTest {
         assertEquals(addProductDTO.getUseDuration(), product.getUseDuration());
         assertEquals(addProductDTO.getShippingType(), product.getShippingType());
         assertEquals(addProductDTO.getQuantityAvailable(), product.getQuantityAvailable());
-        assertNotNull(product.getImagePath());
+        assertEquals(mockImageUrl, product.getImagePath());
         verify(productRepository, times(1)).save(any(Product.class));
     }
 
