@@ -48,6 +48,9 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
     @Override
     public ProductDetailsDTO getDetails(Long productId) {
 
+        Long userId = AuthUtil.getCurrentUserId(userRepository);
+
+
         // Get all the details of the product
         Product product = getProductById(productId);
         System.out.println("details of the product : " + product);
@@ -72,11 +75,6 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
         double rating = (sellerRating != null) ? sellerRating.doubleValue() : 0.0; // Default to 0.0 if null
         productDetailsDTO.setRating(rating);
         //productDetailsDTO.setRating(product.getSeller().getSellerRating());
-
-        // Set the favorite status
-        Long userId = 5L;
-
-        //Long userId = AuthUtil.getCurrentUserId(userRepository);
 
         log.info("userId is : " + userId);
         productDetailsDTO.setFavorite(getFavoriteStatus(userId, productId));

@@ -19,7 +19,6 @@ public class ProductDetailsController {
     @GetMapping("")
     public ResponseEntity<ProductDetailsDTO> product(
             @RequestParam(defaultValue = "0") Long productId) {
-        long userId = 1L;
         ProductDetailsDTO productDetailsDTO = productDetailsService.getDetails(productId);
         return ResponseEntity.ok().body(productDetailsDTO);
     }
@@ -28,9 +27,6 @@ public class ProductDetailsController {
     @GetMapping("/favorite")
     public ResponseEntity<String> markAsFavorite(
             @RequestParam(defaultValue = "0") Long productId) {
-
-        long userId = 1L;
-
         ProductWishlistDTO productWishlistDTO = new ProductWishlistDTO();
         productWishlistDTO.setProductId(productId);
 

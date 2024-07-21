@@ -47,8 +47,8 @@ public class ProductWishListServiceImpl implements ProductWishlistService {
 
     @Transactional
     public boolean markProductAsFavorite(long productId) {
-        Long userId = 5L;
-                // Long userId = AuthUtil.getCurrentUserId(userRepository);
+        //Long userId = 5L;
+        Long userId = AuthUtil.getCurrentUserId(userRepository);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + userId));
         Product product = productRepository.findById(productId)

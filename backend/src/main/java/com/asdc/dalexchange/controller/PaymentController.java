@@ -34,11 +34,26 @@ public class PaymentController {
         }
     }
 
+
+    @GetMapping("/success")
+    public ResponseEntity<String> paymentSuccess(@RequestParam String amount,
+                                                 @RequestParam Long productId,
+                                                 @RequestParam String paymentIntentId,
+                                                 Principal principal) {
+        try {
+
+            paymentService.savePayment(amount, productId, paymentIntentId, principal);
+            return ResponseEntity.ok("Payment successful and recorded.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Payment successful, but recording failed.");
+        }
+    }
+
     //@CrossOrigin
     @PostMapping("/create-payment-intent")
-    public ResponseEntity<Map> createPaymentIntent(@RequestParam("amount") String amount, @RequestParam("productId") long productId, @RequestParam("userId") long userId ,Principal principal) {
+    public ResponseEntity<Map> createPaymentIntent(@RequestParam("amount") String amount, @RequestParam("productId") long productId,Principal principal) {
         try {
-            String sesisonId = paymentService.createPaymentIntent(amount,productId,userId,principal);
+            String sesisonId = paymentService.createPaymentIntent(amount,productId,principal);
             Map<String, Object> response = new HashMap<>();
             response.put("sessionId", sesisonId);
             return ResponseEntity.status(HttpStatus.OK).body(response);
