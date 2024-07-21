@@ -1,13 +1,11 @@
-import axios from "axios";
-
-const BASE_URL = "http://localhost:8080";
+import AxiosInstance from "./AxiosInstance";
 
 export const ProductListingAPI = {
   get: async (setters, params) => {
     try {
       setters.isLoading(true);
       setters.error(null);
-      const response = await axios.get(BASE_URL + "/products_listing", { 
+      const response = await AxiosInstance.get("/products_listing", { 
           params: params,
           paramsSerializer: {indexes: null }
       });
@@ -23,7 +21,7 @@ export const ProductListingAPI = {
   },
   getCategories: async (setters) => {
     try {
-      const response = await axios.get(BASE_URL + "/product_categories");
+      const response = await AxiosInstance.get("/product_categories");
       setters.categories(response.data);
     } catch (error) {
       console.error("Error fetching products:", error);
