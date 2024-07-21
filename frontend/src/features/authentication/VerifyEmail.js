@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import Header from '../../components/Header';
+import AuthenticationApi from '../../services/AuthenticationApi';
 
 const VerifyEmail = () => {
     const [email, setEmail] = useState('');
@@ -19,15 +19,11 @@ const VerifyEmail = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:8080/auth/verify', { email, code });
+            await AuthenticationApi.verify({ email, code });
             setMessage('User verified successfully.');
-            navigate('/landing-page');
+            navigate('/products');
         } catch (error) {
-            if (error.response) {
-                setMessage(error.response.data);
-            } else {
-                setMessage('Error verifying user.');
-            }
+            setMessage('Error verifying user.');
         }
     };
 
