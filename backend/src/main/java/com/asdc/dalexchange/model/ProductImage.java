@@ -1,10 +1,14 @@
 package com.asdc.dalexchange.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 @Table(name = "product_image")
 public class ProductImage {
 

@@ -48,7 +48,6 @@ public class ProductWishListServiceImpl implements ProductWishlistService {
     public boolean markProductAsFavorite(long userId, long productId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + userId));
-
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id " + productId));
 
@@ -57,11 +56,12 @@ public class ProductWishListServiceImpl implements ProductWishlistService {
 
         if (!existingWishlistItems.isEmpty()) {
             productWishlistRepository.deleteAll(existingWishlistItems);
-            return false; // Indicate that the item was removed
+            return false;
         } else {
             ProductWishlist productWishlist = new ProductWishlist();
             productWishlist.setUserId(user);
             productWishlist.setProductId(product);
+            productWishlistRepository.save(productWishlist);
             return true;
         }
     }

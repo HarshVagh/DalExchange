@@ -21,7 +21,6 @@ public class ProductDetailsController {
             @RequestParam(defaultValue = "0") Long productId) {
         long userId = 1L;
         ProductDetailsDTO productDetailsDTO = productDetailsService.getDetails(userId, productId);
-        // int sellerId = productDTO.getSellerId();
         return ResponseEntity.ok().body(productDetailsDTO);
     }
 
