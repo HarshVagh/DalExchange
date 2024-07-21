@@ -25,19 +25,20 @@ import EditProfile from "./features/profile_page/EditProfile";
 import Reviews from './features/profile_page/Reviews';
 import PurchaseHistory from './features/profile_page/PurchaseHistory';
 import { SearchFilterProvider } from './context/SearchFilterContext';
+import UnauthenticatedRoute from './features/authentication/UnauthenticatedRoute';
 
 
 function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        <Route path="/" element={<UnauthenticatedRoute> <LandingPage /> </UnauthenticatedRoute>} />
 
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/verify-email" element={<VerifyEmail />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/login" element={<UnauthenticatedRoute> <Login /> </UnauthenticatedRoute>} />
+        <Route path="/signup" element={<UnauthenticatedRoute> <Signup /> </UnauthenticatedRoute>} />
+        <Route path="/forgot-password" element={<UnauthenticatedRoute> <ForgotPassword /> </UnauthenticatedRoute>} />
+        <Route path="/verify-email" element={<UnauthenticatedRoute> <VerifyEmail /> </UnauthenticatedRoute>} />
+        <Route path="/reset-password" element={<UnauthenticatedRoute> <ResetPassword /> </UnauthenticatedRoute>} />
 
         <Route path="/products" element={
           <PrivateRoute> 
@@ -46,7 +47,7 @@ function App() {
             </SearchFilterProvider>
           </PrivateRoute> 
         } />
-        <Route path="/products/add-product" element={<AddProduct />}/>
+        <Route path="/products/add-product" element={<PrivateRoute><AddProduct /> </PrivateRoute>}/>
         <Route path="/products/:productId" element={<PrivateRoute> <ProductDetails/> </PrivateRoute> } />
         
         <Route path="/trade_requests" element={<PrivateRoute> <TradeRequests/> </PrivateRoute> } />
@@ -56,7 +57,7 @@ function App() {
         <Route path="/admin-moderation/users" element={<Layout><UserModeration /></Layout>} />
         <Route path="/admin-moderation/products" element={<Layout><ProductModeration /></Layout>} />
         
-        <Route path="/profile/purchase-history" element={<PurchaseHistory />} />
+        <Route path="/profile/purchase-history" element={<PrivateRoute> <PurchaseHistory /> </PrivateRoute>} />
         <Route path="/profile" element={<PrivateRoute> <ProfilePage /> </PrivateRoute> } />
         <Route path="/profile/sold-items" element={<PrivateRoute> <SoldItems /> </PrivateRoute>} />
         <Route path="/profile/saved-items" element={<PrivateRoute> <SavedItems /> </PrivateRoute>} />
