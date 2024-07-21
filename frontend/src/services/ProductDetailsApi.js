@@ -1,11 +1,9 @@
-import axios from 'axios';
-
-const BASE_URL = 'http://localhost:8080'; 
+import AxiosInstance from "./AxiosInstance";
 
 const ProductDetailsApi = {
   fetchProductDetails: async (productId) => {
     try {
-      const response = await axios.get(`${BASE_URL}/product_details`, {
+      const response = await AxiosInstance.get("/product_details", {
         params: {
           productId: productId
         }
@@ -18,7 +16,7 @@ const ProductDetailsApi = {
 
   addToFavorite: async (productId) => {
     try {
-      const response = await axios.get(`${BASE_URL}/product_details/favorite`, {
+      const response = await AxiosInstance.get("/product_details/favorite", {
         params: {
           productId: productId
         }
@@ -31,7 +29,7 @@ const ProductDetailsApi = {
 
   createTradeRequest: async (requestBody) => {
     try {
-      const response = await axios.post(`${BASE_URL}/create_trade_request`, requestBody);
+      const response = await AxiosInstance.post("/create_trade_request", requestBody);
       return response.data; // Adjust as per API response format
     } catch (error) {
       throw new Error('Failed to create trade request');

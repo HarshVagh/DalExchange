@@ -1,14 +1,12 @@
-import axios from "axios";
-
-const BASE_URL = "http://localhost:8080";
+import AxiosInstance from "./AxiosInstance";
 
 export const TradeRequestApi = {
   getTradeRequests: async (setters) => {
     try {
       setters.isLoading(true);
       setters.error(null);
-      const sellResponse = await axios.get(BASE_URL + "/sell_requests");
-      const buyResponse = await axios.get(BASE_URL + "/buy_requests");
+      const sellResponse = await AxiosInstance.get("/sell_requests");
+      const buyResponse = await AxiosInstance.get("/buy_requests");
       setters.sellRequests(sellResponse.data);
       setters.buyRequests(buyResponse.data);
     } catch (error) {
@@ -20,7 +18,7 @@ export const TradeRequestApi = {
   },
   updateStatus: async (id, status) => {
     try {
-      await axios.put(BASE_URL+"/update_trade_status/"+id, null, {
+      await AxiosInstance.put("/update_trade_status/" + id, null, {
         params: {
           status: status
         }
@@ -32,7 +30,7 @@ export const TradeRequestApi = {
   },
   create: async (body) => {
     try {
-      const response = await axios.post(BASE_URL+"/create_trade_request", body);
+      const response = await AxiosInstance.post("/create_trade_request", body);
       console.log("Trade request created successfully:", response.data);
     } catch (error) {
       console.error("Error creating trade request:", error);
