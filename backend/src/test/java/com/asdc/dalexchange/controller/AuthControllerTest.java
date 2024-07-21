@@ -20,12 +20,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -59,9 +61,6 @@ public class AuthControllerTest {
     @Mock
     private UserDetails userDetails;
 
-    @Mock
-    private MultipartFile profilePicture;
-
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
@@ -69,9 +68,12 @@ public class AuthControllerTest {
     }
 
     @Test
-    public void signupTest() {
+    public void signupTest() throws IOException {
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
-        doAnswer(invocation -> null).when(userService).registerUser(any(User.class));
+        MultipartFile profilePicture = mock(MultipartFile.class);
+        doAnswer(invocation -> null).when(userService).registerUser(any(User.class), any(MultipartFile.class));
+        when(profilePicture.isEmpty()).thenReturn(false);
+        when(profilePicture.getBytes()).thenReturn("test image content".getBytes());
 
         ResponseEntity<?> response = authController.signup(
                 "testuser",
@@ -90,6 +92,7 @@ public class AuthControllerTest {
 
     @Test
     public void signupTest_InvalidEmail() {
+        MultipartFile profilePicture = mock(MultipartFile.class);
         ResponseEntity<?> response = authController.signup(
                 "testuser",
                 "password",
@@ -108,7 +111,7 @@ public class AuthControllerTest {
     @Test
     public void signupTest_Exception() {
         when(passwordEncoder.encode(anyString())).thenThrow(new RuntimeException());
-
+        MultipartFile profilePicture = mock(MultipartFile.class);
         ResponseEntity<?> response = authController.signup(
                 "testuser",
                 "password",

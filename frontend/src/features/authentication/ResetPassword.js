@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
 import Header from '../../components/Header';
+import AuthenticationApi from '../../services/AuthenticationApi';
 
 const ResetPassword = () => {
     const [newPassword, setNewPassword] = useState('');
@@ -23,16 +23,9 @@ const ResetPassword = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:8080/auth/reset-password',
-                new URLSearchParams({ email, token, newPassword }),
-                {
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    }
-                }
-            );
+            await AuthenticationApi.resetPassword({ email, token, newPassword });
             setMessage('Password reset successfully.');
-            navigate('/login'); // Redirect to login page
+            navigate('/login');
         } catch (error) {
             setMessage('Error resetting password.');
         }

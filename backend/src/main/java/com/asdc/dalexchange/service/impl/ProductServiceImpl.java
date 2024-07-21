@@ -6,9 +6,13 @@ import com.asdc.dalexchange.dto.ProductModerationDTO;
 import com.asdc.dalexchange.mappers.Mapper;
 import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.model.ProductCategory;
+import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.repository.ProductCategoryRepository;
 import com.asdc.dalexchange.repository.ProductRepository;
+import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.service.ProductService;
+import com.asdc.dalexchange.util.AuthUtil;
+import com.asdc.dalexchange.util.CloudinaryUtil;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,10 +38,16 @@ public class ProductServiceImpl implements ProductService {
     private ProductCategoryRepository productCategoryRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private Mapper<Product, ProductDTO> productMapper;
 
     @Autowired
     private Mapper<Product, ProductModerationDTO> productModerationMapper;
+
+    @Autowired
+    private CloudinaryUtil cloudinaryUtil;
 
     @Override
     public ProductDTO getProductById(Long productId) {
@@ -96,11 +106,11 @@ public class ProductServiceImpl implements ProductService {
         productRepository.save(product);
     }
 
-    private static final String UPLOAD_DIR = "/Users/shivaniuppe/Desktop/dal-exchange/group09/backend/src/uploads/";
-
-    public Product addProduct(AddProductDTO addProductDTO, ProductCategory category, MultipartFile file) throws IOException, IOException {
-
+    public Product addProduct(AddProductDTO addProductDTO, ProductCategory category, MultipartFile file) {
         Product product = new Product();
+        String imageURL = cloudinaryUtil.uploadImage(file);
+        User seller = AuthUtil.getCurrentUser(userRepository);
+
         product.setTitle(addProductDTO.getTitle());
         product.setDescription(addProductDTO.getDescription());
         product.setPrice(addProductDTO.getPrice());
@@ -109,20 +119,17 @@ public class ProductServiceImpl implements ProductService {
         product.setUseDuration(addProductDTO.getUseDuration());
         product.setShippingType(addProductDTO.getShippingType());
         product.setQuantityAvailable(addProductDTO.getQuantityAvailable());
-        if (file != null && !file.isEmpty()) {
-            String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
-            Path filePath = Paths.get(UPLOAD_DIR + filename);
-            Files.createDirectories(filePath.getParent());
-            Files.write(filePath, file.getBytes());
-            product.setImagePath(filePath.toString());
-        }
+        product.setSeller(seller);
+        product.setImagePath(imageURL);
         product.setCreatedAt(LocalDateTime.now());
+
         return productRepository.save(product);
     }
 
     public ProductCategory getCategoryById(Long categoryId) {
         return productCategoryRepository.findById(categoryId).orElse(null);
     }
+
     public Product getProductByID(Long id) {
         return productRepository.findById(id).orElse(null);
     }

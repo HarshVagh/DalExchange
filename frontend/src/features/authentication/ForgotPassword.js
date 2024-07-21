@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Header from '../../components/Header';
-import axios from 'axios';
+import AuthenticationApi from '../../services/AuthenticationApi';
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
@@ -16,11 +16,7 @@ const ForgotPassword = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-                await axios.post('http://localhost:8080/auth/forgot-password', null, {
-                params: {
-                    email: email
-                }
-            });
+            await AuthenticationApi.forgotPassword(email);
             setMessage('Password reset email sent.');
         } catch (error) {
             setMessage('Error sending password reset email.');

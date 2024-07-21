@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import Header from '../../components/Header';
-import { useUser } from './UserContext';
+import { useUser } from '../../context/UserContext';
+import AuthenticationApi from '../../services/AuthenticationApi';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
-    const { setUser } = useUser();  // Get the setUser function from the context
+    const { setUser } = useUser();
     const headerConfig = {
         search: false,
         requests: false,
@@ -21,18 +21,12 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:8080/auth/login', { email, password });
+            const response = await AuthenticationApi.login({ email, password });
             setMessage('Login successful.');
             localStorage.setItem('jwtToken', response.data.token);
 
-            const userResponse = await axios.get('http://localhost:8080/auth/current-user', {
-                headers: {
-                    'Authorization': `Bearer ${response.data.token}`
-                }
-            });
-            const userId = userResponse.data.userId
-            localStorage.setItem('UserId', userId);
-            console.log(userResponse.data,"userResponse");
+            const userResponse = await AuthenticationApi.currentUser(response.data.token);
+            console.log(userResponse);
             setUser(userResponse.data); 
             navigate('/products');
         } catch (error) {
@@ -40,7 +34,6 @@ const Login = () => {
         }
     };
 
-   
     return (
         <div className="flex flex-col min-h-screen">
             <Header config={headerConfig}></Header>

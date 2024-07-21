@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {Link, useNavigate} from 'react-router-dom';
-import axios from 'axios';
 import Header from '../../components/Header';
+import AuthenticationApi from '../../services/AuthenticationApi';
 
 const Signup = () => {
     const [username, setUsername] = useState('');
@@ -35,19 +35,11 @@ const Signup = () => {
         formData.append('bio', bio);
 
         try {
-                await axios.post('http://localhost:8080/auth/signup', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
+            await AuthenticationApi.signup(formData);
             setMessage('User registered successfully. Please check your email for verification code.');
             navigate('/verify-email');
         } catch (error) {
-            if (error.response) {
-                setMessage(error.response.data);
-            } else {
-                setMessage('Error registering user.');
-            }
+            setMessage('Error registering user.');
         }
     };
 
