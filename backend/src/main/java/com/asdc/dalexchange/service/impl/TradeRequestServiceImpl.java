@@ -20,6 +20,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import static org.springframework.data.jpa.domain.Specification.where;
+
 @Service
 @Slf4j
 public class TradeRequestServiceImpl implements TradeRequestService {
@@ -42,7 +44,7 @@ public class TradeRequestServiceImpl implements TradeRequestService {
     @Override
     public List<TradeRequest> getBuyerTradeRequests() {
         log.info("getBuyerTradeRequests call started in the TradeRequestServiceImpl");
-        Long buyerId = AuthUtil.getCurrentUserId(userRepository);
+        Long buyerId = 2L; //AuthUtil.getCurrentUserId(userRepository);
         Specification<TradeRequest> spec = TradeRequestSpecification.hasBuyerId(buyerId);
         return tradeRequestRepository.findAll(spec);
     }
@@ -50,7 +52,7 @@ public class TradeRequestServiceImpl implements TradeRequestService {
     @Override
     public List<TradeRequest> getSellerTradeRequests() {
         log.info("getSellerTradeRequests call started in the TradeRequestServiceImpl");
-        Long sellerId = AuthUtil.getCurrentUserId(userRepository);
+        Long sellerId = 2L; //AuthUtil.getCurrentUserId(userRepository);
         Specification<TradeRequest> spec = TradeRequestSpecification.hasSellerId(sellerId);
         return tradeRequestRepository.findAll(spec);
     }
@@ -97,5 +99,15 @@ public class TradeRequestServiceImpl implements TradeRequestService {
     private User findUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+    }
+
+    @Override
+    public double getApprovedTradeRequestAmount(Long buyerId, Long productId) {
+        List<TradeRequest> tradeRequest = tradeRequestRepository.findAll(
+                where(TradeRequestSpecification.hasBuyerId(buyerId))
+                        .and(TradeRequestSpecification.hasProductId(productId))
+                        .and(TradeRequestSpecification.hasRequestStatus("approved")));
+        TradeRequest firsttraderequest = tradeRequest.get(0);
+        return firsttraderequest.getRequestedPrice();
     }
 }

@@ -20,7 +20,7 @@ public class ProductDetailsController {
     public ResponseEntity<ProductDetailsDTO> product(
             @RequestParam(defaultValue = "0") Long productId) {
         long userId = 1L;
-        ProductDetailsDTO productDetailsDTO = productDetailsService.getDetails(userId, productId);
+        ProductDetailsDTO productDetailsDTO = productDetailsService.getDetails(productId);
         return ResponseEntity.ok().body(productDetailsDTO);
     }
 
@@ -30,11 +30,11 @@ public class ProductDetailsController {
             @RequestParam(defaultValue = "0") Long productId) {
 
         long userId = 1L;
+
         ProductWishlistDTO productWishlistDTO = new ProductWishlistDTO();
-        productWishlistDTO.setUserId(userId);
         productWishlistDTO.setProductId(productId);
 
-        productWishlistService.markProductAsFavorite(userId, productId);
+        productWishlistService.markProductAsFavorite(productId);
 
         return ResponseEntity.ok().body("Product added Sucessfully in wishlist.");
     }

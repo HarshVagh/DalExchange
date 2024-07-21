@@ -13,7 +13,6 @@ import org.mockito.*;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,7 +52,7 @@ class ProductDetailsServiceImplTest {
         when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
         // Execute & Verify
-        assertThrows(ResourceNotFoundException.class, () -> productDetailsService.getDetails(userId, productId));
+        assertThrows(ResourceNotFoundException.class, () -> productDetailsService.getDetails(productId));
 
         // Verify interactions
         verify(productRepository).findById(productId);
@@ -97,7 +96,7 @@ class ProductDetailsServiceImplTest {
         when(productWishlistRepository.count(any(Specification.class))).thenReturn(1L);
 
         // Execute
-        ProductDetailsDTO result = productDetailsService.getDetails(userId, productId);
+        ProductDetailsDTO result = productDetailsService.getDetails(productId);
 
         // Verify
         assertNotNull(result);

@@ -8,7 +8,7 @@ import java.util.List;
 
 @Service
 public interface ProductWishlistService {
-    boolean markProductAsFavorite(long userId, long productId);
+    boolean markProductAsFavorite(long productId);
 
     public List<PurchaseProductDTO> getAllPurchasedProduct(Long userid);
 

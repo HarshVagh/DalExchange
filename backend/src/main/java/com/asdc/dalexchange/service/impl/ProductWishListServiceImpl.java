@@ -14,6 +14,7 @@ import com.asdc.dalexchange.repository.ProductWishlistRepository;
 import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.service.ProductWishlistService;
 import com.asdc.dalexchange.specifications.ProductWishlistSpecification;
+import com.asdc.dalexchange.util.AuthUtil;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,9 @@ public class ProductWishListServiceImpl implements ProductWishlistService {
     private ProductRepository productRepository;
 
     @Transactional
-    public boolean markProductAsFavorite(long userId, long productId) {
+    public boolean markProductAsFavorite(long productId) {
+        Long userId = 5L;
+                // Long userId = AuthUtil.getCurrentUserId(userRepository);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + userId));
         Product product = productRepository.findById(productId)

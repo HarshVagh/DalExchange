@@ -68,7 +68,7 @@ class ProductWishListServiceImplTest {
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, () -> {
-            productWishListService.markProductAsFavorite(userId, productId);
+            productWishListService.markProductAsFavorite(productId);
         });
         verify(productRepository, never()).findById(any());
         verify(productWishlistRepository, never()).findAll((Specification<ProductWishlist>) any());
@@ -88,7 +88,7 @@ class ProductWishListServiceImplTest {
         when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> {
-            productWishListService.markProductAsFavorite(userId, productId);
+            productWishListService.markProductAsFavorite(productId);
         });
         verify(productWishlistRepository, never()).findAll((Specification<ProductWishlist>) any());
         verify(productWishlistRepository, never()).save(any());
@@ -114,7 +114,7 @@ class ProductWishListServiceImplTest {
         when(productRepository.findById(productId)).thenReturn(Optional.of(product));
         when(productWishlistRepository.findAll(any(Specification.class))).thenReturn(List.of(existingWishlist));
 
-        boolean result = productWishListService.markProductAsFavorite(userId, productId);
+        boolean result = productWishListService.markProductAsFavorite(productId);
 
         assertFalse(result);
         verify(productWishlistRepository, times(1)).findAll(any(Specification.class));
@@ -138,7 +138,7 @@ class ProductWishListServiceImplTest {
         when(productRepository.findById(productId)).thenReturn(Optional.of(product));
         when(productWishlistRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
 
-        boolean result = productWishListService.markProductAsFavorite(userId, productId);
+        boolean result = productWishListService.markProductAsFavorite(productId);
 
         assertTrue(result); // Product was added to the wishlist
 
