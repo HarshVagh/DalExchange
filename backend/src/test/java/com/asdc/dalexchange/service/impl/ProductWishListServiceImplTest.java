@@ -13,6 +13,7 @@ import com.asdc.dalexchange.repository.ProductRepository;
 import com.asdc.dalexchange.repository.ProductWishlistRepository;
 import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.specifications.ProductWishlistSpecification;
+import com.asdc.dalexchange.util.AuthUtil;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -94,9 +95,9 @@ class ProductWishListServiceImplTest {
         verify(productWishlistRepository, never()).save(any());
     }
 
-    @Test
     @Transactional
-    public void testMarkProductAsFavorite_removesProductFromFavorites() {
+    @Test
+    void testMarkProductAsFavorite_removesProductFromFavorites() {
         long userId = 1L;
         long productId = 1L;
 
@@ -110,19 +111,27 @@ class ProductWishListServiceImplTest {
         existingWishlist.setUserId(user);
         existingWishlist.setProductId(product);
 
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(productRepository.findById(productId)).thenReturn(Optional.of(product));
-        when(productWishlistRepository.findAll(any(Specification.class))).thenReturn(List.of(existingWishlist));
+        try (MockedStatic<AuthUtil> mockedAuthUtil = Mockito.mockStatic(AuthUtil.class)) {
+            mockedAuthUtil.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
 
-        boolean result = productWishListService.markProductAsFavorite(productId);
+            // Mock repository responses
+            when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+            when(productRepository.findById(productId)).thenReturn(Optional.of(product));
+            when(productWishlistRepository.findAll(any(Specification.class))).thenReturn(List.of(existingWishlist));
 
-        assertFalse(result);
-        verify(productWishlistRepository, times(1)).findAll(any(Specification.class));
-        verify(productWishlistRepository, times(1)).deleteAll(any(List.class));
+            boolean result = productWishListService.markProductAsFavorite(productId);
+
+            assertFalse(result); // Product was removed from the wishlist
+
+            // Verify interactions
+            verify(productWishlistRepository, times(1)).findAll(any(Specification.class));
+            verify(productWishlistRepository, times(1)).deleteAll(any(List.class));
+            verify(productWishlistRepository, never()).save(any(ProductWishlist.class));
+        }
     }
 
-    @Test
     @Transactional
+    @Test
     void testMarkProductAsFavorite_addsProductToFavorites() {
         long userId = 1L;
         long productId = 1L;
@@ -133,19 +142,81 @@ class ProductWishListServiceImplTest {
         Product product = new Product();
         product.setProductId(productId);
 
-        // No existing wishlist items for this user and product
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(productRepository.findById(productId)).thenReturn(Optional.of(product));
-        when(productWishlistRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
+        // Mock repository responses
+        try (MockedStatic<AuthUtil> mockedAuthUtil = Mockito.mockStatic(AuthUtil.class)) {
+            mockedAuthUtil.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
 
-        boolean result = productWishListService.markProductAsFavorite(productId);
+            when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+            when(productRepository.findById(productId)).thenReturn(Optional.of(product));
+            when(productWishlistRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
 
-        assertTrue(result); // Product was added to the wishlist
+            // Mock saving the wishlist item
+            ProductWishlist wishlistItem = new ProductWishlist();
+            wishlistItem.setUserId(user);  // Make sure to set the User object
+            wishlistItem.setProductId(product);  // Make sure to set the Product object
+            when(productWishlistRepository.save(any(ProductWishlist.class))).thenReturn(wishlistItem);
 
-        // Verify interactions
-        verify(productWishlistRepository, times(1)).findAll(any(Specification.class));
-        verify(productWishlistRepository, times(1)).save(any(ProductWishlist.class));
+            boolean result = productWishListService.markProductAsFavorite(productId);
+
+            assertTrue(result); // Product was added to the wishlist
+
+            // Verify interactions
+            verify(productWishlistRepository, times(1)).findAll(any(Specification.class));
+            verify(productWishlistRepository, times(1)).save(any(ProductWishlist.class));
+            verify(productWishlistRepository, never()).deleteAll(any(List.class));
+        }
     }
+
+    @Transactional
+    @Test
+    void testMarkProductAsFavorite_userNotFound() {
+        long userId = 1L;
+        long productId = 1L;
+
+        try (MockedStatic<AuthUtil> mockedAuthUtil = Mockito.mockStatic(AuthUtil.class)) {
+            mockedAuthUtil.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
+
+            when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+            Exception exception = assertThrows(ResourceNotFoundException.class, () ->
+                    productWishListService.markProductAsFavorite(productId)
+            );
+
+            assertEquals("User not found with id " + userId, exception.getMessage());
+
+            verify(userRepository, times(1)).findById(userId);
+            verify(productRepository, never()).findById(anyLong());
+            verify(productWishlistRepository, never()).findAll(any(Specification.class));
+        }
+    }
+
+    @Transactional
+    @Test
+    void testMarkProductAsFavorite_productNotFound() {
+        long userId = 1L;
+        long productId = 1L;
+
+        User user = new User();
+        user.setUserId(userId);
+
+        try (MockedStatic<AuthUtil> mockedAuthUtil = Mockito.mockStatic(AuthUtil.class)) {
+            mockedAuthUtil.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
+
+            when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+            when(productRepository.findById(productId)).thenReturn(Optional.empty());
+
+            Exception exception = assertThrows(ResourceNotFoundException.class, () ->
+                    productWishListService.markProductAsFavorite(productId)
+            );
+
+            assertEquals("Product not found with id " + productId, exception.getMessage());
+
+            verify(userRepository, times(1)).findById(userId);
+            verify(productRepository, times(1)).findById(productId);
+            verify(productWishlistRepository, never()).findAll(any(Specification.class));
+        }
+    }
+
 
     @Test
     void testGetAllSavedProducts() {
@@ -183,28 +254,34 @@ class ProductWishListServiceImplTest {
 
     @Test
     void testGetAllPurchasedProduct_whenOrdersExist() {
+        Long userId = 1L;
 
-        long userId = 1L;
-        OrderDetails orderDetails1 = new OrderDetails();
-        orderDetails1.setOrderId(1L);
-        OrderDetails orderDetails2 = new OrderDetails();
-        orderDetails2.setOrderId(2L);
+        // Mock static AuthUtil
+        try (MockedStatic<AuthUtil> authUtilMock = mockStatic(AuthUtil.class)) {
+            authUtilMock.when(() -> AuthUtil.getCurrentUserId(any())).thenReturn(userId);
 
-        when(orderRepository.findByBuyerUserId(userId))
-                .thenReturn(Arrays.asList(orderDetails1, orderDetails2));
+            OrderDetails orderDetails1 = new OrderDetails();
+            orderDetails1.setOrderId(1L);
+            OrderDetails orderDetails2 = new OrderDetails();
+            orderDetails2.setOrderId(2L);
 
-        PurchaseProductDTO purchaseProductDTO1 = new PurchaseProductDTO();
-        PurchaseProductDTO purchaseProductDTO2 = new PurchaseProductDTO();
+            when(orderRepository.findByBuyerUserId(userId))
+                    .thenReturn(Arrays.asList(orderDetails1, orderDetails2));
 
-        when(purchaseProductMapper.mapTo(eq(orderDetails1))).thenReturn(purchaseProductDTO1);
-        when(purchaseProductMapper.mapTo(eq(orderDetails2))).thenReturn(purchaseProductDTO2);
+            PurchaseProductDTO purchaseProductDTO1 = new PurchaseProductDTO();
+            PurchaseProductDTO purchaseProductDTO2 = new PurchaseProductDTO();
 
-        List<PurchaseProductDTO> result = productWishListService.getAllPurchasedProduct();
+            when(purchaseProductMapper.mapTo(orderDetails1)).thenReturn(purchaseProductDTO1);
+            when(purchaseProductMapper.mapTo(orderDetails2)).thenReturn(purchaseProductDTO2);
 
-        assertEquals(2, result.size());
-        verify(purchaseProductMapper, times(1)).mapTo(eq(orderDetails1));
-        verify(purchaseProductMapper, times(1)).mapTo(eq(orderDetails2));
+            List<PurchaseProductDTO> result = productWishListService.getAllPurchasedProduct();
+
+            assertEquals(2, result.size());
+            verify(purchaseProductMapper, times(1)).mapTo(orderDetails1);
+            verify(purchaseProductMapper, times(1)).mapTo(orderDetails2);
+        }
     }
+
 
     @Test
     void testGetAllPurchasedProduct_whenNoOrders() {

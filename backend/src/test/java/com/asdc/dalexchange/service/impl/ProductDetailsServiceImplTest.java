@@ -8,27 +8,22 @@ import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.repository.ProductImageRepository;
 import com.asdc.dalexchange.repository.ProductRepository;
 import com.asdc.dalexchange.repository.ProductWishlistRepository;
+import com.asdc.dalexchange.repository.UserRepository;
+import com.asdc.dalexchange.util.AuthUtil;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 class ProductDetailsServiceImplTest {
 
@@ -44,6 +39,9 @@ class ProductDetailsServiceImplTest {
     @Mock
     private Mapper<Product, ProductDetailsDTO> productDetailsMapper;
 
+    @Mock
+    private UserRepository userRepository;
+
     @InjectMocks
     private ProductDetailsServiceImpl productDetailsService;
 
@@ -55,18 +53,22 @@ class ProductDetailsServiceImplTest {
     @Test
     void testGetDetailsProductNotFound() {
         // Setup
-        Long userId = 1L;
         Long productId = 1L;
+        Long userId = 1L;
 
         // Mocking
         when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
-        // Execute & Verify
-        assertThrows(ResourceNotFoundException.class, () -> productDetailsService.getDetails(productId));
+        try (MockedStatic<AuthUtil> mockedAuthUtil = Mockito.mockStatic(AuthUtil.class)) {
+            mockedAuthUtil.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
 
-        // Verify interactions
-        verify(productRepository).findById(productId);
-        verifyNoMoreInteractions(productImageRepository, productWishlistRepository, productDetailsMapper);
+            // Execute & Verify
+            assertThrows(ResourceNotFoundException.class, () -> productDetailsService.getDetails(productId));
+
+            // Verify interactions
+            verify(productRepository).findById(productId);
+            verifyNoMoreInteractions(productImageRepository, productWishlistRepository, productDetailsMapper);
+        }
     }
 
     @Test
@@ -99,31 +101,33 @@ class ProductDetailsServiceImplTest {
 
         List<ProductImage> productImages = List.of(productImage1, productImage2);
 
-        // Mocking
         when(productRepository.findById(productId)).thenReturn(Optional.of(product));
         when(productImageRepository.findAll(any(Specification.class))).thenReturn(productImages);
         when(productDetailsMapper.mapTo(product)).thenReturn(productDetailsDTO);
         when(productWishlistRepository.count(any(Specification.class))).thenReturn(1L);
 
-        // Execute
-        ProductDetailsDTO result = productDetailsService.getDetails(productId);
+        try (MockedStatic<AuthUtil> mockedAuthUtil = Mockito.mockStatic(AuthUtil.class)) {
+            mockedAuthUtil.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
 
-        // Verify
-        assertNotNull(result);
-        assertEquals("Books", result.getCategory());
-        assertEquals(2L, result.getSellerId());
-        assertEquals(seller.getJoinedAt(), result.getSellerJoiningDate());
-        assertEquals(4.5, result.getRating());
-        assertEquals(List.of("url1", "url2"), result.getImageUrls());
-        assertTrue(result.isFavorite());
+            // Execute
+            ProductDetailsDTO result = productDetailsService.getDetails(productId);
 
-        // Verify interactions
-        verify(productRepository).findById(productId);
-        verify(productImageRepository).findAll(any(Specification.class));
-        verify(productDetailsMapper).mapTo(product);
-        verify(productWishlistRepository).count(any(Specification.class));
+            // Verify
+            assertNotNull(result);
+            assertEquals("Books", result.getCategory());
+            assertEquals(2L, result.getSellerId());
+            assertEquals(seller.getJoinedAt(), result.getSellerJoiningDate());
+            assertEquals(4.5, result.getRating());
+            assertEquals(List.of("url1", "url2"), result.getImageUrls());
+            assertTrue(result.isFavorite());
+
+            // Verify interactions
+            verify(productRepository).findById(productId);
+            verify(productImageRepository).findAll(any(Specification.class));
+            verify(productDetailsMapper).mapTo(product);
+            verify(productWishlistRepository).count(any(Specification.class));
+        }
     }
-
 
     @Test
     void testGetProductById() {

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 
@@ -84,39 +85,42 @@ public class ProfilePageServiceImplTest {
         // Mock data
         Long userId = 1L;
         User user = createUser();
+        EditProfileDTO editProfileDTO = createEditProfileDTO();
 
-        // Mock repository behavior
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        // Mock AuthUtil
+        try (MockedStatic<AuthUtil> authUtilMock = mockStatic(AuthUtil.class)) {
+            authUtilMock.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
 
-        // Mock mapper behavior
-        when(modelMapper.map(user, EditProfileDTO.class)).thenReturn(createEditProfileDTO());
+            // Mock repository behavior
+            when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-        // Call the service method
-        EditProfileDTO userDetails = profilePageService.editGetUserDetails();
+            // Mock mapper behavior
+            when(modelMapper.map(user, EditProfileDTO.class)).thenReturn(editProfileDTO);
 
-        // Assertions
-        assertNotNull(userDetails);
-        assertEquals(user.getUsername(), userDetails.getUsername());
-        assertEquals(user.getEmail(), userDetails.getEmail());
-        // Add more assertions based on your DTO and expected behavior
+            // Call the service method
+            EditProfileDTO userDetails = profilePageService.editGetUserDetails();
+
+            // Assertions
+            assertNotNull(userDetails);
+            assertEquals(user.getUsername(), userDetails.getUsername());
+            assertEquals(user.getEmail(), userDetails.getEmail());
+            // Add more assertions based on your DTO and expected behavior
+        }
     }
 
     // Helper methods for creating mock data
-    private EditProfileDTO createEditProfileDTO() {
-        EditProfileDTO dto = new EditProfileDTO();
-        dto.setUsername("testuser");
-        dto.setEmail("test@example.com");
-        // Set other fields as needed for tests
-        return dto;
-    }
-
     private User createUser() {
         User user = new User();
-        user.getUserId();
-        user.setUsername("testuser");
+        user.setUsername("testUser");
         user.setEmail("test@example.com");
-        // Set other fields as needed for tests
         return user;
+    }
+
+    private EditProfileDTO createEditProfileDTO() {
+        EditProfileDTO dto = new EditProfileDTO();
+        dto.setUsername("testUser");
+        dto.setEmail("test@example.com");
+        return dto;
     }
 
     // Add more test cases to cover edge cases and other methods as necessary
