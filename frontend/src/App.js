@@ -20,6 +20,7 @@ import PurchaseHistory from './features/profile_page/PurchaseHistory';
 import { SearchFilterProvider } from './context/SearchFilterContext';
 import UnauthenticatedRoute from './features/private_routes/UnauthenticatedRoute';
 import StudentPrivateRoute from './features/private_routes/StudentPrivateRoute';
+import AdminPrivateRoute from './features/private_routes/AdminPrivateRoute';
 import NotAuthorizedPage from './features/authentication/NotAuthorizedPage';
 import Layout from './components/AdminLayout';
 import AdminDashboard from "./features/admin_moderation/AdminDashboard";
@@ -54,10 +55,16 @@ function App() {
           <Route path="/trade_requests" element={<StudentPrivateRoute> <TradeRequests/> </StudentPrivateRoute> } />
 
           <Route path="/admin-moderation/dashboard" element={<Layout> <AdminDashboard /> </Layout>} />
-          <Route path="/admin-moderation/orders" element={<Layout> <OrderModeration /> </Layout>} />
+          <Route path="/admin-moderation/orders" element={<Layout> <OrderModeration /> </Layout>}/>
           <Route path="/admin-moderation/users" element={<Layout><UserModeration /></Layout>} />
           <Route path="/admin-moderation/products" element={<Layout><ProductModeration /></Layout>} />
           <Route path="/admin-moderation/feedback" element={<Layout> <FeedbackModeration /> </Layout>} />
+
+          {/* <Route path="/admin-moderation/dashboard" element={<AdminPrivateRoute> <Layout> <AdminDashboard /> </Layout> </AdminPrivateRoute>} />
+          <Route path="/admin-moderation/orders" element={<AdminPrivateRoute> <Layout> <OrderModeration /> </Layout> </AdminPrivateRoute>} />
+          <Route path="/admin-moderation/users" element={<AdminPrivateRoute> <Layout><UserModeration /></Layout> </AdminPrivateRoute>} />
+          <Route path="/admin-moderation/products" element={<AdminPrivateRoute> <Layout><ProductModeration /></Layout> </AdminPrivateRoute>} />
+          <Route path="/admin-moderation/feedback" element={<AdminPrivateRoute> <Layout> <FeedbackModeration /> </Layout> </AdminPrivateRoute>} /> */}
 
           <Route path="/profile/purchase-history" element={<StudentPrivateRoute> <PurchaseHistory /> </StudentPrivateRoute>} />
           <Route path="/profile" element={<StudentPrivateRoute> <ProfilePage /> </StudentPrivateRoute> } />
