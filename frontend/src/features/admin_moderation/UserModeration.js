@@ -79,13 +79,12 @@ export default function UserModeration() {
   };
 
   return (
-    <div className="flex min-h-screen w-full overflow-hidden">
-      <div className="flex flex-col flex-1">
-  <header className="flex h-14 lg:h-[60px] items-center gap-4 border-b bg-gray-200 px-6">
-  <div className="w-full flex justify-center">
-    <h1 className="text-3xl font-bold">User Management</h1>
-  </div>
-</header>
+<div className="flex flex-col min-h-screen w-full">
+      <header className="flex h-14 lg:h-[60px] items-center gap-4 border-b bg-gray-200 px-6 mx-4 mt-4 rounded-lg">
+        <div className="w-full flex justify-center">
+          <h1 className="text-3xl font-bold">User Moderation</h1>
+        </div>
+      </header>
 
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -198,6 +197,5 @@ export default function UserModeration() {
           )}
         </main>
       </div>
-    </div>
   );
 }

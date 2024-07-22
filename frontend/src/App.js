@@ -9,13 +9,8 @@ import VerifyEmail from './features/authentication/VerifyEmail';
 import LandingPage from './features/authentication/LandingPage';
 import ForgotPassword from './features/authentication/ForgotPassword';
 import ResetPassword from './features/authentication/ResetPassword';
-import ViewOrders from './features/order_moderation/ViewOrders';
-import OrderDetails from './features/order_moderation/OrderDetails';
-import Layout from './features/order_moderation/Layout';
 import Notification from './features/notification/Notification';
 import AddProduct from './features/add_product/AddProduct';
-import UserModeration from "./features/user_moderation/UserModeration";
-import ProductModeration from "./features/product_moderation/ProductModeration";
 import ProfilePage from './features/profile_page/Profile';
 import SoldItems from "./features/profile_page/SoldItems";
 import SavedItems from "./features/profile_page/SavedItems";
@@ -27,47 +22,57 @@ import UnauthenticatedRoute from './features/private_routes/UnauthenticatedRoute
 import StudentPrivateRoute from './features/private_routes/StudentPrivateRoute';
 import AdminPrivateRoute from './features/private_routes/AdminPrivateRoute';
 import NotAuthorizedPage from './features/authentication/NotAuthorizedPage';
+import Layout from './components/AdminLayout';
+import AdminDashboard from "./features/admin_moderation/AdminDashboard";
+import OrderModeration from './features/admin_moderation/OrderModeration';
+import UserModeration from "./features/admin_moderation/UserModeration";
+import ProductModeration from "./features/admin_moderation/ProductModeration";
+import FeedbackModeration from "./features/admin_moderation/FeedbackModeration";
+
 
 function App() {
   return (
-    <div className="App">
-      <Routes>
-        <Route path="/" element={<UnauthenticatedRoute> <LandingPage /> </UnauthenticatedRoute>} />
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<UnauthenticatedRoute> <LandingPage /> </UnauthenticatedRoute>} />
 
-        <Route path="/login" element={<UnauthenticatedRoute> <Login /> </UnauthenticatedRoute>} />
-        <Route path="/signup" element={<UnauthenticatedRoute> <Signup /> </UnauthenticatedRoute>} />
-        <Route path="/forgot-password" element={<UnauthenticatedRoute> <ForgotPassword /> </UnauthenticatedRoute>} />
-        <Route path="/verify-email" element={<UnauthenticatedRoute> <VerifyEmail /> </UnauthenticatedRoute>} />
-        <Route path="/reset-password" element={<UnauthenticatedRoute> <ResetPassword /> </UnauthenticatedRoute>} />
+          <Route path="/login" element={<UnauthenticatedRoute> <Login /> </UnauthenticatedRoute>} />
+          <Route path="/signup" element={<UnauthenticatedRoute> <Signup /> </UnauthenticatedRoute>} />
+          <Route path="/forgot-password" element={<UnauthenticatedRoute> <ForgotPassword /> </UnauthenticatedRoute>} />
+          <Route path="/verify-email" element={<UnauthenticatedRoute> <VerifyEmail /> </UnauthenticatedRoute>} />
+          <Route path="/reset-password" element={<UnauthenticatedRoute> <ResetPassword /> </UnauthenticatedRoute>} />
 
-        <Route path="/products" element={
-          <StudentPrivateRoute> 
-            <SearchFilterProvider> 
-              <ProductList />
-            </SearchFilterProvider>
-          </StudentPrivateRoute> 
-        } />
-        <Route path="/products/add-product" element={<StudentPrivateRoute><AddProduct /> </StudentPrivateRoute>}/>
-        <Route path="/products/:productId" element={<StudentPrivateRoute> <ProductDetails/> </StudentPrivateRoute> } />
-        
-        <Route path="/trade_requests" element={<StudentPrivateRoute> <TradeRequests/> </StudentPrivateRoute> } />
-        
-        <Route path="/admin-moderation/orders" element={<AdminPrivateRoute><Layout><ViewOrders /></Layout></AdminPrivateRoute>} />
-        <Route path="/admin-moderation/orders/:orderId" element={<AdminPrivateRoute><Layout><OrderDetails /></Layout></AdminPrivateRoute>} />
-        <Route path="/admin-moderation/users" element={<AdminPrivateRoute><Layout><UserModeration /></Layout></AdminPrivateRoute>} />
-        <Route path="/admin-moderation/products" element={<AdminPrivateRoute><Layout><ProductModeration /></Layout></AdminPrivateRoute>} />
-        
-        <Route path="/profile/purchase-history" element={<StudentPrivateRoute> <PurchaseHistory /> </StudentPrivateRoute>} />
-        <Route path="/profile" element={<StudentPrivateRoute> <ProfilePage /> </StudentPrivateRoute> } />
-        <Route path="/profile/sold-items" element={<StudentPrivateRoute> <SoldItems /> </StudentPrivateRoute>} />
-        <Route path="/profile/saved-items" element={<StudentPrivateRoute> <SavedItems /> </StudentPrivateRoute>} />
-        <Route path="/profile/edit-profile" element={<StudentPrivateRoute> <EditProfile /> </StudentPrivateRoute>} />
-        <Route path="/profile/reviews" element={<StudentPrivateRoute> <Reviews /> </StudentPrivateRoute>} />
-        
-        <Route path="/notifications" element={<StudentPrivateRoute> <Notification/> </StudentPrivateRoute>} /> 
-        <Route path="/not-authorized" element={<NotAuthorizedPage />} />
-      </Routes>
-    </div>
+          <Route path="/products" element={
+            <StudentPrivateRoute>
+              <SearchFilterProvider>
+                <ProductList />
+              </SearchFilterProvider>
+            </StudentPrivateRoute>
+          } />
+          <Route path="/products/add-product" element={<StudentPrivateRoute><AddProduct /> </StudentPrivateRoute>}/>
+          <Route path="/products/:productId" element={<StudentPrivateRoute> <ProductDetails/> </StudentPrivateRoute> } />
+
+          <Route path="/trade_requests" element={<StudentPrivateRoute> <TradeRequests/> </StudentPrivateRoute> } />
+
+          <Route path="/admin-moderation/dashboard" element={<Layout> <AdminDashboard /> </Layout>} />
+          <Route path="/admin-moderation/orders" element={<Layout> <OrderModeration /> </Layout>} />
+          <Route path="/admin-moderation/users" element={<Layout><UserModeration /></Layout>} />
+          <Route path="/admin-moderation/products" element={<Layout><ProductModeration /></Layout>} />
+          <Route path="/admin-moderation/feedback" element={<Layout> <FeedbackModeration /> </Layout>} />
+
+          <Route path="/profile/purchase-history" element={<StudentPrivateRoute> <PurchaseHistory /> </StudentPrivateRoute>} />
+          <Route path="/profile" element={<StudentPrivateRoute> <ProfilePage /> </StudentPrivateRoute> } />
+          <Route path="/profile/sold-items" element={<StudentPrivateRoute> <SoldItems /> </StudentPrivateRoute>} />
+          <Route path="/profile/saved-items" element={<StudentPrivateRoute> <SavedItems /> </StudentPrivateRoute>} />
+          <Route path="/profile/edit-profile" element={<StudentPrivateRoute> <EditProfile /> </StudentPrivateRoute>} />
+          <Route path="/profile/reviews" element={<StudentPrivateRoute> <Reviews /> </StudentPrivateRoute>} />
+
+          <Route path="/notifications" element={<StudentPrivateRoute> <Notification/> </StudentPrivateRoute>} />
+          <Route path="/not-authorized" element={<NotAuthorizedPage />} />
+
+
+        </Routes>
+      </div>
   );
 }
 
