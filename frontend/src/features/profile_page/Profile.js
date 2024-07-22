@@ -5,10 +5,13 @@ import SubHeader from "../../components/SubHeader";
 import Loader from "../../components/Loader";
 import ErrorAlert from "../../components/ErrorAlert";
 import { ProfileApi } from "../../services/ProfileApi";
+import { useUser } from "../../context/UserContext";
+import UserPlaceholder from "../../assets/images/placeholder-user.jpg";
 
 export default function Profile() {
   const navigate = useNavigate();
   const userId = 1;
+  const { user } = useUser();
 
   const [profileData, setProfileData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -42,11 +45,12 @@ export default function Profile() {
           <div className="container mx-auto px-4 md:px-6 overflow-hidden py-">
             <div className="flex flex-col items-center gap-4 dark:text-gray-400">
               <div className="pt-6">
-                <img
-                  className="w-20 h-20 rounded-full"
-                  alt="User Avatar"
-                  src="https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3485.jpg"
-                />
+              <img
+              alt=''
+              className='w-20 h-20 rounded-full'
+              src={user?.profilePicture ? user.profilePicture : UserPlaceholder}
+              onClick={() => navigate('/profile')}
+              />  
               </div>
               <div className="text-center">
                 <h2 className="text-xl font-bold">{profileData?.username}</h2>
