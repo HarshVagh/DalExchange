@@ -1,6 +1,7 @@
 package com.asdc.dalexchange.controller;
 
 
+import com.asdc.dalexchange.model.PaymentRequest;
 import com.asdc.dalexchange.service.PaymentService;
 import com.stripe.model.checkout.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,30 +50,44 @@ public class PaymentController {
     }*/
 
 
-    @GetMapping("/success")
+
+   /* @GetMapping("/success")
     public ResponseEntity<String> paymentSuccess(@RequestParam String amount,
                                                  @RequestParam Long productId,
-                                                 @RequestParam String paymentIntentId,
-                                                 Principal principal) {
+                                                 @RequestParam String paymentIntentId) {
         try {
 
-            paymentService.savePayment(amount, productId, paymentIntentId, principal);
+            paymentService.savePayment(amount, productId, paymentIntentId);
             return ResponseEntity.ok("Payment successful and recorded.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Payment successful, but recording failed.");
         }
-    }
+    }*/
 
     //@CrossOrigin
+//    /*@PostMapping("/create-payment-intent")
+//    public ResponseEntity<Map> createPaymentIntent(@RequestBody long productId) {
+//        try {
+//            System.out.println("Create payment intent" + productId);
+//           String sesssionId = paymentService.createPaymentIntent(productId);
+//            Map<String, Object> response = new HashMap<>();
+//            response.put("sessionId", sesssionId);
+//            return ResponseEntity.status(HttpStatus.OK).body(response);
+//        } catch (Exception e) {
+//            throw new RuntimeException(e.getMessage());
+//        }
+//    }*/
+
     @PostMapping("/create-payment-intent")
-    public ResponseEntity<Map> createPaymentIntent(@RequestParam("amount") String amount, @RequestParam("productId") long productId,Principal principal) {
+    public ResponseEntity<Map<String, Object>> createPaymentIntent(@RequestBody PaymentRequest request) {
         try {
-            String sesisonId = paymentService.createPaymentIntent(amount,productId,principal);
+            String sessionId = paymentService.createPaymentIntent(request.getProductId());
             Map<String, Object> response = new HashMap<>();
-            response.put("sessionId", sesisonId);
+            response.put("sessionId", sessionId);
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
     }
+
 }

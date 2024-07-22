@@ -46,6 +46,7 @@ const ProductDetails = () => {
   const fetchProductData = async (productId) => {
     try {
       const data = await ProductDetailsApi.fetchProductDetails(productId);
+      console.log(data);
       setProduct(data);
       setLoading(false);
     } catch (error) {
@@ -77,7 +78,7 @@ const ProductDetails = () => {
 
     const requestBody = {
       productId: product.productId,
-      sellerId: product.sellerId, // TODO: Add actual seller ID
+      sellerId: product.sellerId,
       requestedPrice: requestedAmount // Replace with input value
     };
     try {
@@ -215,7 +216,7 @@ const ProductDetails = () => {
                       Seller since {product?.sellerJoiningDate || '2020'}
                     </p>
                     <div className="flex flew-col items-center gap-1 text-xs font-semibold">
-                      <StarRating starCount={3} />
+                      <StarRating starCount={product?.rating || 3} />
                     </div>
                   </div>
                 </div>

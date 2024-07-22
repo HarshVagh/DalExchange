@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.time.LocalDateTime;
 
 @Service
@@ -88,9 +87,10 @@ public class PaymentServiceImpl implements PaymentService {
     }*/
 
     @Override
-    public String createPaymentIntent(String amount, Long productId, Principal principal) {
+    public String createPaymentIntent( Long productId) {
         try {
-            Long userId = AuthUtil.getCurrentUserId(userRepository);
+
+            Long userId = 1L;//AuthUtil.getCurrentUserId(userRepository);
 
             double productPrice = tradeRequestService.getApprovedTradeRequestAmount(productId);
             String successURL = APIendpoint + "/payment/success?amount=" + productPrice
@@ -118,7 +118,7 @@ public class PaymentServiceImpl implements PaymentService {
                                             .build())
                             .build())
                     .build();
-
+            System.out.println("the param is " + params);
             Session s = Session.create(params);
             return s.getId();
         } catch (Exception e) {
@@ -128,7 +128,7 @@ public class PaymentServiceImpl implements PaymentService {
 
 
     @Override
-    public void savePayment(String amount, Long productId, String paymentIntentId, Principal principal) {
+    public void savePayment(String amount, Long productId, String paymentIntentId) {
         Long userId = AuthUtil.getCurrentUserId(userRepository);
         User user = userRepository.findByUserId(userId);
         // Fetch or create ShippingAddress
