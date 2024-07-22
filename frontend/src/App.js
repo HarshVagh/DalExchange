@@ -20,7 +20,6 @@ import PurchaseHistory from './features/profile_page/PurchaseHistory';
 import { SearchFilterProvider } from './context/SearchFilterContext';
 import UnauthenticatedRoute from './features/private_routes/UnauthenticatedRoute';
 import StudentPrivateRoute from './features/private_routes/StudentPrivateRoute';
-import AdminPrivateRoute from './features/private_routes/AdminPrivateRoute';
 import NotAuthorizedPage from './features/authentication/NotAuthorizedPage';
 import Layout from './components/AdminLayout';
 import AdminDashboard from "./features/admin_moderation/AdminDashboard";
