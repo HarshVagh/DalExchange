@@ -11,16 +11,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProductListingMapperImpl implements Mapper<Product, ProductListingDTO> {
 
-    @Autowired
-    private ModelMapper modelMapper;
-    private final TypeMap<Product, ProductListingDTO> propertyMapper;
+    private final ModelMapper modelMapper;
 
+    @Autowired
     public ProductListingMapperImpl(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
-        this.propertyMapper = this.modelMapper.createTypeMap(Product.class, ProductListingDTO.class);
-        this.propertyMapper.addMappings(
-                mapper -> mapper.map(src -> src.getCategory().getName(), ProductListingDTO::setCategoryName)
-        );
+        TypeMap<Product, ProductListingDTO> propertyMapper = this.modelMapper.createTypeMap(Product.class, ProductListingDTO.class);
+        propertyMapper.addMappings(mapper -> mapper.map(
+                src -> src.getCategory().getName(), ProductListingDTO::setCategoryName
+        ));
     }
 
     @Override

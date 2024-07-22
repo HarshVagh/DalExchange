@@ -66,8 +66,11 @@ public class UserServiceImpl implements UserService {
 
 
     private double calculatePercentageIncrease(Double current, Double previous) {
-        if (previous == 0) {
-            return current > 0 ? 100.0 : 0.0;
+        if (previous == null || previous == 0) {
+            return current != null && current > 0 ? 100.0 : 0.0;
+        }
+        if (current == null) {
+            current = 0.0;
         }
         return ((current - previous) / previous) * 100;
     }
