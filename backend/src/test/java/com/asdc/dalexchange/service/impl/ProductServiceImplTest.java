@@ -8,15 +8,21 @@ import com.asdc.dalexchange.enums.ShippingType;
 import com.asdc.dalexchange.mappers.Mapper;
 import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.model.ProductCategory;
+import com.asdc.dalexchange.model.ProductImage;
+import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.repository.ProductCategoryRepository;
+import com.asdc.dalexchange.repository.ProductImageRepository;
 import com.asdc.dalexchange.repository.ProductRepository;
 import com.asdc.dalexchange.repository.UserRepository;
+import com.asdc.dalexchange.util.AuthUtil;
 import com.asdc.dalexchange.util.CloudinaryUtil;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,10 +31,20 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyList;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class ProductServiceImplTest {
 
@@ -46,6 +62,9 @@ public class ProductServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private ProductImageRepository productImageRepository;
 
     @Mock
     private CloudinaryUtil cloudinaryUtil;
@@ -251,53 +270,88 @@ public class ProductServiceImplTest {
         addProductDTO.setUseDuration("1 year");
         addProductDTO.setShippingType(ShippingType.FREE);
         addProductDTO.setQuantityAvailable(10);
+        addProductDTO.setCategoryId(1L);
 
         ProductCategory category = new ProductCategory();
-        category.setId(1L);
+        category.setCategoryId(1L);
         category.setName("Test Category");
 
-        MultipartFile file = mock(MultipartFile.class);
-        when(file.getOriginalFilename()).thenReturn("test.jpg");
-        when(file.isEmpty()).thenReturn(false);
-        when(file.getBytes()).thenReturn(new byte[0]);
+        User seller = new User();
+        seller.setUserId(1L);
+        seller.setUsername("testUser");
 
-        String mockImageUrl = "http://mock.cloudinary.url/test.jpg";
-        when(cloudinaryUtil.uploadImage(any(MultipartFile.class))).thenReturn(mockImageUrl);
+        // Mock the userRepository to return an Optional<User>
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(seller));
 
-        Product savedProduct = new Product();
-        savedProduct.setId(1L);
-        savedProduct.setTitle(addProductDTO.getTitle());
-        savedProduct.setDescription(addProductDTO.getDescription());
-        savedProduct.setPrice(addProductDTO.getPrice());
-        savedProduct.setCategory(category);
-        savedProduct.setProductCondition(addProductDTO.getProductCondition());
-        savedProduct.setUseDuration(addProductDTO.getUseDuration());
-        savedProduct.setShippingType(addProductDTO.getShippingType());
-        savedProduct.setQuantityAvailable(addProductDTO.getQuantityAvailable());
-        savedProduct.setImagePath(mockImageUrl);
-        savedProduct.setCreatedAt(LocalDateTime.now());
+        try (MockedStatic<AuthUtil> mockedAuthUtil = Mockito.mockStatic(AuthUtil.class)) {
+            mockedAuthUtil.when(() -> AuthUtil.getCurrentUser(userRepository)).thenReturn(seller);
 
-        when(productRepository.save(any(Product.class))).thenReturn(savedProduct);
+            MultipartFile file1 = mock(MultipartFile.class);
+            when(file1.getOriginalFilename()).thenReturn("test1.jpg");
+            when(file1.isEmpty()).thenReturn(false);
+            when(file1.getBytes()).thenReturn(new byte[0]);
 
-        Product product = productService.addProduct(addProductDTO, category, file);
+            MultipartFile file2 = mock(MultipartFile.class);
+            when(file2.getOriginalFilename()).thenReturn("test2.jpg");
+            when(file2.isEmpty()).thenReturn(false);
+            when(file2.getBytes()).thenReturn(new byte[0]);
 
-        assertNotNull(product);
-        assertEquals(addProductDTO.getTitle(), product.getTitle());
-        assertEquals(addProductDTO.getDescription(), product.getDescription());
-        assertEquals(addProductDTO.getPrice(), product.getPrice());
-        assertEquals(category, product.getCategory());
-        assertEquals(addProductDTO.getProductCondition(), product.getProductCondition());
-        assertEquals(addProductDTO.getUseDuration(), product.getUseDuration());
-        assertEquals(addProductDTO.getShippingType(), product.getShippingType());
-        assertEquals(addProductDTO.getQuantityAvailable(), product.getQuantityAvailable());
-        assertEquals(mockImageUrl, product.getImagePath());
-        verify(productRepository, times(1)).save(any(Product.class));
+            List<MultipartFile> files = Arrays.asList(file1, file2);
+
+            String mockImageUrl1 = "http://mock.cloudinary.url/test1.jpg";
+            String mockImageUrl2 = "http://mock.cloudinary.url/test2.jpg";
+            when(cloudinaryUtil.uploadImage(file1)).thenReturn(mockImageUrl1);
+            when(cloudinaryUtil.uploadImage(file2)).thenReturn(mockImageUrl2);
+
+            Product savedProduct = new Product();
+            savedProduct.setProductId(1L);
+            savedProduct.setTitle(addProductDTO.getTitle());
+            savedProduct.setDescription(addProductDTO.getDescription());
+            savedProduct.setPrice(addProductDTO.getPrice());
+            savedProduct.setCategory(category);
+            savedProduct.setProductCondition(addProductDTO.getProductCondition());
+            savedProduct.setUseDuration(addProductDTO.getUseDuration());
+            savedProduct.setShippingType(addProductDTO.getShippingType());
+            savedProduct.setQuantityAvailable(addProductDTO.getQuantityAvailable());
+            savedProduct.setSeller(seller);
+            savedProduct.setCreatedAt(LocalDateTime.now());
+
+            when(productRepository.save(any(Product.class))).thenReturn(savedProduct);
+
+            List<ProductImage> images = files.stream().map(file -> {
+                ProductImage productImage = new ProductImage();
+                productImage.setImageUrl(cloudinaryUtil.uploadImage(file));
+                productImage.setProduct(savedProduct);
+                return productImage;
+            }).collect(Collectors.toList());
+
+            productImageRepository.saveAll(images);
+
+            Product product = productService.addProduct(addProductDTO, category, files);
+
+            assertNotNull(product);
+            assertEquals(addProductDTO.getTitle(), product.getTitle());
+            assertEquals(addProductDTO.getDescription(), product.getDescription());
+            assertEquals(addProductDTO.getPrice(), product.getPrice());
+            assertEquals(category, product.getCategory());
+            assertEquals(addProductDTO.getProductCondition(), product.getProductCondition());
+            assertEquals(addProductDTO.getUseDuration(), product.getUseDuration());
+            assertEquals(addProductDTO.getShippingType(), product.getShippingType());
+            assertEquals(addProductDTO.getQuantityAvailable(), product.getQuantityAvailable());
+            assertEquals(seller, product.getSeller());
+
+            // Verify images were saved
+            verify(productImageRepository, times(2)).saveAll(anyList());
+            assertEquals(mockImageUrl1, images.get(0).getImageUrl());
+            assertEquals(mockImageUrl2, images.get(1).getImageUrl());
+            verify(productRepository, times(1)).save(any(Product.class));
+        }
     }
 
     @Test
     void getCategoryByIdTest() {
         ProductCategory category = new ProductCategory();
-        category.setId(1L);
+        category.setCategoryId(1L);
         category.setName("Test Category");
 
         when(productCategoryRepository.findById(1L)).thenReturn(Optional.of(category));
@@ -305,7 +359,7 @@ public class ProductServiceImplTest {
         ProductCategory result = productService.getCategoryById(1L);
 
         assertNotNull(result);
-        assertEquals(category.getId(), result.getId());
+        assertEquals(category.getCategoryId(), result.getCategoryId());
         assertEquals(category.getName(), result.getName());
         verify(productCategoryRepository, times(1)).findById(1L);
     }
@@ -313,7 +367,7 @@ public class ProductServiceImplTest {
     @Test
     void ggetProductByIDTest() {
         Product product = new Product();
-        product.setId(1L);
+        product.setProductId(1L);
         product.setTitle("Test Product");
 
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
@@ -321,12 +375,9 @@ public class ProductServiceImplTest {
         Product result = productService.getProductByID(1L);
 
         assertNotNull(result);
-        assertEquals(product.getId(), result.getId());
+        assertEquals(product.getProductId(), result.getProductId());
         assertEquals(product.getTitle(), result.getTitle());
         verify(productRepository, times(1)).findById(1L);
     }
-
-
-
 
 }

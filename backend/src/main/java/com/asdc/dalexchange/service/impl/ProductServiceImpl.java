@@ -6,26 +6,23 @@ import com.asdc.dalexchange.dto.ProductModerationDTO;
 import com.asdc.dalexchange.mappers.Mapper;
 import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.model.ProductCategory;
+import com.asdc.dalexchange.model.ProductImage;
 import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.repository.ProductCategoryRepository;
+import com.asdc.dalexchange.repository.ProductImageRepository;
 import com.asdc.dalexchange.repository.ProductRepository;
 import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.service.ProductService;
 import com.asdc.dalexchange.util.AuthUtil;
 import com.asdc.dalexchange.util.CloudinaryUtil;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import jakarta.transaction.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,6 +36,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ProductImageRepository productImageRepository;
 
     @Autowired
     private Mapper<Product, ProductDTO> productMapper;
@@ -106,11 +106,10 @@ public class ProductServiceImpl implements ProductService {
         productRepository.save(product);
     }
 
-    public Product addProduct(AddProductDTO addProductDTO, ProductCategory category, MultipartFile file) {
-        Product product = new Product();
-        String imageURL = cloudinaryUtil.uploadImage(file);
+    public Product addProduct(AddProductDTO addProductDTO, ProductCategory category, List<MultipartFile> imageFiles) {
         User seller = AuthUtil.getCurrentUser(userRepository);
 
+        Product product = new Product();
         product.setTitle(addProductDTO.getTitle());
         product.setDescription(addProductDTO.getDescription());
         product.setPrice(addProductDTO.getPrice());
@@ -120,10 +119,21 @@ public class ProductServiceImpl implements ProductService {
         product.setShippingType(addProductDTO.getShippingType());
         product.setQuantityAvailable(addProductDTO.getQuantityAvailable());
         product.setSeller(seller);
-        product.setImagePath(imageURL);
         product.setCreatedAt(LocalDateTime.now());
 
-        return productRepository.save(product);
+        Product savedProduct = productRepository.save(product);
+
+        List<ProductImage> images = imageFiles.stream().map(file -> {
+            String imageUrl = "";
+            imageUrl = cloudinaryUtil.uploadImage(file);
+            ProductImage productImage = new ProductImage();
+            productImage.setImageUrl(imageUrl);
+            productImage.setProduct(savedProduct);
+            return productImage;
+        }).collect(Collectors.toList());
+
+        productImageRepository.saveAll(images);
+        return savedProduct;
     }
 
     public ProductCategory getCategoryById(Long categoryId) {
