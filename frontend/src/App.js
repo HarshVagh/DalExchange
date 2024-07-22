@@ -11,12 +11,12 @@ import LandingPage from './features/authentication/LandingPage';
 import ForgotPassword from './features/authentication/ForgotPassword';
 import ResetPassword from './features/authentication/ResetPassword';
 import PrivateRoute from './features/authentication/PrivateRoute';
-import ViewOrders from './features/order_moderation/ViewOrders';
-import OrderDetails from './features/order_moderation/OrderDetails';
-import Layout from './features/order_moderation/Layout'; 
-import UserModeration from "./features/user_moderation/UserModeration";
-import ProductModeration from "./features/product_moderation/ProductModeration";
-
+import OrderModeration from './features/admin_moderation/OrderModeration';
+import Layout from './components/AdminLayout'; 
+import UserModeration from "./features/admin_moderation/UserModeration";
+import ProductModeration from "./features/admin_moderation/ProductModeration";
+import FeedbackModeration from "./features/admin_moderation/FeedbackModeration";
+import AdminDashboard from "./features/admin_moderation/AdminDashboard";
 
 import ProfilePage from './features/profile_page/Profile';
 import SoldItems from "./features/profile_page/SoldItems";
@@ -39,8 +39,6 @@ function App() {
         <Route path="/products" element={<PrivateRoute> <ProductList /> </PrivateRoute> } />
         <Route path="/products/:productId" element={<PrivateRoute> <ProductDetails/> </PrivateRoute> } />
         <Route path="/trade_requests" element={<PrivateRoute> <TradeRequests/> </PrivateRoute> } />
-        <Route path="/admin-moderation/orders" element={<Layout><ViewOrders /></Layout>} /> 
-        <Route path="/admin-moderation/orders/:orderId" element={<Layout><OrderDetails /></Layout>} />
         <Route path="/admin-moderation/users" element={<Layout><UserModeration /></Layout>} />
         <Route path="/admin-moderation/products" element={<Layout><ProductModeration /></Layout>} />
         <Route path="/profile/purchase-history" element={<PurchaseHistory />} />
@@ -49,8 +47,10 @@ function App() {
         <Route path="/profile/saved-items" element={<PrivateRoute> <SavedItems /> </PrivateRoute>} />
         <Route path="/profile/edit-profile" element={<PrivateRoute> <EditProfile /> </PrivateRoute>} />
         <Route path="/profile/reviews" element={<PrivateRoute> <Reviews /> </PrivateRoute>} />
-        <Route path="/admin-moderation/orders" element={<Layout> <ViewOrders /> </Layout>} />
-        <Route path="/admin-moderation/orders/:orderId" element={<Layout> <OrderDetails /> </Layout>} />
+        <Route path="/admin-moderation/orders" element={<Layout> <OrderModeration /> </Layout>} />
+        <Route path="/admin-moderation/feedback" element={<Layout> <FeedbackModeration /> </Layout>} />
+        <Route path="/admin-moderation/dashboard" element={<Layout> <AdminDashboard /> </Layout>} />
+
       </Routes>
     </div>
   );

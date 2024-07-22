@@ -1,7 +1,6 @@
 package com.asdc.dalexchange.service.impl;
 
-import com.asdc.dalexchange.dto.OrderDTO;
-import com.asdc.dalexchange.dto.UserDTO;
+import com.asdc.dalexchange.dto.*;
 import com.asdc.dalexchange.enums.OrderStatus;
 import com.asdc.dalexchange.mappers.Mapper;
 import com.asdc.dalexchange.model.OrderDetails;
@@ -321,5 +320,62 @@ class OrderServiceImplTest {
         });
 
         assertEquals("Shipping Address not found", exception.getMessage());
+    }
+
+    @Test
+    void testGetItemsSold() {
+        // Prepare mock data
+        List<Object[]> mockData = Arrays.asList(
+                new Object[]{"2024-07", 10},
+                new Object[]{"2024-06", 20}
+        );
+
+        when(orderRepository.findItemsSoldPerMonth()).thenReturn(mockData);
+
+        List<ItemsSoldDTO> result = orderService.getItemsSold();
+
+        assertEquals(2, result.size());
+        assertEquals("2024-07", result.get(0).getMonth());
+        assertEquals(10, result.get(0).getItemsSold());
+        assertEquals("2024-06", result.get(1).getMonth());
+        assertEquals(20, result.get(1).getItemsSold());
+    }
+
+    @Test
+    void testGetTopSellingCategories() {
+        // Prepare mock data
+        List<Object[]> mockData = Arrays.asList(
+                new Object[]{"Electronics", 50},
+                new Object[]{"Books", 30}
+        );
+
+        when(orderRepository.findTopSellingCategories()).thenReturn(mockData);
+
+        List<TopSellingCategoriesDTO> result = orderService.getTopSellingCategories();
+
+        assertEquals(2, result.size());
+        assertEquals("Electronics", result.get(0).getCategory());
+        assertEquals(50, result.get(0).getSales());
+        assertEquals("Books", result.get(1).getCategory());
+        assertEquals(30, result.get(1).getSales());
+    }
+
+    @Test
+    void testGetBestSellingProducts() {
+
+        List<Object[]> mockData = Arrays.asList(
+                new Object[]{"Product A", 100},
+                new Object[]{"Product B", 80}
+        );
+
+        when(orderRepository.findBestSellingProducts()).thenReturn(mockData);
+
+        List<BestSellingProductsDTO> result = orderService.getBestSellingProducts();
+
+        assertEquals(2, result.size());
+        assertEquals("Product A", result.get(0).getProductName());
+        assertEquals(100, result.get(0).getItemsSold());
+        assertEquals("Product B", result.get(1).getProductName());
+        assertEquals(80, result.get(1).getItemsSold());
     }
 }
