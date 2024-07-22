@@ -10,7 +10,7 @@ import FilledStarIcon from '../../assets/icons/star-solid.svg';
 import ErrorAlert from '../../components/ErrorAlert';
 import ProductDetailsApi from '../../services/ProductDetailsApi'; // Import the new service
 import { TradeRequestApi } from '../../services/TradeRequestApi';
-import {useUser} from '../authentication/UserContext'
+import {useUser} from '../../context/UserContext'
 
 const ProductDetails = () => {
   const { productId } = useParams();
@@ -28,7 +28,7 @@ const ProductDetails = () => {
     add: true,
     profile: true
   };
-  const { user } =  1 //useUser();  // Get the user function from the context
+  const { user } = useUser();  // Get the user function from the context
   console.log("user", user)
   console.log("product", product)
 
@@ -131,7 +131,7 @@ const ProductDetails = () => {
               alt="Product"
               className="w-full rounded-lg"
               height={600}
-              src={product?.imageUrl || placeholder}
+              src={placeholder}
               style={{
                 aspectRatio: '1/1',
                 objectFit: 'cover',

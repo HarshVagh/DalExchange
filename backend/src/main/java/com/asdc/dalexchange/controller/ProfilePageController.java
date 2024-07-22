@@ -66,10 +66,7 @@ public class ProfilePageController {
     @PutMapping("/remove_saved/{productId}")
     public ResponseEntity<Object> unmarkAsFavorite(@PathVariable long productId) {
         boolean isUpdated = productWishlistService.markProductAsFavorite(productId);
-       // if (isUpdated) {
             return ResponseEntity.ok("Product removed successfully");
-       // }
-       // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
 }
