@@ -33,7 +33,11 @@ const Login = () => {
             const userResponse = await AuthenticationApi.currentUser(response.data.token);
             console.log(userResponse);
             setUser(userResponse.data);
-            navigate('/products');
+            if (userResponse.data.role === 'student') {
+                navigate('/products');
+            } else if (userResponse.data.role === 'admin') {
+                navigate('/admin-moderation/dashboard');
+            }
         } catch (error) {
             setError('Error logging in. Please check your username and password.');
         } finally {
