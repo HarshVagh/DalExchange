@@ -1,7 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import './App.css';
 import ProductList from './features/product_list/ProductList';
-
 import TradeRequests from './features/trade_requests/TradeRequests';
 import ProductDetails from './features/product_details/ProductDetails';
 import Login from './features/authentication/Login';
@@ -10,10 +9,9 @@ import VerifyEmail from './features/authentication/VerifyEmail';
 import LandingPage from './features/authentication/LandingPage';
 import ForgotPassword from './features/authentication/ForgotPassword';
 import ResetPassword from './features/authentication/ResetPassword';
-import PrivateRoute from './features/authentication/PrivateRoute';
 import ViewOrders from './features/order_moderation/ViewOrders';
 import OrderDetails from './features/order_moderation/OrderDetails';
-import Layout from './features/order_moderation/Layout'; 
+import Layout from './features/order_moderation/Layout';
 import Notification from './features/notification/Notification';
 import AddProduct from './features/add_product/AddProduct';
 import UserModeration from "./features/user_moderation/UserModeration";
@@ -25,8 +23,10 @@ import EditProfile from "./features/profile_page/EditProfile";
 import Reviews from './features/profile_page/Reviews';
 import PurchaseHistory from './features/profile_page/PurchaseHistory';
 import { SearchFilterProvider } from './context/SearchFilterContext';
-import UnauthenticatedRoute from './features/authentication/UnauthenticatedRoute';
-
+import UnauthenticatedRoute from './features/private_routes/UnauthenticatedRoute';
+import StudentPrivateRoute from './features/private_routes/StudentPrivateRoute';
+import AdminPrivateRoute from './features/private_routes/AdminPrivateRoute';
+import NotAuthorizedPage from './features/authentication/NotAuthorizedPage';
 
 function App() {
   return (
@@ -41,30 +41,31 @@ function App() {
         <Route path="/reset-password" element={<UnauthenticatedRoute> <ResetPassword /> </UnauthenticatedRoute>} />
 
         <Route path="/products" element={
-          <PrivateRoute> 
+          <StudentPrivateRoute> 
             <SearchFilterProvider> 
               <ProductList />
             </SearchFilterProvider>
-          </PrivateRoute> 
+          </StudentPrivateRoute> 
         } />
-        <Route path="/products/add-product" element={<PrivateRoute><AddProduct /> </PrivateRoute>}/>
-        <Route path="/products/:productId" element={<PrivateRoute> <ProductDetails/> </PrivateRoute> } />
+        <Route path="/products/add-product" element={<StudentPrivateRoute><AddProduct /> </StudentPrivateRoute>}/>
+        <Route path="/products/:productId" element={<StudentPrivateRoute> <ProductDetails/> </StudentPrivateRoute> } />
         
-        <Route path="/trade_requests" element={<PrivateRoute> <TradeRequests/> </PrivateRoute> } />
+        <Route path="/trade_requests" element={<StudentPrivateRoute> <TradeRequests/> </StudentPrivateRoute> } />
         
-        <Route path="/admin-moderation/orders" element={<Layout><ViewOrders /></Layout>} />
-        <Route path="/admin-moderation/orders/:orderId" element={<Layout><OrderDetails /></Layout>} />
-        <Route path="/admin-moderation/users" element={<Layout><UserModeration /></Layout>} />
-        <Route path="/admin-moderation/products" element={<Layout><ProductModeration /></Layout>} />
+        <Route path="/admin-moderation/orders" element={<AdminPrivateRoute><Layout><ViewOrders /></Layout></AdminPrivateRoute>} />
+        <Route path="/admin-moderation/orders/:orderId" element={<AdminPrivateRoute><Layout><OrderDetails /></Layout></AdminPrivateRoute>} />
+        <Route path="/admin-moderation/users" element={<AdminPrivateRoute><Layout><UserModeration /></Layout></AdminPrivateRoute>} />
+        <Route path="/admin-moderation/products" element={<AdminPrivateRoute><Layout><ProductModeration /></Layout></AdminPrivateRoute>} />
         
-        <Route path="/profile/purchase-history" element={<PrivateRoute> <PurchaseHistory /> </PrivateRoute>} />
-        <Route path="/profile" element={<PrivateRoute> <ProfilePage /> </PrivateRoute> } />
-        <Route path="/profile/sold-items" element={<PrivateRoute> <SoldItems /> </PrivateRoute>} />
-        <Route path="/profile/saved-items" element={<PrivateRoute> <SavedItems /> </PrivateRoute>} />
-        <Route path="/profile/edit-profile" element={<PrivateRoute> <EditProfile /> </PrivateRoute>} />
-        <Route path="/profile/reviews" element={<PrivateRoute> <Reviews /> </PrivateRoute>} />
+        <Route path="/profile/purchase-history" element={<StudentPrivateRoute> <PurchaseHistory /> </StudentPrivateRoute>} />
+        <Route path="/profile" element={<StudentPrivateRoute> <ProfilePage /> </StudentPrivateRoute> } />
+        <Route path="/profile/sold-items" element={<StudentPrivateRoute> <SoldItems /> </StudentPrivateRoute>} />
+        <Route path="/profile/saved-items" element={<StudentPrivateRoute> <SavedItems /> </StudentPrivateRoute>} />
+        <Route path="/profile/edit-profile" element={<StudentPrivateRoute> <EditProfile /> </StudentPrivateRoute>} />
+        <Route path="/profile/reviews" element={<StudentPrivateRoute> <Reviews /> </StudentPrivateRoute>} />
         
-        <Route path="/notifications" element={<PrivateRoute> <Notification/> </PrivateRoute>} /> 
+        <Route path="/notifications" element={<StudentPrivateRoute> <Notification/> </StudentPrivateRoute>} /> 
+        <Route path="/not-authorized" element={<NotAuthorizedPage />} />
       </Routes>
     </div>
   );
