@@ -1,7 +1,6 @@
 package com.asdc.dalexchange.service.impl;
 
-import com.asdc.dalexchange.dto.OrderDTO;
-import com.asdc.dalexchange.dto.UserDTO;
+import com.asdc.dalexchange.dto.*;
 import com.asdc.dalexchange.enums.OrderStatus;
 import com.asdc.dalexchange.mappers.Mapper;
 import com.asdc.dalexchange.model.OrderDetails;
@@ -183,6 +182,40 @@ public class OrderServiceImpl implements OrderService {
         existingAddress.setPostalCode(updatedShippingAddress.getPostalCode());
 
         shippingRepository.save(existingAddress);
+    }
+
+    @Override
+    public List<ItemsSoldDTO> getItemsSold() {
+        // Assuming orderRepository has a method to fetch items sold data
+        List<Object[]> results = orderRepository.findItemsSoldPerMonth();
+        return results.stream().map(result -> {
+            ItemsSoldDTO dto = new ItemsSoldDTO();
+            dto.setMonth((String) result[0]);
+            dto.setItemsSold(((Number) result[1]).intValue());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TopSellingCategoriesDTO> getTopSellingCategories() {
+        List<Object[]> results = orderRepository.findTopSellingCategories();
+        return results.stream().map(result -> {
+            TopSellingCategoriesDTO dto = new TopSellingCategoriesDTO();
+            dto.setCategory((String) result[0]);
+            dto.setSales(((Number) result[1]).intValue());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BestSellingProductsDTO> getBestSellingProducts() {
+        List<Object[]> results = orderRepository.findBestSellingProducts();
+        return results.stream().map(result -> {
+            BestSellingProductsDTO dto = new BestSellingProductsDTO();
+            dto.setProductName((String) result[0]);
+            dto.setItemsSold(((Number) result[1]).intValue());
+            return dto;
+        }).collect(Collectors.toList());
     }
 
 }

@@ -2,10 +2,7 @@ package com.asdc.dalexchange.service.impl;
 
 import com.asdc.dalexchange.dto.ProductRatingDTO;
 import com.asdc.dalexchange.mappers.impl.ProductRatingMapperImpl;
-import com.asdc.dalexchange.model.Product;
-import com.asdc.dalexchange.model.ProductRating;
-import com.asdc.dalexchange.model.ProductCategory;
-import com.asdc.dalexchange.model.User;
+import com.asdc.dalexchange.model.*;
 import com.asdc.dalexchange.enums.ProductCondition;
 import com.asdc.dalexchange.enums.ShippingType;
 import com.asdc.dalexchange.repository.ProductRatingRepository;
@@ -132,6 +129,8 @@ class ProductRatingServiceImplTest {
         verify(productRatingMapper, times(1)).mapTo(rating1);
         verify(productRatingMapper, times(1)).mapTo(rating2);
     }
+
+
 }
 
 

@@ -7,6 +7,8 @@ const VerifyEmail = () => {
     const [email, setEmail] = useState('');
     const [code, setCode] = useState('');
     const [message, setMessage] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const headerConfig = {
         search: false,
@@ -18,12 +20,17 @@ const VerifyEmail = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
+        setError('');
+        setMessage('');
         try {
             await AuthenticationApi.verify({ email, code });
             setMessage('User verified successfully.');
             navigate('/products');
         } catch (error) {
-            setMessage('Error verifying user.');
+            setError('Error verifying user.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -35,6 +42,8 @@ const VerifyEmail = () => {
                     <div className="text-center">
                         <h2 className="text-3xl font-bold tracking-tight">Verify Email</h2>
                     </div>
+                    {message && <p className="text-green-500">{message}</p>}
+                    {error && <p className="text-red-500">{error}</p>}
                     <form className="space-y-4" onSubmit={handleSubmit}>
                         <div className="mb-6">
                             <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900">Email</label>
@@ -58,11 +67,10 @@ const VerifyEmail = () => {
                                 required
                             />
                         </div>
-                        <button type="submit" className="w-full bg-black text-white py-2 rounded">
-                            Verify Email
+                        <button type="submit" className="w-full bg-black text-white py-2 rounded" disabled={loading}>
+                            {loading ? 'Verifying...' : 'Verify Email'}
                         </button>
                     </form>
-                    {message && <p>{message}</p>}
                 </div>
             </div>
         </div>
@@ -70,5 +78,3 @@ const VerifyEmail = () => {
 };
 
 export default VerifyEmail;
-
-

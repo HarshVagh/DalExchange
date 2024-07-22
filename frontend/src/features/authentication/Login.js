@@ -8,6 +8,8 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
     const navigate = useNavigate();
     const { setUser } = useUser();
     const headerConfig = {
@@ -20,6 +22,9 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
+        setError('');
+        setMessage('');
         try {
             const response = await AuthenticationApi.login({ email, password });
             setMessage('Login successful.');
@@ -27,10 +32,16 @@ const Login = () => {
 
             const userResponse = await AuthenticationApi.currentUser(response.data.token);
             console.log(userResponse);
-            setUser(userResponse.data); 
-            navigate('/products');
+            setUser(userResponse.data);
+            if (userResponse.data.role === 'student') {
+                navigate('/products');
+            } else if (userResponse.data.role === 'admin') {
+                navigate('/admin-moderation/dashboard');
+            }
         } catch (error) {
-            setMessage('Invalid credentials.');
+            setError('Error logging in. Please check your username and password.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -48,6 +59,8 @@ const Login = () => {
                             </Link>
                         </p>
                     </div>
+                    {message && <p className="text-green-500">{message}</p>}
+                    {error && <p className="text-red-500">{error}</p>}
                     <form className="space-y-4" onSubmit={handleSubmit}>
                         <div className="mb-6">
                             <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900">Email</label>
@@ -76,8 +89,12 @@ const Login = () => {
                                 Forgot Password?
                             </Link>
                         </div>
-                        <button type="submit" className="w-full bg-black text-white py-2 rounded">
-                            Sign in
+                        <button 
+                            type="submit" 
+                            className="w-full bg-black text-white py-2 rounded" 
+                            disabled={loading}
+                        >
+                            {loading ? 'Signing in...' : 'Sign in'}
                         </button>
                     </form>
                     {message && <p>{message}</p>}
