@@ -49,7 +49,7 @@ public class SoldItemServiceImplTest {
         });
 
         // Call the service method
-        List<SoldItemDTO> soldItemDTOs = soldItemService.GetallSoldProduct(userId);
+        List<SoldItemDTO> soldItemDTOs = soldItemService.GetallSoldProduct();
 
         // Assertions
         assertEquals(mockSoldItemDTOs.size(), soldItemDTOs.size());

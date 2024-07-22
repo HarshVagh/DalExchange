@@ -1,13 +1,15 @@
 package com.asdc.dalexchange.service.impl;
 
 
+import com.asdc.dalexchange.enums.OrderStatus;
 import com.asdc.dalexchange.enums.PaymentStatus;
-import com.asdc.dalexchange.model.Payment;
+import com.asdc.dalexchange.model.*;
 import com.asdc.dalexchange.repository.OrderRepository;
 import com.asdc.dalexchange.repository.PaymentRepository;
 import com.asdc.dalexchange.repository.ShippingRepository;
 import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.service.PaymentService;
+import com.asdc.dalexchange.service.TradeRequestService;
 import com.asdc.dalexchange.util.AuthUtil;
 import com.stripe.Stripe;
 import com.stripe.model.checkout.Session;
@@ -40,6 +42,9 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
     private PaymentRepository paymentRepository;
+
+    @Autowired
+    private TradeRequestService tradeRequestService;
 
     //Long userId = AuthUtil.getCurrentUserId(userRepository);
 
@@ -86,8 +91,9 @@ public class PaymentServiceImpl implements PaymentService {
     public String createPaymentIntent(String amount, Long productId, Principal principal) {
         try {
             Long userId = AuthUtil.getCurrentUserId(userRepository);
-            // Assuming APIendpoint is the backend endpoint and frontendEndpoint is the frontend endpoint
-            String successURL = APIendpoint + "/payment/success?amount=" + Double.parseDouble(amount)
+
+            double productPrice = tradeRequestService.getApprovedTradeRequestAmount(productId);
+            String successURL = APIendpoint + "/payment/success?amount=" + productPrice
                     + "&productId=" + productId + "&paymentIntentId={CHECKOUT_SESSION_ID}";
 
             String failureURL = frontendEndpoint + "/payment/fail";
@@ -104,7 +110,7 @@ public class PaymentServiceImpl implements PaymentService {
                             .setPriceData(
                                     SessionCreateParams.LineItem.PriceData.builder()
                                             .setCurrency("cad")
-                                            .setUnitAmount((long) Double.parseDouble(amount) * 100)
+                                            .setUnitAmount((long) (productPrice * 100))
                                             .setProductData(
                                                     SessionCreateParams.LineItem.PriceData.ProductData.builder()
                                                             .setName("Dal Exchange")
@@ -116,7 +122,7 @@ public class PaymentServiceImpl implements PaymentService {
             Session s = Session.create(params);
             return s.getId();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to create payment intent: " + e.getMessage(), e);
         }
     }
 
@@ -124,23 +130,34 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public void savePayment(String amount, Long productId, String paymentIntentId, Principal principal) {
         Long userId = AuthUtil.getCurrentUserId(userRepository);
-        // save the the order in orede repository
+        User user = userRepository.findByUserId(userId);
+        // Fetch or create ShippingAddress
+        ShippingAddress shippingAddress = new ShippingAddress();
+        // Set shipping address details here
+        shippingRepository.save(shippingAddress);
 
-        //shippingRepository.save("Rutvik","Canada","6969","BaayersRoad","Halifax","Nova Scotia","B3L4P3");
-        //orderRepository.save(userId,productId, amount, OrderStatus.PENDING,LocalDateTime.now(),shippingRepository.findById(1L),1L,"hello");
-
-
+        // Create and save Payment
         Payment payment = new Payment();
-        payment.setPaymentMethod("CARD"); // Assuming CARD for now, you can adjust based on actual payment method
-        payment.setPaymentStatus(PaymentStatus.completed); // Assuming payment success, can be adjusted based on actual status
+        payment.setPaymentMethod("Stripe"); // Example
+        payment.setPaymentStatus(PaymentStatus.completed);
         payment.setPaymentDate(LocalDateTime.now());
         payment.setAmount(Double.parseDouble(amount));
-
-        // Fetch and set the order details
-       // OrderDetails order = orderRepository.findByProductIdAndBuyerUsername(productId, principal.getName());
-       // payment.setOrder(order);
-        payment.setOrder(orderRepository.getReferenceById(1));  //TODO : set the orderid
-
         paymentRepository.save(payment);
+
+        // Create and save OrderDetails
+        OrderDetails orderDetails = new OrderDetails();
+        orderDetails.setBuyer(user); // Fetch user based on principal
+        orderDetails.setProductId(new Product()); // Fetch product based on productId
+        orderDetails.setTotalAmount(Double.parseDouble(amount));
+        orderDetails.setOrderStatus(OrderStatus.PENDING); // Example status
+        orderDetails.setTransactionDatetime(LocalDateTime.now());
+        orderDetails.setShippingAddress(shippingAddress);
+        orderDetails.setPayment(payment);
+        orderRepository.save(orderDetails);
+
+    }
+
+    public Payment savePayment(Payment payment) {
+        return paymentRepository.save(payment);
     }
 }

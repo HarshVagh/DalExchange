@@ -28,7 +28,7 @@ const ProductDetails = () => {
     add: true,
     profile: true
   };
-  const { user } = useUser();  // Get the user function from the context
+  const { user } =  1 //useUser();  // Get the user function from the context
   console.log("user", user)
   console.log("product", product)
 
@@ -131,7 +131,7 @@ const ProductDetails = () => {
               alt="Product"
               className="w-full rounded-lg"
               height={600}
-              src={placeholder}
+              src={product?.imageUrl || placeholder}
               style={{
                 aspectRatio: '1/1',
                 objectFit: 'cover',

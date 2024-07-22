@@ -5,5 +5,5 @@ import com.asdc.dalexchange.dto.ProductRatingDTO;
 import java.util.List;
 
 public interface ProductRatingService {
-    public List<ProductRatingDTO> allReviewOfAllSoldItemsOfUser(Long userid);
+    public List<ProductRatingDTO> allReviewOfAllSoldItemsOfUser();
 }

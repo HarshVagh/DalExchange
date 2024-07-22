@@ -47,7 +47,6 @@ public class ProductWishListServiceImpl implements ProductWishlistService {
 
     @Transactional
     public boolean markProductAsFavorite(long productId) {
-        //Long userId = 5L;
         Long userId = AuthUtil.getCurrentUserId(userRepository);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + userId));
@@ -71,7 +70,8 @@ public class ProductWishListServiceImpl implements ProductWishlistService {
 
 
     @Override
-    public List<SavedProductDTO> getAllSavedProducts(Long userId) {
+    public List<SavedProductDTO> getAllSavedProducts() {
+        Long userId = AuthUtil.getCurrentUserId(userRepository);
         Specification<ProductWishlist> spec = ProductWishlistSpecification.byUserId(userId);
         List<ProductWishlist> allWishlistedProducts = productWishlistRepository.findAll(spec);
 
@@ -90,15 +90,17 @@ public class ProductWishListServiceImpl implements ProductWishlistService {
 
 
     @Override
-    public List<PurchaseProductDTO> getAllPurchasedProduct(Long userid) {
-        List<OrderDetails> orderDetailsList = orderRepository.findByBuyerUserId(userid);
+    public List<PurchaseProductDTO> getAllPurchasedProduct() {
+        Long userId = AuthUtil.getCurrentUserId(userRepository);
+        List<OrderDetails> orderDetailsList = orderRepository.findByBuyerUserId(userId);
         return orderDetailsList.stream()
                 .map(purchaseProductMapper::mapTo)
                 .collect(Collectors.toList());
 
     }
 
-    public boolean checkProductIsFavoriteByGivenUser(long userId, long productId) {
+    public boolean checkProductIsFavoriteByGivenUser( long productId) {
+        Long userId = AuthUtil.getCurrentUserId(userRepository);
         Specification<ProductWishlist> spec = ProductWishlistSpecification.byUserIdAndProductId(userId, productId);
         long count = productWishlistRepository.count(spec);
         return count > 0;

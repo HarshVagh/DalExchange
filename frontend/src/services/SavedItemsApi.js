@@ -11,7 +11,7 @@ const fetchSavedItems = async () => {
 
 const removeSavedItem = async (productId) => {
   try {
-    const response = await AxiosInstance.post(`/profile/remove_saved/${productId}`);
+    const response = await AxiosInstance.put(`/profile/remove_saved/${productId}`);
     return response.data;
   } catch (error) {
     throw error;

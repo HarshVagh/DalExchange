@@ -29,54 +29,47 @@ public class ProfilePageController {
 
     @GetMapping("")
     public ResponseEntity<EditProfileDTO> profileDetails() {
-        long userId = 1L; // TODO: Replace with current loggdin userid
-        EditProfileDTO updatedUser = profilePageService.editGetUserDetails(userId);
+        EditProfileDTO updatedUser = profilePageService.editGetUserDetails();
         return ResponseEntity.ok(updatedUser);
     }
 
     @GetMapping("/saved_products")
     public ResponseEntity<List<SavedProductDTO>> getAllSavedProducts() {
-        long userId = 1L; // TODO: Replace with current loggdin userid
-        List<SavedProductDTO> savedProductDTOs = productWishlistService.getAllSavedProducts(userId);
+        List<SavedProductDTO> savedProductDTOs = productWishlistService.getAllSavedProducts();
         return ResponseEntity.ok(savedProductDTOs);
     }
 
     @GetMapping("/sold_products")
     public ResponseEntity<List<SoldItemDTO>> getAllSoldProducts() {
-        long userId = 1L; // TODO: Replace with current loggdin userid
-        List<SoldItemDTO> soldProductDTOs = soldItemService.GetallSoldProduct(userId);
+        List<SoldItemDTO> soldProductDTOs = soldItemService.GetallSoldProduct();
         return ResponseEntity.ok(soldProductDTOs);
     }
 
     @GetMapping("/purchased_products")
     public ResponseEntity<List<PurchaseProductDTO>> getAllPurchasedProducts() {
-        long userId = 1L; // TODO: Replace with current loggdin userid
-        List<PurchaseProductDTO> purchasedProductDTOs = productWishlistService.getAllPurchasedProduct(userId);
+        List<PurchaseProductDTO> purchasedProductDTOs = productWishlistService.getAllPurchasedProduct();
         return ResponseEntity.ok(purchasedProductDTOs);
     }
 
     @GetMapping("/product_ratings")
     public ResponseEntity<List<ProductRatingDTO>> getAllProductRatings() {
-        long userId = 1L; // TODO: Replace with current loggdin userid
-        List<ProductRatingDTO> productRatingDTOs = productRatingService.allReviewOfAllSoldItemsOfUser(userId);
+        List<ProductRatingDTO> productRatingDTOs = productRatingService.allReviewOfAllSoldItemsOfUser();
         return ResponseEntity.ok(productRatingDTOs);
     }
 
     @PutMapping("/edit_user")
     public ResponseEntity<EditProfileDTO> editUserDetails(@RequestBody EditProfileDTO editProfileDTO) {
-        long userId = 1L; // TODO: Replace with current loggdin userid
-        EditProfileDTO updatedUser = profilePageService.editUserDetails(userId,editProfileDTO);
+        EditProfileDTO updatedUser = profilePageService.editUserDetails(editProfileDTO);
         return ResponseEntity.ok(updatedUser);
     }
 
     @PutMapping("/remove_saved/{productId}")
     public ResponseEntity<Object> unmarkAsFavorite(@PathVariable long productId) {
-        long userId = 1L; // TODO: Replace with current loggdin userid
         boolean isUpdated = productWishlistService.markProductAsFavorite(productId);
-       /* if (isUpdated) {*/
+       // if (isUpdated) {
             return ResponseEntity.ok("Product removed successfully");
-        /*}
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();*/
+       // }
+       // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
 }

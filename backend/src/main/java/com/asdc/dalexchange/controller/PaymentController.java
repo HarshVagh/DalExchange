@@ -35,6 +35,21 @@ public class PaymentController {
     }
 
 
+  /*  @GetMapping("/success")
+    public ResponseEntity<String> paymentSuccess(@RequestParam String amount,
+                                                 @RequestParam Long productId,
+                                                 @RequestParam String paymentIntentId,
+                                                 Principal principal) {
+        try {
+
+            paymentService.savePayment(amount, productId, paymentIntentId, principal);
+            return ResponseEntity.ok("Payment successful and recorded.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Payment successful, but recording failed.");
+        }
+    }*/
+
+
     @GetMapping("/success")
     public ResponseEntity<String> paymentSuccess(@RequestParam String amount,
                                                  @RequestParam Long productId,

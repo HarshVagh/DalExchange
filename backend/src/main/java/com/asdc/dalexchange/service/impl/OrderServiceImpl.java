@@ -185,4 +185,8 @@ public class OrderServiceImpl implements OrderService {
         shippingRepository.save(existingAddress);
     }
 
+    public OrderDetails saveOrderDetails(OrderDetails orderDetails) {
+        return orderRepository.save(orderDetails);
+    }
+
 }

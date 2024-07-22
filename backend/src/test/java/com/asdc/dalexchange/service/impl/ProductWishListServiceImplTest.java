@@ -172,7 +172,7 @@ class ProductWishListServiceImplTest {
         when(savedProductMapper.mapTo(product1)).thenReturn(savedProductDTO1);
         when(savedProductMapper.mapTo(product2)).thenReturn(savedProductDTO2);
 
-        List<SavedProductDTO> result = productWishListService.getAllSavedProducts(userId);
+        List<SavedProductDTO> result = productWishListService.getAllSavedProducts();
 
         assertEquals(2, result.size());
         verify(productWishlistRepository, times(1)).findAll(any(Specification.class));
@@ -199,7 +199,7 @@ class ProductWishListServiceImplTest {
         when(purchaseProductMapper.mapTo(eq(orderDetails1))).thenReturn(purchaseProductDTO1);
         when(purchaseProductMapper.mapTo(eq(orderDetails2))).thenReturn(purchaseProductDTO2);
 
-        List<PurchaseProductDTO> result = productWishListService.getAllPurchasedProduct(userId);
+        List<PurchaseProductDTO> result = productWishListService.getAllPurchasedProduct();
 
         assertEquals(2, result.size());
         verify(purchaseProductMapper, times(1)).mapTo(eq(orderDetails1));
@@ -213,7 +213,7 @@ class ProductWishListServiceImplTest {
         when(orderRepository.findByBuyerUserId(userId))
                 .thenReturn(Collections.emptyList());
 
-        List<PurchaseProductDTO> result = productWishListService.getAllPurchasedProduct(userId);
+        List<PurchaseProductDTO> result = productWishListService.getAllPurchasedProduct();
 
         assertEquals(0, result.size());
         verify(purchaseProductMapper, never()).mapTo(any()); // Ensure mapTo is never called when there are no orders
@@ -227,7 +227,7 @@ class ProductWishListServiceImplTest {
         Specification<ProductWishlist> spec = ProductWishlistSpecification.byUserIdAndProductId(userId, productId);
         when(productWishlistRepository.count(any(Specification.class))).thenReturn(1L);
 
-        boolean result = productWishListService.checkProductIsFavoriteByGivenUser(userId, productId);
+        boolean result = productWishListService.checkProductIsFavoriteByGivenUser(productId);
 
         assertTrue(result);
         verify(productWishlistRepository, times(1)).count(any(Specification.class));
@@ -241,7 +241,7 @@ class ProductWishListServiceImplTest {
         Specification<ProductWishlist> spec = ProductWishlistSpecification.byUserIdAndProductId(userId, productId);
         when(productWishlistRepository.count(any(Specification.class))).thenReturn(0L);
 
-        boolean result = productWishListService.checkProductIsFavoriteByGivenUser(userId, productId);
+        boolean result = productWishListService.checkProductIsFavoriteByGivenUser(productId);
 
         assertFalse(result);
         verify(productWishlistRepository, times(1)).count(any(Specification.class));

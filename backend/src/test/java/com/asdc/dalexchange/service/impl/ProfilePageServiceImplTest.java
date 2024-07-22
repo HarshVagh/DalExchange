@@ -3,6 +3,7 @@ import com.asdc.dalexchange.dto.EditProfileDTO;
 import com.asdc.dalexchange.mappers.impl.EditProfileMapperImpl;
 import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.repository.UserRepository;
+import com.asdc.dalexchange.util.AuthUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -37,7 +38,7 @@ public class ProfilePageServiceImplTest {
     @Test
     void testEditUserDetails_Success() {
         // Mock data
-        Long userId = 1L;
+        Long userId = AuthUtil.getCurrentUserId(userRepository);
         EditProfileDTO editProfileDTO = createEditProfileDTO();
         User user = createUser();
 
@@ -54,7 +55,7 @@ public class ProfilePageServiceImplTest {
         when(editProfileMapper.mapTo(user)).thenReturn(editProfileDTO);
 
         // Call the service method
-        EditProfileDTO updatedProfile = profilePageService.editUserDetails(userId, editProfileDTO);
+        EditProfileDTO updatedProfile = profilePageService.editUserDetails(editProfileDTO);
 
         // Assertions
         assertNotNull(updatedProfile);
@@ -74,7 +75,7 @@ public class ProfilePageServiceImplTest {
 
         // Call the service method and expect RuntimeException
         assertThrows(RuntimeException.class, () -> {
-            profilePageService.editUserDetails(userId, editProfileDTO);
+            profilePageService.editUserDetails(editProfileDTO);
         });
     }
 
@@ -91,7 +92,7 @@ public class ProfilePageServiceImplTest {
         when(modelMapper.map(user, EditProfileDTO.class)).thenReturn(createEditProfileDTO());
 
         // Call the service method
-        EditProfileDTO userDetails = profilePageService.editGetUserDetails(userId);
+        EditProfileDTO userDetails = profilePageService.editGetUserDetails();
 
         // Assertions
         assertNotNull(userDetails);

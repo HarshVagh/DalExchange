@@ -118,7 +118,7 @@ class ProductRatingServiceImplTest {
         when(productRatingMapper.mapTo(rating1)).thenReturn(ratingDTO1);
         when(productRatingMapper.mapTo(rating2)).thenReturn(ratingDTO2);
 
-        List<ProductRatingDTO> result = productRatingService.allReviewOfAllSoldItemsOfUser(userId);
+        List<ProductRatingDTO> result = productRatingService.allReviewOfAllSoldItemsOfUser();
 
         assertEquals(2, result.size());
         assertEquals(5, result.get(0).getRating());

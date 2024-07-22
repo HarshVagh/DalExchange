@@ -6,8 +6,10 @@ import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.model.ProductRating;
 import com.asdc.dalexchange.repository.ProductRatingRepository;
 import com.asdc.dalexchange.repository.ProductRepository;
+import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.service.ProductRatingService;
 import com.asdc.dalexchange.specifications.ProductSpecification;
+import com.asdc.dalexchange.util.AuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,11 +26,15 @@ public class ProductRatingServiceImpl implements ProductRatingService {
     private ProductRepository productRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private ProductRatingMapperImpl productRatingMapper;
 
     @Override
-    public List<ProductRatingDTO> allReviewOfAllSoldItemsOfUser(Long userid) {
-        List<Product> products = productRepository.findAll(ProductSpecification.bySellerUserId(userid));
+    public List<ProductRatingDTO> allReviewOfAllSoldItemsOfUser() {
+        Long userId = AuthUtil.getCurrentUserId(userRepository);
+        List<Product> products = productRepository.findAll(ProductSpecification.bySellerUserId(userId));
         List<Long> productIds = products.stream()
                 .map(Product::getProductId)
                 .collect(Collectors.toList());

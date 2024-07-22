@@ -102,9 +102,10 @@ public class TradeRequestServiceImpl implements TradeRequestService {
     }
 
     @Override
-    public double getApprovedTradeRequestAmount(Long buyerId, Long productId) {
+    public double getApprovedTradeRequestAmount(Long productId) {
+        Long userId = AuthUtil.getCurrentUserId(userRepository);
         List<TradeRequest> tradeRequest = tradeRequestRepository.findAll(
-                where(TradeRequestSpecification.hasBuyerId(buyerId))
+                where(TradeRequestSpecification.hasBuyerId(userId))
                         .and(TradeRequestSpecification.hasProductId(productId))
                         .and(TradeRequestSpecification.hasRequestStatus("approved")));
         TradeRequest firsttraderequest = tradeRequest.get(0);
