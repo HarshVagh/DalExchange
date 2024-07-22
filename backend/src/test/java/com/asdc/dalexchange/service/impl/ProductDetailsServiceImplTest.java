@@ -2,24 +2,33 @@ package com.asdc.dalexchange.service.impl;
 
 import com.asdc.dalexchange.dto.ProductDetailsDTO;
 import com.asdc.dalexchange.mappers.Mapper;
-import com.asdc.dalexchange.model.*;
+import com.asdc.dalexchange.model.Product;
+import com.asdc.dalexchange.model.ProductImage;
+import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.repository.ProductImageRepository;
 import com.asdc.dalexchange.repository.ProductRepository;
 import com.asdc.dalexchange.repository.ProductWishlistRepository;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 class ProductDetailsServiceImplTest {
 
@@ -77,7 +86,7 @@ class ProductDetailsServiceImplTest {
         productDetailsDTO.setSellerId(seller.getUserId());
         productDetailsDTO.setSellerJoiningDate(seller.getJoinedAt());
         productDetailsDTO.setRating(seller.getSellerRating());
-        productDetailsDTO.setImageurl(List.of("url1", "url2"));
+        productDetailsDTO.setImageUrls(List.of("url1", "url2"));
         productDetailsDTO.setFavorite(true);
 
         ProductImage productImage1 = new ProductImage();
@@ -105,7 +114,7 @@ class ProductDetailsServiceImplTest {
         assertEquals(2L, result.getSellerId());
         assertEquals(seller.getJoinedAt(), result.getSellerJoiningDate());
         assertEquals(4.5, result.getRating());
-        assertEquals(List.of("url1", "url2"), result.getImageurl());
+        assertEquals(List.of("url1", "url2"), result.getImageUrls());
         assertTrue(result.isFavorite());
 
         // Verify interactions

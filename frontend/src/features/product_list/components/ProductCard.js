@@ -9,7 +9,7 @@ const ProductCard = ({ product }) => {
         alt=""
         className="w-full h-48 object-cover"
         height={300}
-        src={product.imagePath ? product.imagePath : placeholder}
+        src={product.imageUrl ? product.imageUrl : placeholder}
         style={{
           aspectRatio: "400/300",
           objectFit: "cover",
