@@ -1,7 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import './App.css';
 import ProductList from './features/product_list/ProductList';
-
 import TradeRequests from './features/trade_requests/TradeRequests';
 import ProductDetails from './features/product_details/ProductDetails';
 import Login from './features/authentication/Login';
@@ -10,49 +9,70 @@ import VerifyEmail from './features/authentication/VerifyEmail';
 import LandingPage from './features/authentication/LandingPage';
 import ForgotPassword from './features/authentication/ForgotPassword';
 import ResetPassword from './features/authentication/ResetPassword';
-import PrivateRoute from './features/authentication/PrivateRoute';
-import OrderModeration from './features/admin_moderation/OrderModeration';
-import Layout from './components/AdminLayout'; 
-import UserModeration from "./features/admin_moderation/UserModeration";
-import ProductModeration from "./features/admin_moderation/ProductModeration";
-import FeedbackModeration from "./features/admin_moderation/FeedbackModeration";
-import AdminDashboard from "./features/admin_moderation/AdminDashboard";
-
+import Notification from './features/notification/Notification';
+import AddProduct from './features/add_product/AddProduct';
 import ProfilePage from './features/profile_page/Profile';
 import SoldItems from "./features/profile_page/SoldItems";
 import SavedItems from "./features/profile_page/SavedItems";
 import EditProfile from "./features/profile_page/EditProfile";
 import Reviews from './features/profile_page/Reviews';
 import PurchaseHistory from './features/profile_page/PurchaseHistory';
+import { SearchFilterProvider } from './context/SearchFilterContext';
+import UnauthenticatedRoute from './features/private_routes/UnauthenticatedRoute';
+import StudentPrivateRoute from './features/private_routes/StudentPrivateRoute';
+import AdminPrivateRoute from './features/private_routes/AdminPrivateRoute';
+import NotAuthorizedPage from './features/authentication/NotAuthorizedPage';
+import Layout from './components/AdminLayout';
+import AdminDashboard from "./features/admin_moderation/AdminDashboard";
+import OrderModeration from './features/admin_moderation/OrderModeration';
+import UserModeration from "./features/admin_moderation/UserModeration";
+import ProductModeration from "./features/admin_moderation/ProductModeration";
+import FeedbackModeration from "./features/admin_moderation/FeedbackModeration";
 
 
 function App() {
   return (
-    <div className="App">
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/verify-email" element={<VerifyEmail />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/products" element={<PrivateRoute> <ProductList /> </PrivateRoute> } />
-        <Route path="/products/:productId" element={<PrivateRoute> <ProductDetails/> </PrivateRoute> } />
-        <Route path="/trade_requests" element={<PrivateRoute> <TradeRequests/> </PrivateRoute> } />
-        <Route path="/admin-moderation/users" element={<Layout><UserModeration /></Layout>} />
-        <Route path="/admin-moderation/products" element={<Layout><ProductModeration /></Layout>} />
-        <Route path="/profile/purchase-history" element={<PurchaseHistory />} />
-        <Route path="/profile" element={<PrivateRoute> <ProfilePage /> </PrivateRoute> } />
-        <Route path="/profile/sold-items" element={<PrivateRoute> <SoldItems /> </PrivateRoute>} />
-        <Route path="/profile/saved-items" element={<PrivateRoute> <SavedItems /> </PrivateRoute>} />
-        <Route path="/profile/edit-profile" element={<PrivateRoute> <EditProfile /> </PrivateRoute>} />
-        <Route path="/profile/reviews" element={<PrivateRoute> <Reviews /> </PrivateRoute>} />
-        <Route path="/admin-moderation/orders" element={<Layout> <OrderModeration /> </Layout>} />
-        <Route path="/admin-moderation/feedback" element={<Layout> <FeedbackModeration /> </Layout>} />
-        <Route path="/admin-moderation/dashboard" element={<Layout> <AdminDashboard /> </Layout>} />
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<UnauthenticatedRoute> <LandingPage /> </UnauthenticatedRoute>} />
 
-      </Routes>
-    </div>
+          <Route path="/login" element={<UnauthenticatedRoute> <Login /> </UnauthenticatedRoute>} />
+          <Route path="/signup" element={<UnauthenticatedRoute> <Signup /> </UnauthenticatedRoute>} />
+          <Route path="/forgot-password" element={<UnauthenticatedRoute> <ForgotPassword /> </UnauthenticatedRoute>} />
+          <Route path="/verify-email" element={<UnauthenticatedRoute> <VerifyEmail /> </UnauthenticatedRoute>} />
+          <Route path="/reset-password" element={<UnauthenticatedRoute> <ResetPassword /> </UnauthenticatedRoute>} />
+
+          <Route path="/products" element={
+            <StudentPrivateRoute>
+              <SearchFilterProvider>
+                <ProductList />
+              </SearchFilterProvider>
+            </StudentPrivateRoute>
+          } />
+          <Route path="/products/add-product" element={<StudentPrivateRoute><AddProduct /> </StudentPrivateRoute>}/>
+          <Route path="/products/:productId" element={<StudentPrivateRoute> <ProductDetails/> </StudentPrivateRoute> } />
+
+          <Route path="/trade_requests" element={<StudentPrivateRoute> <TradeRequests/> </StudentPrivateRoute> } />
+
+          <Route path="/admin-moderation/dashboard" element={<Layout> <AdminDashboard /> </Layout>} />
+          <Route path="/admin-moderation/orders" element={<Layout> <OrderModeration /> </Layout>} />
+          <Route path="/admin-moderation/users" element={<Layout><UserModeration /></Layout>} />
+          <Route path="/admin-moderation/products" element={<Layout><ProductModeration /></Layout>} />
+          <Route path="/admin-moderation/feedback" element={<Layout> <FeedbackModeration /> </Layout>} />
+
+          <Route path="/profile/purchase-history" element={<StudentPrivateRoute> <PurchaseHistory /> </StudentPrivateRoute>} />
+          <Route path="/profile" element={<StudentPrivateRoute> <ProfilePage /> </StudentPrivateRoute> } />
+          <Route path="/profile/sold-items" element={<StudentPrivateRoute> <SoldItems /> </StudentPrivateRoute>} />
+          <Route path="/profile/saved-items" element={<StudentPrivateRoute> <SavedItems /> </StudentPrivateRoute>} />
+          <Route path="/profile/edit-profile" element={<StudentPrivateRoute> <EditProfile /> </StudentPrivateRoute>} />
+          <Route path="/profile/reviews" element={<StudentPrivateRoute> <Reviews /> </StudentPrivateRoute>} />
+
+          <Route path="/notifications" element={<StudentPrivateRoute> <Notification/> </StudentPrivateRoute>} />
+          <Route path="/not-authorized" element={<NotAuthorizedPage />} />
+
+
+        </Routes>
+      </div>
   );
 }
 

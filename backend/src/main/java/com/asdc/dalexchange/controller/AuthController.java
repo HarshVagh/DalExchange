@@ -5,8 +5,10 @@ import com.asdc.dalexchange.enums.Role;
 import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.model.VerificationRequest;
 import com.asdc.dalexchange.service.UserService;
-import com.asdc.dalexchange.service.impl.UserServiceImpl;
 import com.asdc.dalexchange.util.JwtUtils;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import org.hibernate.service.spi.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Map;
 
 @RestController
@@ -41,23 +44,6 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    /*@PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody User user) {
-        try {
-            if (!user.getEmail().endsWith("@dal.ca")) {
-                return ResponseEntity.badRequest().body("Email must be a @dal.ca address");
-            }
-            String encodedPassword = passwordEncoder.encode(user.getPassword());
-            user.setPassword(encodedPassword);
-
-            userService.registerUser(user);
-            // Send verification code logic
-            return ResponseEntity.ok("User registered successfully. Please check your email for verification code.");
-        } catch (Exception e) {
-            logger.error("Error registering user: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error registering user.");
-        }
-    }*/
     @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> signup(
             @RequestPart("username") String username,
@@ -83,25 +69,13 @@ public class AuthController {
             user.setRole(Role.valueOf(role));
             user.setBio(bio);
 
-            if (!profilePicture.isEmpty()) {
-                String profilePicturePath = saveProfilePicture(profilePicture);
-                user.setProfilePicture(profilePicturePath);
-            }
-
-            userService.registerUser(user);
-            // Send verification code logic
+            userService.registerUser(user, profilePicture);
             return ResponseEntity.ok("User registered successfully. Please check your email for verification code.");
         } catch (Exception e) {
             logger.error("Error registering user: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error registering user.");
         }
     }
-    private String saveProfilePicture(MultipartFile profilePicture) {
-        // Implement logic to save profile picture to the server
-        // and return the file path or URL
-        return "path/to/saved/profilePicture.jpg";
-    }
-
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
@@ -136,5 +110,14 @@ public class AuthController {
             logger.error("Error verifying user: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error verifying user.");
         }
+    }
+
+    @GetMapping("/current-user")
+    public ResponseEntity<?> getCurrentUser() {
+        User currentUser = userService.getCurrentUser();
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No user is currently logged in");
+        }
+        return ResponseEntity.ok(currentUser);
     }
 }

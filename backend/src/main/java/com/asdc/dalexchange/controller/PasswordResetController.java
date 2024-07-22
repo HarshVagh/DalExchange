@@ -6,6 +6,7 @@ import com.asdc.dalexchange.repository.PasswordResetTokenRepository;
 import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +32,9 @@ public class PasswordResetController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Value("${frontend.url}")
+    private String frontendUrl;
+
     @PostMapping("/forgot-password")
     public String forgotPassword(@RequestParam String email) {
         String token = UUID.randomUUID().toString();
@@ -41,7 +45,7 @@ public class PasswordResetController {
 
         passwordResetTokenRepository.save(resetToken);
 
-        String resetUrl = "http://localhost:3000/reset-password?token=" + token + "&email=" + email;
+        String resetUrl = frontendUrl + "/reset-password?token=" + token + "&email=" + email;
 
         emailService.sendEmail(email, "Password Reset Request", "Click the link to reset your password: " + resetUrl);
 

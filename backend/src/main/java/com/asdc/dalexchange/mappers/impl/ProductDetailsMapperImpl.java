@@ -21,7 +21,9 @@ public class ProductDetailsMapperImpl implements Mapper<Product, ProductDetailsD
     public ProductDetailsDTO mapTo(Product product) {
         ProductDetailsDTO productDetailsDTO = modelMapper.map(product, ProductDetailsDTO.class);
         productDetailsDTO.setSellerJoiningDate(product.getSeller().getJoinedAt());
-        productDetailsDTO.setCategory(product.getCategory().getName());
+        if (product.getCategory() != null) {
+            productDetailsDTO.setCategory(product.getCategory().getName());
+        }
         return productDetailsDTO;
     }
 

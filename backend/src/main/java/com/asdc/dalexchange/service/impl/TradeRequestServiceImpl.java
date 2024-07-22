@@ -1,6 +1,5 @@
 package com.asdc.dalexchange.service.impl;
 
-import com.asdc.dalexchange.dto.ProductListingDTO;
 import com.asdc.dalexchange.dto.TradeRequestDTO;
 import com.asdc.dalexchange.mappers.Mapper;
 import com.asdc.dalexchange.model.Product;
@@ -11,9 +10,9 @@ import com.asdc.dalexchange.repository.TradeRequestRepository;
 import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.service.TradeRequestService;
 import com.asdc.dalexchange.specifications.TradeRequestSpecification;
+import com.asdc.dalexchange.util.AuthUtil;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -24,36 +23,34 @@ import java.util.Map;
 @Service
 @Slf4j
 public class TradeRequestServiceImpl implements TradeRequestService {
-
-    @Autowired
     private TradeRequestRepository tradeRequestRepository;
-
-    @Autowired
     private ProductRepository productRepository;
-
-    @Autowired
     private UserRepository userRepository;
-
-    @Autowired
     private Mapper<TradeRequest, TradeRequestDTO> tradeRequestMapper;
 
-    @Autowired
-    private Mapper<Product, ProductListingDTO> productMapper;
-
-    public TradeRequestServiceImpl(TradeRequestRepository tradeRequestRepository) {
+    public TradeRequestServiceImpl(
+            TradeRequestRepository tradeRequestRepository,
+            ProductRepository productRepository,
+            UserRepository userRepository,
+            Mapper<TradeRequest, TradeRequestDTO> tradeRequestMapper) {
         this.tradeRequestRepository = tradeRequestRepository;
+        this.productRepository = productRepository;
+        this.userRepository = userRepository;
+        this.tradeRequestMapper = tradeRequestMapper;
     }
 
     @Override
-    public List<TradeRequest> getBuyerTradeRequests(Long buyerId) {
+    public List<TradeRequest> getBuyerTradeRequests() {
         log.info("getBuyerTradeRequests call started in the TradeRequestServiceImpl");
+        Long buyerId = AuthUtil.getCurrentUserId(userRepository);
         Specification<TradeRequest> spec = TradeRequestSpecification.hasBuyerId(buyerId);
         return tradeRequestRepository.findAll(spec);
     }
 
     @Override
-    public List<TradeRequest> getSellerTradeRequests(Long sellerId) {
+    public List<TradeRequest> getSellerTradeRequests() {
         log.info("getSellerTradeRequests call started in the TradeRequestServiceImpl");
+        Long sellerId = AuthUtil.getCurrentUserId(userRepository);
         Specification<TradeRequest> spec = TradeRequestSpecification.hasSellerId(sellerId);
         return tradeRequestRepository.findAll(spec);
     }

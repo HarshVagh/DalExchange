@@ -1,6 +1,5 @@
-package com.asdc.dalexchange.service;
+package com.asdc.dalexchange.service.impl;
 
-import com.asdc.dalexchange.service.impl.EmailServiceImpl;
 import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class EmailServiceTest {
+public class EmailServiceImplTest {
 
     @Mock
     private JavaMailSender emailSender;

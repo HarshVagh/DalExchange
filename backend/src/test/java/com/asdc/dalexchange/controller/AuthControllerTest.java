@@ -2,7 +2,6 @@ package com.asdc.dalexchange.controller;
 
 import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.model.VerificationRequest;
-import com.asdc.dalexchange.service.UserService;
 import com.asdc.dalexchange.service.impl.UserServiceImpl;
 import com.asdc.dalexchange.util.JwtUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,18 +16,32 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 public class AuthControllerTest {
 
     @InjectMocks
     private AuthController authController;
+
+    private MockMvc mockMvc;
 
     @Mock
     private UserServiceImpl userService;
@@ -48,18 +61,19 @@ public class AuthControllerTest {
     @Mock
     private UserDetails userDetails;
 
-    @Mock
-    private MultipartFile profilePicture;
-
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(authController).build();
     }
 
     @Test
-    public void signupTest() {
+    public void signupTest() throws IOException {
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
-        doAnswer(invocation -> null).when(userService).registerUser(any(User.class));
+        MultipartFile profilePicture = mock(MultipartFile.class);
+        doAnswer(invocation -> null).when(userService).registerUser(any(User.class), any(MultipartFile.class));
+        when(profilePicture.isEmpty()).thenReturn(false);
+        when(profilePicture.getBytes()).thenReturn("test image content".getBytes());
 
         ResponseEntity<?> response = authController.signup(
                 "testuser",
@@ -78,6 +92,7 @@ public class AuthControllerTest {
 
     @Test
     public void signupTest_InvalidEmail() {
+        MultipartFile profilePicture = mock(MultipartFile.class);
         ResponseEntity<?> response = authController.signup(
                 "testuser",
                 "password",
@@ -96,7 +111,7 @@ public class AuthControllerTest {
     @Test
     public void signupTest_Exception() {
         when(passwordEncoder.encode(anyString())).thenThrow(new RuntimeException());
-
+        MultipartFile profilePicture = mock(MultipartFile.class);
         ResponseEntity<?> response = authController.signup(
                 "testuser",
                 "password",
@@ -183,5 +198,34 @@ public class AuthControllerTest {
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertEquals("Error verifying user.", response.getBody());
+    }
+
+    @Test
+    public void getCurrentUser_ShouldReturnUser_WhenUserIsLoggedIn() throws Exception {
+        User mockUser = new User();
+        mockUser.setUserId(1L);
+        mockUser.setFullName("John Doe");
+        mockUser.setEmail("john.doe@example.com");
+
+        when(userService.getCurrentUser()).thenReturn(mockUser);
+
+        mockMvc.perform(get("/auth/current-user"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userId").value(1L))
+                .andExpect(jsonPath("$.fullName").value("John Doe"))
+                .andExpect(jsonPath("$.email").value("john.doe@example.com"));
+
+        verify(userService, times(1)).getCurrentUser();
+    }
+
+    @Test
+    public void getCurrentUser_ShouldReturnUnauthorized_WhenUserIsNotLoggedIn() throws Exception {
+        when(userService.getCurrentUser()).thenReturn(null);
+
+        mockMvc.perform(get("/auth/current-user"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$").value("No user is currently logged in"));
+
+        verify(userService, times(1)).getCurrentUser();
     }
 }

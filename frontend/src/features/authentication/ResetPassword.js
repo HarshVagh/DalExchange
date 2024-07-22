@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-
-import Footer from './Footer';
-import axios from 'axios';
 import Header from '../../components/Header';
+import AuthenticationApi from '../../services/AuthenticationApi';
 
 const ResetPassword = () => {
     const [newPassword, setNewPassword] = useState('');
     const [message, setMessage] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
     const params = new URLSearchParams(location.search);
@@ -24,19 +24,17 @@ const ResetPassword = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
+        setError('');
+        setMessage('');
         try {
-            await axios.post('http://localhost:8080/auth/reset-password',
-                new URLSearchParams({ email, token, newPassword }),
-                {
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    }
-                }
-            );
+            await AuthenticationApi.resetPassword({ email, token, newPassword });
             setMessage('Password reset successfully.');
-            navigate('/login'); // Redirect to login page
+            navigate('/login');
         } catch (error) {
-            setMessage('Error resetting password.');
+            setError('Error resetting password.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -48,9 +46,11 @@ const ResetPassword = () => {
                     <div className="text-center">
                         <h2 className="text-3xl font-bold tracking-tight">Reset Password</h2>
                     </div>
+                    {message && <p className="text-green-500">{message}</p>}
+                    {error && <p className="text-red-500">{error}</p>}
                     <form className="space-y-4" onSubmit={handleSubmit}>
                         <div className="mb-6">
-                            <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900">Enter New Password</label>
+                            <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900">Enter New Password</label>
                             <input
                                 type="password"
                                 id="password"
@@ -60,14 +60,12 @@ const ResetPassword = () => {
                                 required
                             />
                         </div>
-                        <button type="submit" className="w-full bg-black text-white py-2 rounded">
-                            Reset Password
+                        <button type="submit" className="w-full bg-black text-white py-2 rounded" disabled={loading}>
+                            {loading ? 'Resetting...' : 'Reset Password'}
                         </button>
                     </form>
-                    {message && <p>{message}</p>}
                 </div>
             </div>
-            <Footer />
         </div>
     );
 };

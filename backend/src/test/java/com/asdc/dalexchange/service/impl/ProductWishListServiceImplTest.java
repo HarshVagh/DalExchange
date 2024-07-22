@@ -8,7 +8,6 @@ import com.asdc.dalexchange.model.OrderDetails;
 import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.model.ProductWishlist;
 import com.asdc.dalexchange.model.User;
-import org.springframework.data.domain.Example;
 import com.asdc.dalexchange.repository.OrderRepository;
 import com.asdc.dalexchange.repository.ProductRepository;
 import com.asdc.dalexchange.repository.ProductWishlistRepository;
@@ -62,43 +61,36 @@ class ProductWishListServiceImplTest {
         MockitoAnnotations.openMocks(this);
     }
 
-
     @Test
     void testMarkProductAsFavorite_whenUserNotFound() {
-        // Arrange
         long userId = 1L;
         long productId = 1L;
 
-        // Mock repository behaviors
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
-
-        // Act and Assert
         assertThrows(ResourceNotFoundException.class, () -> {
             productWishListService.markProductAsFavorite(userId, productId);
         });
         verify(productRepository, never()).findById(any());
-        verify(productWishlistRepository, never()).findAll((Example<ProductWishlist>) any());
+        verify(productWishlistRepository, never()).findAll((Specification<ProductWishlist>) any());
         verify(productWishlistRepository, never()).save(any());
     }
 
     @Test
     void testMarkProductAsFavorite_whenProductNotFound() {
-        // Arrange
         long userId = 1L;
         long productId = 1L;
 
         User user = new User();
         user.setUserId(userId);
 
-        // Mock repository behaviors
+
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
-        // Act and Assert
         assertThrows(ResourceNotFoundException.class, () -> {
             productWishListService.markProductAsFavorite(userId, productId);
         });
-        verify(productWishlistRepository, never()).findAll((Example<ProductWishlist>) any());
+        verify(productWishlistRepository, never()).findAll((Specification<ProductWishlist>) any());
         verify(productWishlistRepository, never()).save(any());
     }
 
@@ -127,6 +119,32 @@ class ProductWishListServiceImplTest {
         assertFalse(result);
         verify(productWishlistRepository, times(1)).findAll(any(Specification.class));
         verify(productWishlistRepository, times(1)).deleteAll(any(List.class));
+    }
+
+    @Test
+    @Transactional
+    void testMarkProductAsFavorite_addsProductToFavorites() {
+        long userId = 1L;
+        long productId = 1L;
+
+        User user = new User();
+        user.setUserId(userId);
+
+        Product product = new Product();
+        product.setProductId(productId);
+
+        // No existing wishlist items for this user and product
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(productRepository.findById(productId)).thenReturn(Optional.of(product));
+        when(productWishlistRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
+
+        boolean result = productWishListService.markProductAsFavorite(userId, productId);
+
+        assertTrue(result); // Product was added to the wishlist
+
+        // Verify interactions
+        verify(productWishlistRepository, times(1)).findAll(any(Specification.class));
+        verify(productWishlistRepository, times(1)).save(any(ProductWishlist.class));
     }
 
     @Test
@@ -163,47 +181,44 @@ class ProductWishListServiceImplTest {
         verify(savedProductMapper, times(1)).mapTo(product2);
     }
 
-        @Test
-        void testGetAllPurchasedProduct_whenOrdersExist() {
-            // Arrange
-            long userId = 1L;
-            OrderDetails orderDetails1 = new OrderDetails();
-            orderDetails1.setOrderId(1L); // Set appropriate data for testing
-            OrderDetails orderDetails2 = new OrderDetails();
-            orderDetails2.setOrderId(2L); // Set appropriate data for testing
+    @Test
+    void testGetAllPurchasedProduct_whenOrdersExist() {
 
-            when(orderRepository.findByBuyerUserId(userId))
-                    .thenReturn(Arrays.asList(orderDetails1, orderDetails2));
+        long userId = 1L;
+        OrderDetails orderDetails1 = new OrderDetails();
+        orderDetails1.setOrderId(1L);
+        OrderDetails orderDetails2 = new OrderDetails();
+        orderDetails2.setOrderId(2L);
 
-            PurchaseProductDTO purchaseProductDTO1 = new PurchaseProductDTO();
-            PurchaseProductDTO purchaseProductDTO2 = new PurchaseProductDTO();
+        when(orderRepository.findByBuyerUserId(userId))
+                .thenReturn(Arrays.asList(orderDetails1, orderDetails2));
 
-            when(purchaseProductMapper.mapTo(eq(orderDetails1))).thenReturn(purchaseProductDTO1);
-            when(purchaseProductMapper.mapTo(eq(orderDetails2))).thenReturn(purchaseProductDTO2);
+        PurchaseProductDTO purchaseProductDTO1 = new PurchaseProductDTO();
+        PurchaseProductDTO purchaseProductDTO2 = new PurchaseProductDTO();
 
-            // Act
-            List<PurchaseProductDTO> result = productWishListService.getAllPurchasedProduct(userId);
+        when(purchaseProductMapper.mapTo(eq(orderDetails1))).thenReturn(purchaseProductDTO1);
+        when(purchaseProductMapper.mapTo(eq(orderDetails2))).thenReturn(purchaseProductDTO2);
 
-            // Assert
-            assertEquals(2, result.size());
-            verify(purchaseProductMapper, times(1)).mapTo(eq(orderDetails1));
-            verify(purchaseProductMapper, times(1)).mapTo(eq(orderDetails2));
-        }
+        List<PurchaseProductDTO> result = productWishListService.getAllPurchasedProduct(userId);
 
-        @Test
-        void testGetAllPurchasedProduct_whenNoOrders() {
-            // Arrange
-            long userId = 1L;
-            when(orderRepository.findByBuyerUserId(userId))
-                    .thenReturn(Collections.emptyList());
+        assertEquals(2, result.size());
+        verify(purchaseProductMapper, times(1)).mapTo(eq(orderDetails1));
+        verify(purchaseProductMapper, times(1)).mapTo(eq(orderDetails2));
+    }
 
-            // Act
-            List<PurchaseProductDTO> result = productWishListService.getAllPurchasedProduct(userId);
+    @Test
+    void testGetAllPurchasedProduct_whenNoOrders() {
 
-            // Assert
-            assertEquals(0, result.size());
-            verify(purchaseProductMapper, never()).mapTo(any()); // Ensure mapTo is never called when there are no orders
-        }
+        long userId = 1L;
+        when(orderRepository.findByBuyerUserId(userId))
+                .thenReturn(Collections.emptyList());
+
+        List<PurchaseProductDTO> result = productWishListService.getAllPurchasedProduct(userId);
+
+        assertEquals(0, result.size());
+        verify(purchaseProductMapper, never()).mapTo(any()); // Ensure mapTo is never called when there are no orders
+    }
+
     @Test
     public void testCheckProductIsFavoriteByGivenUser_whenFavorite() {
         long userId = 1L;
@@ -232,4 +247,3 @@ class ProductWishListServiceImplTest {
         verify(productWishlistRepository, times(1)).count(any(Specification.class));
     }
 }
-

@@ -27,4 +27,13 @@ public class ProductCategory {
 
     @OneToMany(mappedBy = "category")
     private Set<Product> products;
+
+    public Long getId() {
+        return categoryId;
+    }
+
+    public void setId(Long id) {
+        this.categoryId = id;
+    }
+
 }

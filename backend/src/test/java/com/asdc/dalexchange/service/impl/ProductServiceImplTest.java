@@ -1,5 +1,6 @@
 package com.asdc.dalexchange.service.impl;
 
+import com.asdc.dalexchange.dto.AddProductDTO;
 import com.asdc.dalexchange.dto.ProductDTO;
 import com.asdc.dalexchange.dto.ProductModerationDTO;
 import com.asdc.dalexchange.enums.ProductCondition;
@@ -9,16 +10,22 @@ import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.model.ProductCategory;
 import com.asdc.dalexchange.repository.ProductCategoryRepository;
 import com.asdc.dalexchange.repository.ProductRepository;
+import com.asdc.dalexchange.repository.UserRepository;
+import com.asdc.dalexchange.util.CloudinaryUtil;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -36,6 +43,12 @@ public class ProductServiceImplTest {
 
     @Mock
     private ProductCategoryRepository productCategoryRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private CloudinaryUtil cloudinaryUtil;
 
     @InjectMocks
     private ProductServiceImpl productService;
@@ -227,5 +240,93 @@ public class ProductServiceImplTest {
         assertEquals("Product not found", exception.getMessage());
         verify(productRepository, times(1)).findById(1L);
     }
+
+    @Test
+    void addProductTest() throws IOException {
+        AddProductDTO addProductDTO = new AddProductDTO();
+        addProductDTO.setTitle("Test Product");
+        addProductDTO.setDescription("Test Description");
+        addProductDTO.setPrice(100.0);
+        addProductDTO.setProductCondition(ProductCondition.NEW);
+        addProductDTO.setUseDuration("1 year");
+        addProductDTO.setShippingType(ShippingType.FREE);
+        addProductDTO.setQuantityAvailable(10);
+
+        ProductCategory category = new ProductCategory();
+        category.setId(1L);
+        category.setName("Test Category");
+
+        MultipartFile file = mock(MultipartFile.class);
+        when(file.getOriginalFilename()).thenReturn("test.jpg");
+        when(file.isEmpty()).thenReturn(false);
+        when(file.getBytes()).thenReturn(new byte[0]);
+
+        String mockImageUrl = "http://mock.cloudinary.url/test.jpg";
+        when(cloudinaryUtil.uploadImage(any(MultipartFile.class))).thenReturn(mockImageUrl);
+
+        Product savedProduct = new Product();
+        savedProduct.setId(1L);
+        savedProduct.setTitle(addProductDTO.getTitle());
+        savedProduct.setDescription(addProductDTO.getDescription());
+        savedProduct.setPrice(addProductDTO.getPrice());
+        savedProduct.setCategory(category);
+        savedProduct.setProductCondition(addProductDTO.getProductCondition());
+        savedProduct.setUseDuration(addProductDTO.getUseDuration());
+        savedProduct.setShippingType(addProductDTO.getShippingType());
+        savedProduct.setQuantityAvailable(addProductDTO.getQuantityAvailable());
+        savedProduct.setImagePath(mockImageUrl);
+        savedProduct.setCreatedAt(LocalDateTime.now());
+
+        when(productRepository.save(any(Product.class))).thenReturn(savedProduct);
+
+        Product product = productService.addProduct(addProductDTO, category, file);
+
+        assertNotNull(product);
+        assertEquals(addProductDTO.getTitle(), product.getTitle());
+        assertEquals(addProductDTO.getDescription(), product.getDescription());
+        assertEquals(addProductDTO.getPrice(), product.getPrice());
+        assertEquals(category, product.getCategory());
+        assertEquals(addProductDTO.getProductCondition(), product.getProductCondition());
+        assertEquals(addProductDTO.getUseDuration(), product.getUseDuration());
+        assertEquals(addProductDTO.getShippingType(), product.getShippingType());
+        assertEquals(addProductDTO.getQuantityAvailable(), product.getQuantityAvailable());
+        assertEquals(mockImageUrl, product.getImagePath());
+        verify(productRepository, times(1)).save(any(Product.class));
+    }
+
+    @Test
+    void getCategoryByIdTest() {
+        ProductCategory category = new ProductCategory();
+        category.setId(1L);
+        category.setName("Test Category");
+
+        when(productCategoryRepository.findById(1L)).thenReturn(Optional.of(category));
+
+        ProductCategory result = productService.getCategoryById(1L);
+
+        assertNotNull(result);
+        assertEquals(category.getId(), result.getId());
+        assertEquals(category.getName(), result.getName());
+        verify(productCategoryRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    void getProductByIDTest() {
+        Product product = new Product();
+        product.setId(1L);
+        product.setTitle("Test Product");
+
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+
+        Product result = productService.getProductByID(1L);
+
+        assertNotNull(result);
+        assertEquals(product.getId(), result.getId());
+        assertEquals(product.getTitle(), result.getTitle());
+        verify(productRepository, times(1)).findById(1L);
+    }
+
+
+
 
 }

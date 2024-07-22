@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import Header from '../../components/Header';
-import axios from 'axios';
+import AuthenticationApi from '../../services/AuthenticationApi';
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
     const headerConfig = {
         search: false,
         requests: false,
@@ -15,18 +17,18 @@ const ForgotPassword = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
+        setError('');
+        setMessage('');
         try {
-                await axios.post('http://localhost:8080/auth/forgot-password', null, {
-                params: {
-                    email: email
-                }
-            });
+            await AuthenticationApi.forgotPassword(email);
             setMessage('Password reset email sent.');
         } catch (error) {
-            setMessage('Error sending password reset email.');
+            setError('Error sending password reset email.');
+        } finally {
+            setLoading(false);
         }
     };
-
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -36,8 +38,10 @@ const ForgotPassword = () => {
                     <div className="text-center">
                         <h2 className="text-3xl font-bold tracking-tight">Reset Password</h2>
                     </div>
+                    {message && <p className="text-green-500">{message}</p>}
+                    {error && <p className="text-red-500">{error}</p>}
                     <form className="space-y-4" onSubmit={handleSubmit}>
-                        <div className="mb-6">
+                        <div>
                             <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900">Email</label>
                             <input
                                 type="email"
@@ -48,11 +52,10 @@ const ForgotPassword = () => {
                                 required
                             />
                         </div>
-                        <button type="submit" className="w-full bg-black text-white py-2 rounded">
-                            Reset Password
+                        <button type="submit" className="w-full bg-black text-white py-2 rounded" disabled={loading}>
+                            {loading ? 'Sending...' : 'Send Password Reset Email'}
                         </button>
                     </form>
-                    {message && <p>{message}</p>}
                 </div>
             </div>
         </div>
