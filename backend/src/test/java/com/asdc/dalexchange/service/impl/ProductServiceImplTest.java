@@ -311,7 +311,7 @@ public class ProductServiceImplTest {
     }
 
     @Test
-    void ggetProductByIDTest() {
+    void getProductByIDTest() {
         Product product = new Product();
         product.setId(1L);
         product.setTitle("Test Product");
