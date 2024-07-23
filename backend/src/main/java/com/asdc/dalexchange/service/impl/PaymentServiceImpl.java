@@ -142,7 +142,7 @@ public class PaymentServiceImpl implements PaymentService {
         orderDetails.setBuyer(user);
         orderDetails.setProductId(new Product());
         orderDetails.setTotalAmount(Double.parseDouble(amount));
-        orderDetails.setOrderStatus(OrderStatus.PENDING);
+        orderDetails.setOrderStatus(OrderStatus.Pending);
         orderDetails.setTransactionDatetime(LocalDateTime.now());
         orderDetails.setShippingAddress(shippingAddress);
         orderDetails.setPayment(payment);
