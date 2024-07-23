@@ -61,9 +61,9 @@ public class ProductDetailsMapperImplTest {
         product.setDescription("Test Description");
         product.setPrice(99.99);
         product.setCategory(createMockProductCategory());
-        product.setProductCondition(ProductCondition.NEW);
+        product.setProductCondition(ProductCondition.New);
         product.setUseDuration("1 year");
-        product.setShippingType(ShippingType.STANDARD);
+        product.setShippingType(ShippingType.Free);
         product.setQuantityAvailable(10);
         product.setCreatedAt(LocalDateTime.now());
         return product;

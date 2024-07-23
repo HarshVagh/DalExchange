@@ -13,21 +13,18 @@ export default function FeedbackModeration() {
       try {
         const reviews = await FeedbackModerationApi.fetchReviews();
 
-        // Fetch product names
         const productIds = [...new Set(reviews.map((review) => review.productId))];
         const productResponses = await Promise.all(
           productIds.map((id) => FeedbackModerationApi.fetchProductById(id))
         );
         const products = productResponses.map((res) => res);
 
-        // Fetch user names (if required)
         const userIds = [...new Set(reviews.map((review) => review.userId))];
         const userResponses = await Promise.all(
           userIds.map((id) => FeedbackModerationApi.fetchUserById(id))
         );
         const users = userResponses.map((res) => res);
 
-        // Group reviews by productId
         const productMap = reviews.reduce((map, review) => {
           const product = products.find((p) => p.productId === review.productId);
           const user = users.find((u) => u.userId === review.userId);
@@ -35,14 +32,14 @@ export default function FeedbackModeration() {
           if (!map[review.productId]) {
             map[review.productId] = {
               id: review.productId,
-              name: product ? product.title : `Product ${review.productId}`, // Adjust product name
+              name: product ? product.title : `Product ${review.productId}`, 
               reviews: [],
             };
           }
 
           map[review.productId].reviews.push({
             id: review.userId,
-            name: user ? user.fullName : `User ${review.userId}`, // Adjust user name
+            name: user ? user.fullName : `User ${review.userId}`, 
             rating: review.rating,
             comment: review.review,
           });

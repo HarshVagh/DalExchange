@@ -181,10 +181,10 @@ export default function OrderModeration() {
                         value={orderStatus}
                         onChange={(e) => setOrderStatus(e.target.value)}
                       >
-                        <option value="PENDING">Pending</option>
-                        <option value="SHIPPED">Shipped</option>
-                        <option value="DELIVERED">Delivered</option>
-                        <option value="CANCELLED">Cancelled</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Cancelled">Cancelled</option>
                       </select>
                     </div>
                     <div className="grid gap-2">
