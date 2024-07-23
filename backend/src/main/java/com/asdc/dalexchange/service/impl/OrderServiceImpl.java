@@ -119,7 +119,6 @@ public class OrderServiceImpl implements OrderService {
                 .collect(Collectors.toList());
     }
 
-    // Order Moderation
     public OrderDTO getOrderById(int orderId) {
         OrderDetails order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
@@ -190,7 +189,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<ItemsSoldDTO> getItemsSold() {
-        // Assuming orderRepository has a method to fetch items sold data
         List<Object[]> results = orderRepository.findItemsSoldPerMonth();
         return results.stream().map(result -> {
             ItemsSoldDTO dto = new ItemsSoldDTO();

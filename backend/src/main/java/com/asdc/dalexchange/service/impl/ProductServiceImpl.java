@@ -56,7 +56,6 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.mapTo(product);
     }
 
-    // Product Moderation - prashanth
     public List<ProductModerationDTO> getAllProducts() {
         return productRepository.findAll().stream()
                 .map(productModerationMapper::mapTo)
@@ -99,10 +98,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Transactional
-    public void unlistProduct(Long productId) {
+    public void unlistProduct(Long productId, boolean unlisted) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
-        product.setUnlisted(true);
+        product.setUnlisted(unlisted);
         productRepository.save(product);
     }
 
@@ -142,6 +141,13 @@ public class ProductServiceImpl implements ProductService {
 
     public Product getProductByID(Long id) {
         return productRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public ProductModerationDTO getProductByIdForModeration(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
+        return productModerationMapper.mapTo(product);
     }
 
 }

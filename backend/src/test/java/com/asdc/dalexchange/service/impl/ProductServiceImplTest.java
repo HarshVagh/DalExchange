@@ -10,10 +10,13 @@ import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.model.ProductCategory;
 import com.asdc.dalexchange.model.ProductImage;
 import com.asdc.dalexchange.model.User;
+import com.asdc.dalexchange.model.ProductImage;
+import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.repository.ProductCategoryRepository;
 import com.asdc.dalexchange.repository.ProductImageRepository;
 import com.asdc.dalexchange.repository.ProductRepository;
 import com.asdc.dalexchange.repository.UserRepository;
+import com.asdc.dalexchange.util.AuthUtil;
 import com.asdc.dalexchange.util.AuthUtil;
 import com.asdc.dalexchange.util.CloudinaryUtil;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
@@ -33,18 +36,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyList;
-import static org.mockito.Mockito.anyLong;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class ProductServiceImplTest {
 
@@ -234,14 +227,12 @@ public class ProductServiceImplTest {
 
 
     @Test
-    void testUnlistProduct() {
+    void testSetProductListingStatus_Unlist() {
         Product product = new Product();
-        product.setProductId(1L);
-        product.setUnlisted(false);
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
         when(productRepository.save(any(Product.class))).thenReturn(product);
 
-        productService.unlistProduct(1L);
+        productService.unlistProduct(1L, true);
 
         assertTrue(product.isUnlisted());
         verify(productRepository, times(1)).findById(1L);
@@ -249,15 +240,32 @@ public class ProductServiceImplTest {
     }
 
     @Test
-    void testUnlistProductNotFound() {
+    void testSetProductListingStatus_List() {
+        Product product = new Product();
+
+        product.setUnlisted(true);
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(productRepository.save(any(Product.class))).thenReturn(product);
+
+        productService.unlistProduct(1L, false);
+
+        assertFalse(product.isUnlisted());
+        verify(productRepository, times(1)).findById(1L);
+        verify(productRepository, times(1)).save(product);
+    }
+
+    @Test
+    void testSetProductListingStatus_ProductNotFound() {
+
         when(productRepository.findById(1L)).thenReturn(Optional.empty());
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            productService.unlistProduct(1L);
+            productService.unlistProduct(1L, true);
         });
 
         assertEquals("Product not found", exception.getMessage());
         verify(productRepository, times(1)).findById(1L);
+        verify(productRepository, never()).save(any(Product.class));
     }
 
     @Test
@@ -379,5 +387,42 @@ public class ProductServiceImplTest {
         assertEquals(product.getTitle(), result.getTitle());
         verify(productRepository, times(1)).findById(1L);
     }
+
+    @Test
+    void getProductByIdForModeration_ProductFound() {
+        Product product = new Product();
+        product.setProductId(1L);
+        ProductModerationDTO dto = new ProductModerationDTO();
+        dto.setProductId(1L);
+
+        when(productRepository.findById(anyLong())).thenReturn(Optional.of(product));
+        when(productModerationMapper.mapTo(product)).thenReturn(dto);
+
+        ProductModerationDTO result = productService.getProductByIdForModeration(1L);
+
+        assertNotNull(result);
+        assertEquals(1L, result.getProductId());
+        verify(productRepository, times(1)).findById(1L);
+        verify(productModerationMapper, times(1)).mapTo(product);
+    }
+
+    @Test
+    void getProductByIdForModeration_ProductNotFound() {
+
+        when(productRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
+            productService.getProductByIdForModeration(1L);
+        });
+
+        String expectedMessage = "Product not found with ID: 1";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+        verify(productRepository, times(1)).findById(1L);
+        verify(productModerationMapper, times(0)).mapTo(any(Product.class));
+    }
+
+
 
 }

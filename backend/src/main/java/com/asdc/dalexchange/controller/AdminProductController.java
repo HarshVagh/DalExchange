@@ -26,8 +26,8 @@ public class AdminProductController {
     }
 
     @GetMapping("/{productId}")
-    public ProductDTO getProductById(@PathVariable Long productId) {
-        return productService.getProductById(productId);
+    public ProductModerationDTO getProductById(@PathVariable Long productId) {
+        return productService.getProductByIdForModeration(productId);
     }
 
     @PutMapping("/update/{productId}")
@@ -37,8 +37,8 @@ public class AdminProductController {
         return productService.updateProduct(productId, updatedProductDetails);
     }
 
-    @DeleteMapping("/unlist/{productId}")
-    public void unlistProduct(@PathVariable Long productId) {
-        productService.unlistProduct(productId);
+    @PutMapping("/unlist/{productId}")
+    public void unlistProduct(@PathVariable Long productId, @RequestParam boolean unlisted) {
+        productService.unlistProduct(productId, unlisted);
     }
 }

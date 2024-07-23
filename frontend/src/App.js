@@ -20,6 +20,7 @@ import PurchaseHistory from './features/profile_page/PurchaseHistory';
 import { SearchFilterProvider } from './context/SearchFilterContext';
 import UnauthenticatedRoute from './features/private_routes/UnauthenticatedRoute';
 import StudentPrivateRoute from './features/private_routes/StudentPrivateRoute';
+import AdminPrivateRoute from './features/private_routes/AdminPrivateRoute';
 import NotAuthorizedPage from './features/authentication/NotAuthorizedPage';
 import Layout from './components/AdminLayout';
 import AdminDashboard from "./features/admin_moderation/AdminDashboard";
@@ -27,7 +28,6 @@ import OrderModeration from './features/admin_moderation/OrderModeration';
 import UserModeration from "./features/admin_moderation/UserModeration";
 import ProductModeration from "./features/admin_moderation/ProductModeration";
 import FeedbackModeration from "./features/admin_moderation/FeedbackModeration";
-import AdminPrivateRoute from './features/private_routes/AdminPrivateRoute';
 
 
 function App() {

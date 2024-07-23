@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
-import axios from 'axios';
+import AdminDashboardApi from '../../services/AdminDashboardApi';
 import 'chart.js/auto';
-
-// Set the base URL for Axios
-axios.defaults.baseURL = 'http://localhost:8080/admin';
 
 const AdminDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -16,8 +13,8 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const response = await axios.get('/stats');
-        setDashboardData(response.data);
+        const data = await AdminDashboardApi.fetchDashboardData();
+        setDashboardData(data);
       } catch (error) {
         setError(error.message);
       }
@@ -25,9 +22,9 @@ const AdminDashboard = () => {
 
     const fetchItemsSold = async () => {
       try {
-        const response = await axios.get('/items-sold');
-        const months = response.data.map(item => item.month);
-        const itemsSold = response.data.map(item => item.itemsSold);
+        const data = await AdminDashboardApi.fetchItemsSold();
+        const months = data.map(item => item.month);
+        const itemsSold = data.map(item => item.itemsSold);
 
         setItemsSoldData({
           labels: months,
@@ -47,9 +44,9 @@ const AdminDashboard = () => {
 
     const fetchTopSellingCategories = async () => {
       try {
-        const response = await axios.get('/top-selling-categories');
-        const categories = response.data.map(item => item.category);
-        const sales = response.data.map(item => item.sales);
+        const data = await AdminDashboardApi.fetchTopSellingCategories();
+        const categories = data.map(item => item.category);
+        const sales = data.map(item => item.sales);
 
         setTopSellingCategoriesData({
           labels: categories,
@@ -74,9 +71,9 @@ const AdminDashboard = () => {
 
     const fetchBestSellingProducts = async () => {
       try {
-        const response = await axios.get('/best-selling-products');
-        const products = response.data.map(item => item.productName);
-        const itemsSold = response.data.map(item => item.itemsSold);
+        const data = await AdminDashboardApi.fetchBestSellingProducts();
+        const products = data.map(item => item.productName);
+        const itemsSold = data.map(item => item.itemsSold);
 
         setBestSellingProductsData({
           labels: products,
