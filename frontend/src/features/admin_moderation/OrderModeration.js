@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import OrderModerationApi from "../../services/OrderModerationApi";
 
 export default function OrderModeration() {
   const [orders, setOrders] = useState([]);
@@ -21,8 +21,8 @@ export default function OrderModeration() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/admin/orders/all");
-        setOrders(response.data);
+        const data = await OrderModerationApi.fetchOrders();
+        setOrders(data);
       } catch (error) {
         console.error("There was an error fetching the orders!", error);
       }
@@ -33,8 +33,7 @@ export default function OrderModeration() {
 
   const handleOrderClick = async (orderId) => {
     try {
-      const response = await axios.get(`http://localhost:8080/admin/orders/orderDetails/${orderId}`);
-      const orderData = response.data;
+      const orderData = await OrderModerationApi.fetchOrderDetails(orderId);
       setSelectedOrder(orderData);
       setOrderStatus(orderData.orderStatus);
       setShippingAddress(orderData.shippingAddress || {
@@ -59,7 +58,7 @@ export default function OrderModeration() {
         orderStatus,
         adminComments
       };
-      await axios.put(`http://localhost:8080/admin/orders/update/${selectedOrder.orderId}`, updatedOrder);
+      await OrderModerationApi.updateOrder(selectedOrder.orderId, updatedOrder);
       setOrders(orders.map((order) => (order.orderId === selectedOrder.orderId ? { ...order, ...updatedOrder } : order)));
       setSelectedOrder(null);
       showMessageWithFade("Order and shipping address updated successfully");
@@ -75,13 +74,7 @@ export default function OrderModeration() {
     }
 
     try {
-      await axios.put(`http://localhost:8080/admin/orders/refund/${selectedOrder.orderId}`, selectedOrder.totalAmount.toString(), {
-        headers: {
-          'Content-Type': 'text/plain'
-        }
-      });
-
-      // Update the order's total amount in the orders list
+      await OrderModerationApi.refundOrder(selectedOrder.orderId, selectedOrder.totalAmount.toString());
       setOrders(orders.map((order) => (order.orderId === selectedOrder.orderId ? { ...order, totalAmount: 0 } : order)));
       showMessageWithFade("Order refunded successfully");
       setSelectedOrder(null);
@@ -276,7 +269,7 @@ export default function OrderModeration() {
                       />
                     </div>
                     <div className="flex gap-2">
-                    <button
+                      <button
                         type="button"
                         className="px-4 py-2 bg-transparent text-black border border-black rounded hover:bg-black hover:text-white transition"
                         onClick={handleRefundOrder}
@@ -318,6 +311,6 @@ export default function OrderModeration() {
             </div>
           )}
         </main>
-      </div>
+    </div>
   );
 }

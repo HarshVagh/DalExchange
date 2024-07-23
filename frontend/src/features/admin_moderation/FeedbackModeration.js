@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import StarIcon from "../../assets/icons/star-regular.svg";
 import FilledStarIcon from "../../assets/icons/star-solid.svg";
+import FeedbackModerationApi from "../../services/FeedbackModerationApi";
 
 export default function FeedbackModeration() {
   const [products, setProducts] = useState([]);
@@ -11,22 +11,21 @@ export default function FeedbackModeration() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/admin/reviews/all");
-        const reviews = response.data;
+        const reviews = await FeedbackModerationApi.fetchReviews();
 
         // Fetch product names
         const productIds = [...new Set(reviews.map((review) => review.productId))];
         const productResponses = await Promise.all(
-          productIds.map((id) => axios.get(`http://localhost:8080/admin/products/${id}`))
+          productIds.map((id) => FeedbackModerationApi.fetchProductById(id))
         );
-        const products = productResponses.map((res) => res.data);
+        const products = productResponses.map((res) => res);
 
         // Fetch user names (if required)
         const userIds = [...new Set(reviews.map((review) => review.userId))];
         const userResponses = await Promise.all(
-          userIds.map((id) => axios.get(`http://localhost:8080/admin/users/${id}`))
+          userIds.map((id) => FeedbackModerationApi.fetchUserById(id))
         );
-        const users = userResponses.map((res) => res.data);
+        const users = userResponses.map((res) => res);
 
         // Group reviews by productId
         const productMap = reviews.reduce((map, review) => {
@@ -61,7 +60,7 @@ export default function FeedbackModeration() {
 
   const handleReviewDelete = async (productId, userId) => {
     try {
-      await axios.delete(`http://localhost:8080/admin/reviews/delete`, { params: { productId, userId } });
+      await FeedbackModerationApi.deleteReview(productId, userId);
       setSelectedProduct((prevSelectedProduct) => ({
         ...prevSelectedProduct,
         reviews: prevSelectedProduct.reviews.filter((review) => review.id !== userId),

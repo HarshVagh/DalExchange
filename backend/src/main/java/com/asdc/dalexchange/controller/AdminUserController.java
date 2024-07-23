@@ -56,9 +56,4 @@ public class AdminUserController {
         userService.deleteUser(id);
     }
 
-//    // Reset Password
-//    @PutMapping("/{id}/reset-password")
-//    public User resetPassword(@PathVariable Long id, @RequestBody String newPassword) {
-//        return userService.resetPassword(id, newPassword);
-//    }
 }

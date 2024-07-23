@@ -75,8 +75,6 @@ public class UserServiceImpl implements UserService {
         return ((current - previous) / previous) * 100;
     }
 
-    //new
-
     @Override
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll().stream()
@@ -138,22 +136,9 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    // Delete User Account
     public void deleteUser(long userId) {
         userRepository.deleteById(userId);
     }
-
-    // Reset Password
-//    public User resetPassword(long userId, String newPassword) {
-//        Optional<User> optionalUser = userRepository.findById(userId);
-//        if (optionalUser.isPresent()) {
-//            User user = optionalUser.get();
-//            user.setPassword(newPassword);
-//            return userRepository.save(user);
-//        } else {
-//            throw new RuntimeException("User not found");
-//        }
-//    }
 
     public User registerUser(User user, MultipartFile profilePicture) {
 
