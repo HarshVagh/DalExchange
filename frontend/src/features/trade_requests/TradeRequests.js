@@ -32,12 +32,13 @@ const TradeRequests = () => {
         isLoading: setIsLoading,
         error: setError
       };
-      await TradeRequestApi.getTradeRequests(setters);
+        await TradeRequestApi.getTradeRequests(setters);
     };
     fetchTradeRequests();
   }, []);
 
   const handleStatusUpdate = (id, status, type) => {
+
     TradeRequestApi.updateStatus(id, status).then(() => {
       if(type === "buy") {
         const updatedBuyRequests = buyRequests.map((request) => {
@@ -62,9 +63,9 @@ const TradeRequests = () => {
     });
   }
 
-  const acceptBuyRequest = (id) => {
-    handleStatusUpdate(id, "completed", "buy");
-  }
+  const acceptBuyRequest = async (productId) => {
+    await TradeRequestApi.createPaymentIntent(productId);
+  };
 
   const rejectBuyRequest = (id) => {
     handleStatusUpdate(id, "canceled", "buy");
@@ -77,6 +78,9 @@ const TradeRequests = () => {
   const rejectSellRequest = (id) => {
     handleStatusUpdate(id, "rejected", "sell");
   }
+
+  console.log("buyRequests", buyRequests, buyRequests[0 ]);
+  console.log("tradeRequests", buyRequests,buyRequests[1]);
 
   return (
     <div className="flex flex-col min-h-[100dvh]">
@@ -115,7 +119,6 @@ const TradeRequests = () => {
                       <img className="w-10 h-10 rounded-full border-2" src={UserPlaceholder} alt=""/>
                       <div className="font-medium">
                           <div>{tradeRequest.buyerName}</div>
-                          {/* <div className="text-sm text-gray-500">{tradeRequest.buyerJoinedAt}</div> */}
                           <div className="text-sm text-gray-500">Joined in August 2014</div>
                       </div>
                       <div className="text-xs font-medium ml-4">
@@ -155,13 +158,13 @@ const TradeRequests = () => {
                       <div className="flex justify-end gap-2 items-end w-full">
                         {tradeRequest.requestStatus === 'approved' &&
                         <button type="button" 
-                          onClick={() => acceptBuyRequest(tradeRequest.requestId)}
+                          onClick={() => acceptBuyRequest(tradeRequest.product.productId) }
                           className="text-white bg-gray-900 hover:bg-gray-800 focus:outline-none font-medium rounded-lg text-sm px-8 py-2.5">
                           Buy
                         </button>}
                         {tradeRequest.requestStatus === 'approved' &&
                         <button type="button"
-                          onClick={() => rejectBuyRequest(tradeRequest.requestId)}
+                          onClick={() => rejectBuyRequest(tradeRequest?.requestId)}
                           className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 font-medium rounded-lg text-sm px-8 py-2.5">
                           Cancel
                         </button>}

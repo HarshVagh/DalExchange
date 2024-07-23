@@ -10,4 +10,5 @@ public interface ProductRatingService {
     List<ProductRatingAdminDTO> getAllReviewsByProduct(Long productId);
     void deleteReview(Long productId, Long userId);
     List<ProductRatingAdminDTO> getAllReviews();
+    void  saveRating(Integer Rating,String Review,Long productId);
 }

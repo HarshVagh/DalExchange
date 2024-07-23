@@ -2,12 +2,14 @@ package com.asdc.dalexchange.service;
 
 
 import com.asdc.dalexchange.model.ShippingAddress;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 public interface ShippingAddressService {
 
-    public ShippingAddress saveShippingAddress(ShippingAddress address);
+    ShippingAddress saveShippingAddress(ShippingAddress address);
 
-    public Optional<ShippingAddress> getShippingAddressById(Long id);
+    Optional<ShippingAddress> getShippingAddressById(Long id);
 }

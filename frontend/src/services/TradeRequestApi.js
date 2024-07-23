@@ -1,4 +1,6 @@
 import AxiosInstance from "./AxiosInstance";
+import axios from 'axios';
+import { loadStripe } from "@stripe/stripe-js";
 
 export const TradeRequestApi = {
   getTradeRequests: async (setters) => {
@@ -34,6 +36,24 @@ export const TradeRequestApi = {
       console.log("Trade request created successfully:", response.data);
     } catch (error) {
       console.error("Error creating trade request:", error);
+    }
+  },
+  createPaymentIntent: async (productId) => {
+    try {
+      // Make a request to your backend to create a payment intent
+      const response = await AxiosInstance.post("/api/payment/create-payment-intent", { productId});
+
+      // Extract the session ID from the response
+      const { sessionId } = response.data;
+
+      // Redirect the user to Stripe Checkout
+      if (window.Stripe) {
+        window.Stripe('pk_test_51Pdgl8RuVIC7U6kcnDPmtuBFtSoX83Of4rWP09F9M6LkmxUPVCRgi0eRY5aAMXsxBOhCtlVpnF6JfUSRpF7NdHAh00DKHrJPs6').redirectToCheckout({ sessionId });
+      } else {
+        console.error('Stripe is not loaded');
+      }
+    } catch (error) {
+      console.error('Error creating payment intent:', error);
     }
   }
 };

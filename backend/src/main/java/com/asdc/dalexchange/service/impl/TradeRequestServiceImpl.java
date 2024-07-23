@@ -44,7 +44,7 @@ public class TradeRequestServiceImpl implements TradeRequestService {
     @Override
     public List<TradeRequest> getBuyerTradeRequests() {
         log.info("getBuyerTradeRequests call started in the TradeRequestServiceImpl");
-        Long buyerId = 2L; //AuthUtil.getCurrentUserId(userRepository);
+        Long buyerId = AuthUtil.getCurrentUserId(userRepository);
         Specification<TradeRequest> spec = TradeRequestSpecification.hasBuyerId(buyerId);
         return tradeRequestRepository.findAll(spec);
     }
@@ -52,7 +52,7 @@ public class TradeRequestServiceImpl implements TradeRequestService {
     @Override
     public List<TradeRequest> getSellerTradeRequests() {
         log.info("getSellerTradeRequests call started in the TradeRequestServiceImpl");
-        Long sellerId = 2L; //AuthUtil.getCurrentUserId(userRepository);
+        Long sellerId = AuthUtil.getCurrentUserId(userRepository);
         Specification<TradeRequest> spec = TradeRequestSpecification.hasSellerId(sellerId);
         return tradeRequestRepository.findAll(spec);
     }
@@ -103,12 +103,18 @@ public class TradeRequestServiceImpl implements TradeRequestService {
 
     @Override
     public double getApprovedTradeRequestAmount(Long productId) {
-        Long userId = 1L;//AuthUtil.getCurrentUserId(userRepository);
+        System.out.println("the productid : ");
+        Long userId = AuthUtil.getCurrentUserId(userRepository);
+        System.out.println("thhhtherhehrrh:" + tradeRequestRepository.findAll(
+                where(TradeRequestSpecification.hasBuyerId(userId))
+                        .and(TradeRequestSpecification.hasProductId(productId))
+                        .and(TradeRequestSpecification.hasRequestStatus("approved"))));
         List<TradeRequest> tradeRequest = tradeRequestRepository.findAll(
                 where(TradeRequestSpecification.hasBuyerId(userId))
                         .and(TradeRequestSpecification.hasProductId(productId))
                         .and(TradeRequestSpecification.hasRequestStatus("approved")));
         TradeRequest firsttraderequest = tradeRequest.get(0);
+        System.out.println("treaderequest payment"+firsttraderequest);
         return firsttraderequest.getRequestedPrice();
     }
 }
