@@ -1,13 +1,10 @@
 package com.asdc.dalexchange.service;
 
 import com.asdc.dalexchange.dto.*;
-import com.asdc.dalexchange.model.User;
-
-import java.util.List;
 
 public interface ProfilePageService {
 
-    EditProfileDTO editUserDetails(Long userId , EditProfileDTO editProfileDTO);
+    EditProfileDTO editUserDetails(EditProfileDTO editProfileDTO);
 
-    EditProfileDTO editGetUserDetails(Long userId);
+    EditProfileDTO editGetUserDetails();
 }

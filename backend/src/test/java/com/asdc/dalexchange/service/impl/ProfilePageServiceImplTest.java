@@ -3,10 +3,12 @@ import com.asdc.dalexchange.dto.EditProfileDTO;
 import com.asdc.dalexchange.mappers.impl.EditProfileMapperImpl;
 import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.repository.UserRepository;
+import com.asdc.dalexchange.util.AuthUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 
@@ -37,7 +39,7 @@ public class ProfilePageServiceImplTest {
     @Test
     void testEditUserDetails_Success() {
         // Mock data
-        Long userId = 1L;
+        Long userId = AuthUtil.getCurrentUserId(userRepository);
         EditProfileDTO editProfileDTO = createEditProfileDTO();
         User user = createUser();
 
@@ -54,7 +56,7 @@ public class ProfilePageServiceImplTest {
         when(editProfileMapper.mapTo(user)).thenReturn(editProfileDTO);
 
         // Call the service method
-        EditProfileDTO updatedProfile = profilePageService.editUserDetails(userId, editProfileDTO);
+        EditProfileDTO updatedProfile = profilePageService.editUserDetails(editProfileDTO);
 
         // Assertions
         assertNotNull(updatedProfile);
@@ -74,7 +76,7 @@ public class ProfilePageServiceImplTest {
 
         // Call the service method and expect RuntimeException
         assertThrows(RuntimeException.class, () -> {
-            profilePageService.editUserDetails(userId, editProfileDTO);
+            profilePageService.editUserDetails(editProfileDTO);
         });
     }
 
@@ -83,39 +85,42 @@ public class ProfilePageServiceImplTest {
         // Mock data
         Long userId = 1L;
         User user = createUser();
+        EditProfileDTO editProfileDTO = createEditProfileDTO();
 
-        // Mock repository behavior
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        // Mock AuthUtil
+        try (MockedStatic<AuthUtil> authUtilMock = mockStatic(AuthUtil.class)) {
+            authUtilMock.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
 
-        // Mock mapper behavior
-        when(modelMapper.map(user, EditProfileDTO.class)).thenReturn(createEditProfileDTO());
+            // Mock repository behavior
+            when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-        // Call the service method
-        EditProfileDTO userDetails = profilePageService.editGetUserDetails(userId);
+            // Mock mapper behavior
+            when(modelMapper.map(user, EditProfileDTO.class)).thenReturn(editProfileDTO);
 
-        // Assertions
-        assertNotNull(userDetails);
-        assertEquals(user.getUsername(), userDetails.getUsername());
-        assertEquals(user.getEmail(), userDetails.getEmail());
-        // Add more assertions based on your DTO and expected behavior
+            // Call the service method
+            EditProfileDTO userDetails = profilePageService.editGetUserDetails();
+
+            // Assertions
+            assertNotNull(userDetails);
+            assertEquals(user.getUsername(), userDetails.getUsername());
+            assertEquals(user.getEmail(), userDetails.getEmail());
+            // Add more assertions based on your DTO and expected behavior
+        }
     }
 
     // Helper methods for creating mock data
-    private EditProfileDTO createEditProfileDTO() {
-        EditProfileDTO dto = new EditProfileDTO();
-        dto.setUsername("testuser");
-        dto.setEmail("test@example.com");
-        // Set other fields as needed for tests
-        return dto;
-    }
-
     private User createUser() {
         User user = new User();
-        user.getUserId();
-        user.setUsername("testuser");
+        user.setUsername("testUser");
         user.setEmail("test@example.com");
-        // Set other fields as needed for tests
         return user;
+    }
+
+    private EditProfileDTO createEditProfileDTO() {
+        EditProfileDTO dto = new EditProfileDTO();
+        dto.setUsername("testUser");
+        dto.setEmail("test@example.com");
+        return dto;
     }
 
     // Add more test cases to cover edge cases and other methods as necessary

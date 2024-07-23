@@ -180,6 +180,10 @@ public class OrderServiceImpl implements OrderService {
         shippingRepository.save(existingAddress);
     }
 
+    public OrderDetails saveOrderDetails(OrderDetails orderDetails) {
+        return orderRepository.save(orderDetails);
+    }
+
     @Override
     public List<ItemsSoldDTO> getItemsSold() {
         List<Object[]> results = orderRepository.findItemsSoldPerMonth();

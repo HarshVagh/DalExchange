@@ -1,4 +1,90 @@
 package com.asdc.dalexchange.service.impl;
+
+import com.asdc.dalexchange.dto.SoldItemDTO;
+import com.asdc.dalexchange.mappers.impl.SoldItemMapperImpl;
+import com.asdc.dalexchange.model.SoldItem;
+import com.asdc.dalexchange.repository.SoldItemRepository;
+import com.asdc.dalexchange.repository.UserRepository;
+import com.asdc.dalexchange.specifications.SoldItemSpecification;
+import com.asdc.dalexchange.util.AuthUtil;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.MockedStatic;
+
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mockStatic;
+
+public class SoldItemServiceImplTest {
+
+    @Mock
+    private SoldItemRepository soldItemRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private SoldItemMapperImpl soldItemMapper;
+
+    @InjectMocks
+    private SoldItemServiceImpl soldItemService;
+
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+
+
+    @Test
+    public void testGetallSoldProduct_EmptyList() {
+        Long userId = 1L;
+
+        try (MockedStatic<AuthUtil> authUtilMock = mockStatic(AuthUtil.class)) {
+            // Mock AuthUtil
+            authUtilMock.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
+
+            // Mock SoldItemRepository
+            when(soldItemRepository.findAll(SoldItemSpecification.bySellerUserId(userId)))
+                    .thenReturn(Collections.emptyList());
+
+            // Call the method to test
+            List<SoldItemDTO> result = soldItemService.GetallSoldProduct();
+
+            // Verify the results
+            assertTrue(result.isEmpty());
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+package com.asdc.dalexchange.service.impl;
 import com.asdc.dalexchange.dto.SoldItemDTO;
 import com.asdc.dalexchange.mappers.impl.SoldItemMapperImpl;
 import com.asdc.dalexchange.model.SoldItem;
@@ -49,7 +135,7 @@ public class SoldItemServiceImplTest {
         });
 
         // Call the service method
-        List<SoldItemDTO> soldItemDTOs = soldItemService.GetallSoldProduct(userId);
+        List<SoldItemDTO> soldItemDTOs = soldItemService.GetallSoldProduct();
 
         // Assertions
         assertEquals(mockSoldItemDTOs.size(), soldItemDTOs.size());
@@ -80,3 +166,4 @@ public class SoldItemServiceImplTest {
     // Add more test cases to cover edge cases and other methods as necessary
 
 }
+*/

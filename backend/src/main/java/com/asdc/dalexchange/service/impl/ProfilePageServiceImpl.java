@@ -5,6 +5,7 @@ import com.asdc.dalexchange.mappers.impl.*;
 import com.asdc.dalexchange.model.*;
 import com.asdc.dalexchange.repository.*;
 import com.asdc.dalexchange.service.*;
+import com.asdc.dalexchange.util.AuthUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,8 @@ public class ProfilePageServiceImpl implements ProfilePageService {
     private ModelMapper modelMapper;
 
     @Override
-    public EditProfileDTO editUserDetails(Long userId, EditProfileDTO editProfileDTO) {
+    public EditProfileDTO editUserDetails(EditProfileDTO editProfileDTO) {
+        Long userId = AuthUtil.getCurrentUserId(userRepository);
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
@@ -37,7 +39,8 @@ public class ProfilePageServiceImpl implements ProfilePageService {
     }
 
     @Override
-    public EditProfileDTO editGetUserDetails(Long userId) {
+    public EditProfileDTO editGetUserDetails() {
+        Long userId = AuthUtil.getCurrentUserId(userRepository);
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         return modelMapper.map(user, EditProfileDTO.class);
     }

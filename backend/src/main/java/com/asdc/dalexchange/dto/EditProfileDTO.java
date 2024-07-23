@@ -8,6 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EditProfileDTO {
+    private int userId;
     private String username;
     private String password;
     private String email;

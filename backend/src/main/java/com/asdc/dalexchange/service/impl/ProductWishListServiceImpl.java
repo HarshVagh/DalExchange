@@ -14,6 +14,7 @@ import com.asdc.dalexchange.repository.ProductWishlistRepository;
 import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.service.ProductWishlistService;
 import com.asdc.dalexchange.specifications.ProductWishlistSpecification;
+import com.asdc.dalexchange.util.AuthUtil;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,8 @@ public class ProductWishListServiceImpl implements ProductWishlistService {
     private ProductRepository productRepository;
 
     @Transactional
-    public boolean markProductAsFavorite(long userId, long productId) {
+    public boolean markProductAsFavorite(long productId) {
+        Long userId = AuthUtil.getCurrentUserId(userRepository);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + userId));
         Product product = productRepository.findById(productId)
@@ -68,7 +70,8 @@ public class ProductWishListServiceImpl implements ProductWishlistService {
 
 
     @Override
-    public List<SavedProductDTO> getAllSavedProducts(Long userId) {
+    public List<SavedProductDTO> getAllSavedProducts() {
+        Long userId = AuthUtil.getCurrentUserId(userRepository);
         Specification<ProductWishlist> spec = ProductWishlistSpecification.byUserId(userId);
         List<ProductWishlist> allWishlistedProducts = productWishlistRepository.findAll(spec);
 
@@ -87,15 +90,17 @@ public class ProductWishListServiceImpl implements ProductWishlistService {
 
 
     @Override
-    public List<PurchaseProductDTO> getAllPurchasedProduct(Long userid) {
-        List<OrderDetails> orderDetailsList = orderRepository.findByBuyerUserId(userid);
+    public List<PurchaseProductDTO> getAllPurchasedProduct() {
+        Long userId = AuthUtil.getCurrentUserId(userRepository);
+        List<OrderDetails> orderDetailsList = orderRepository.findByBuyerUserId(userId);
         return orderDetailsList.stream()
                 .map(purchaseProductMapper::mapTo)
                 .collect(Collectors.toList());
 
     }
 
-    public boolean checkProductIsFavoriteByGivenUser(long userId, long productId) {
+    public boolean checkProductIsFavoriteByGivenUser( long productId) {
+        Long userId = AuthUtil.getCurrentUserId(userRepository);
         Specification<ProductWishlist> spec = ProductWishlistSpecification.byUserIdAndProductId(userId, productId);
         long count = productWishlistRepository.count(spec);
         return count > 0;

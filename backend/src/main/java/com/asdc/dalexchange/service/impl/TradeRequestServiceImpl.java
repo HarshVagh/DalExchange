@@ -20,6 +20,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import static org.springframework.data.jpa.domain.Specification.where;
+
 @Service
 @Slf4j
 public class TradeRequestServiceImpl implements TradeRequestService {
@@ -98,5 +100,32 @@ public class TradeRequestServiceImpl implements TradeRequestService {
     private User findUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+    }
+
+    @Override
+    public double getApprovedTradeRequestAmount(Long productId) {
+        System.out.println("the productid : ");
+        Long userId = AuthUtil.getCurrentUserId(userRepository);
+        System.out.println("thhhtherhehrrh:" + tradeRequestRepository.findAll(
+                where(TradeRequestSpecification.hasBuyerId(userId))
+                        .and(TradeRequestSpecification.hasProductId(productId))
+                        .and(TradeRequestSpecification.hasRequestStatus("approved"))));
+        List<TradeRequest> tradeRequest = tradeRequestRepository.findAll(
+                where(TradeRequestSpecification.hasBuyerId(userId))
+                        .and(TradeRequestSpecification.hasProductId(productId))
+                        .and(TradeRequestSpecification.hasRequestStatus("approved")));
+        TradeRequest firsttraderequest = tradeRequest.get(0);
+        System.out.println("treaderequest payment"+firsttraderequest);
+        return firsttraderequest.getRequestedPrice();
+    }
+
+    public List<TradeRequest> getApprovedTradeRequests(Long productId) {
+        Long userId = AuthUtil.getCurrentUserId(userRepository);
+        Specification<TradeRequest> specification = Specification
+                .where(TradeRequestSpecification.hasProductId(productId))
+                .and(TradeRequestSpecification.hasBuyerId(userId))
+                .and(TradeRequestSpecification.hasRequestStatus("approved"));
+
+        return tradeRequestRepository.findAll(specification);
     }
 }

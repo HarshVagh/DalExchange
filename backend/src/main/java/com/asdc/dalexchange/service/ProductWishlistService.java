@@ -8,12 +8,12 @@ import java.util.List;
 
 @Service
 public interface ProductWishlistService {
-    boolean markProductAsFavorite(long userId, long productId);
+    boolean markProductAsFavorite(long productId);
 
-    public List<PurchaseProductDTO> getAllPurchasedProduct(Long userid);
+    public List<PurchaseProductDTO> getAllPurchasedProduct();
 
-    public boolean checkProductIsFavoriteByGivenUser(long userId, long productId);
+    public boolean checkProductIsFavoriteByGivenUser(long productId);
 
-    public List<SavedProductDTO> getAllSavedProducts(Long userId);
+    public List<SavedProductDTO> getAllSavedProducts();
 
 }

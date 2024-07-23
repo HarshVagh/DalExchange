@@ -1,8 +1,6 @@
 package com.asdc.dalexchange.controller;
 
 import com.asdc.dalexchange.dto.ProductRatingAdminDTO;
-import com.asdc.dalexchange.dto.ProductRatingDTO;
-import com.asdc.dalexchange.model.ProductRating;
 import com.asdc.dalexchange.service.ProductRatingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

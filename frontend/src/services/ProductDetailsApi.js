@@ -35,6 +35,7 @@ const ProductDetailsApi = {
       throw new Error('Failed to create trade request');
     }
   }
+  
 };
 
 export default ProductDetailsApi;
