@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import Header from '../../components/Header';
 import SubHeader from '../../components/SubHeader';
+import {useNavigate} from 'react-router-dom';
 import AddProductApi from '../../services/AddProductApi';
 
 
@@ -85,6 +86,7 @@ const Button = styled.button`
 `;
 
 const AddProduct = () => {
+  const navigate = useNavigate();
   const [product, setProduct] = useState({
     title: '',
     description: '',
@@ -137,6 +139,9 @@ const AddProduct = () => {
     try {
       const response = await AddProductApi.add(formData);
       console.log('Product added successfully:', response.data);
+      const productId = response.data.id;
+      navigate(`/products/${productId}`);
+
     } catch (error) {
       console.error('There was an error adding the product!', error);
     }
