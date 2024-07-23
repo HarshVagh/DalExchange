@@ -2,9 +2,12 @@ package com.asdc.dalexchange.controller;
 
 
 import com.asdc.dalexchange.model.PaymentRequest;
+import com.asdc.dalexchange.model.ProductRating;
 import com.asdc.dalexchange.model.ShippingAddress;
+import com.asdc.dalexchange.model.TradeRequest;
 import com.asdc.dalexchange.service.PaymentService;
 import com.asdc.dalexchange.service.ShippingAddressService;
+import com.asdc.dalexchange.service.TradeRequestService;
 import com.stripe.model.checkout.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -21,6 +25,9 @@ public class PaymentController {
 
     @Autowired
     private PaymentService paymentService;
+
+    @Autowired
+    private TradeRequestService tradeRequestService;
 
     @Autowired
     private ShippingAddressService shippingAddressService;
@@ -40,7 +47,7 @@ public class PaymentController {
     }
 
     @PostMapping("/shippingadress")
-    public ResponseEntity<String> saveShippingAddress(@RequestParam ShippingAddress address) {
+    public ResponseEntity<String> saveShippingAddress(@RequestBody ShippingAddress address) {
         try {
             shippingAddressService.saveShippingAddress(address);
             return ResponseEntity.ok("Shipping address added successfully");
@@ -75,5 +82,25 @@ public class PaymentController {
             throw new RuntimeException(e.getMessage());
         }
     }
+
+
+    /// change the payment status
+    @PostMapping("/paymentsuccess")
+    public  ResponseEntity<String> changeTradeRequestStatus(@RequestParam Long productId){
+        try {
+            String s = "succesfull";
+          //  TradeRequest tradereuest = tradeRequestService.getApprovedTradeRequestAmount(productId);
+          return ResponseEntity.status(HttpStatus.OK).body(s);
+        }catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+
+    @PostMapping("/save_rating")
+    public  ResponseEntity<String> saveProductRating(@RequestBody Long productId,@RequestParam long rating ,  @RequestParam String review) {
+        return null;
+    }
+
 
 }

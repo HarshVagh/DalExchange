@@ -118,4 +118,14 @@ public class TradeRequestServiceImpl implements TradeRequestService {
         System.out.println("treaderequest payment"+firsttraderequest);
         return firsttraderequest.getRequestedPrice();
     }
+
+    public List<TradeRequest> getApprovedTradeRequests(Long productId) {
+        Long userId = AuthUtil.getCurrentUserId(userRepository);
+        Specification<TradeRequest> specification = Specification
+                .where(TradeRequestSpecification.hasProductId(productId))
+                .and(TradeRequestSpecification.hasBuyerId(userId))
+                .and(TradeRequestSpecification.hasRequestStatus("approved"));
+
+        return tradeRequestRepository.findAll(specification);
+    }
 }
