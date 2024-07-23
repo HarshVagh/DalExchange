@@ -26,4 +26,5 @@ public class ProductDTO {
     public Integer quantityAvailable;
     public LocalDateTime createdAt;
 
+
 }

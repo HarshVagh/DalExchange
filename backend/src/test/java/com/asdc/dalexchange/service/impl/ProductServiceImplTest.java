@@ -215,14 +215,12 @@ public class ProductServiceImplTest {
 
 
     @Test
-    void testUnlistProduct() {
+    void testSetProductListingStatus_Unlist() {
         Product product = new Product();
-        product.setProductId(1L);
-        product.setUnlisted(false);
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
         when(productRepository.save(any(Product.class))).thenReturn(product);
 
-        productService.unlistProduct(1L);
+        productService.unlistProduct(1L, true);
 
         assertTrue(product.isUnlisted());
         verify(productRepository, times(1)).findById(1L);
@@ -230,15 +228,32 @@ public class ProductServiceImplTest {
     }
 
     @Test
-    void testUnlistProductNotFound() {
+    void testSetProductListingStatus_List() {
+        Product product = new Product();
+
+        product.setUnlisted(true);
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(productRepository.save(any(Product.class))).thenReturn(product);
+
+        productService.unlistProduct(1L, false);
+
+        assertFalse(product.isUnlisted());
+        verify(productRepository, times(1)).findById(1L);
+        verify(productRepository, times(1)).save(product);
+    }
+
+    @Test
+    void testSetProductListingStatus_ProductNotFound() {
+
         when(productRepository.findById(1L)).thenReturn(Optional.empty());
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            productService.unlistProduct(1L);
+            productService.unlistProduct(1L, true);
         });
 
         assertEquals("Product not found", exception.getMessage());
         verify(productRepository, times(1)).findById(1L);
+        verify(productRepository, never()).save(any(Product.class));
     }
 
     @Test
@@ -326,6 +341,40 @@ public class ProductServiceImplTest {
         verify(productRepository, times(1)).findById(1L);
     }
 
+    @Test
+    void getProductByIdForModeration_ProductFound() {
+        Product product = new Product();
+        product.setProductId(1L);
+        ProductModerationDTO dto = new ProductModerationDTO();
+        dto.setProductId(1L);
+
+        when(productRepository.findById(anyLong())).thenReturn(Optional.of(product));
+        when(productModerationMapper.mapTo(product)).thenReturn(dto);
+
+        ProductModerationDTO result = productService.getProductByIdForModeration(1L);
+
+        assertNotNull(result);
+        assertEquals(1L, result.getProductId());
+        verify(productRepository, times(1)).findById(1L);
+        verify(productModerationMapper, times(1)).mapTo(product);
+    }
+
+    @Test
+    void getProductByIdForModeration_ProductNotFound() {
+
+        when(productRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
+            productService.getProductByIdForModeration(1L);
+        });
+
+        String expectedMessage = "Product not found with ID: 1";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+        verify(productRepository, times(1)).findById(1L);
+        verify(productModerationMapper, times(0)).mapTo(any(Product.class));
+    }
 
 
 

@@ -1,6 +1,9 @@
 package com.asdc.dalexchange.service.impl;
 
+import com.asdc.dalexchange.dto.ProductModerationDTO;
+import com.asdc.dalexchange.dto.ProductRatingAdminDTO;
 import com.asdc.dalexchange.dto.ProductRatingDTO;
+import com.asdc.dalexchange.mappers.Mapper;
 import com.asdc.dalexchange.mappers.impl.ProductRatingMapperImpl;
 import com.asdc.dalexchange.model.*;
 import com.asdc.dalexchange.enums.ProductCondition;
@@ -20,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -33,6 +37,9 @@ class ProductRatingServiceImplTest {
 
     @Mock
     private ProductRatingMapperImpl productRatingMapper;
+
+    @Mock
+    private Mapper<ProductRating, ProductRatingAdminDTO> productRatingAdminMapper;
 
     @InjectMocks
     private ProductRatingServiceImpl productRatingService;
@@ -130,7 +137,59 @@ class ProductRatingServiceImplTest {
         verify(productRatingMapper, times(1)).mapTo(rating2);
     }
 
+    @Test
+    void testGetAllReviews() {
+        ProductRating rating1 = new ProductRating();
+        ProductRating rating2 = new ProductRating();
+        List<ProductRating> mockRatings = Arrays.asList(rating1, rating2);
 
+        ProductRatingAdminDTO dto1 = new ProductRatingAdminDTO();
+        ProductRatingAdminDTO dto2 = new ProductRatingAdminDTO();
+
+        when(productRatingRepository.findAll()).thenReturn(mockRatings);
+        when(productRatingAdminMapper.mapTo(any(ProductRating.class)))
+                .thenReturn(dto1)
+                .thenReturn(dto2);
+
+        List<ProductRatingAdminDTO> result = productRatingService.getAllReviews();
+
+        assertEquals(2, result.size());
+        verify(productRatingRepository, times(1)).findAll();
+        verify(productRatingAdminMapper, times(2)).mapTo(any(ProductRating.class));
+    }
+
+    @Test
+    void testGetAllReviewsByProduct() {
+        Long productId = 1L;
+        ProductRating rating1 = new ProductRating();
+        ProductRating rating2 = new ProductRating();
+        List<ProductRating> mockRatings = Arrays.asList(rating1, rating2);
+
+        ProductRatingAdminDTO dto1 = new ProductRatingAdminDTO();
+        ProductRatingAdminDTO dto2 = new ProductRatingAdminDTO();
+
+        when(productRatingRepository.findByIdProductId(productId)).thenReturn(mockRatings);
+        when(productRatingAdminMapper.mapTo(any(ProductRating.class)))
+                .thenReturn(dto1)
+                .thenReturn(dto2);
+
+        List<ProductRatingAdminDTO> result = productRatingService.getAllReviewsByProduct(productId);
+
+        assertEquals(2, result.size());
+        verify(productRatingRepository, times(1)).findByIdProductId(productId);
+        verify(productRatingAdminMapper, times(2)).mapTo(any(ProductRating.class));
+    }
+
+    @Test
+    void testDeleteReview() {
+        Long productId = 1L;
+        Long userId = 1L;
+        ProductRatingID id = new ProductRatingID(productId, userId);
+
+        productRatingService.deleteReview(productId, userId);
+
+        verify(productRatingRepository, times(1)).deleteById(id);
+    }
 }
 
 
