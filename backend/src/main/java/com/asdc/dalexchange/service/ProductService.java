@@ -18,9 +18,8 @@ public interface ProductService {
     List<ProductModerationDTO> getAllProducts();
     ProductModerationDTO updateProduct(Long productId, ProductModerationDTO updatedProductDetails);
     void unlistProduct(Long productId, boolean unlisted);
-    Product addProduct(AddProductDTO addProductDTO, ProductCategory category, MultipartFile file) throws IOException;
     ProductCategory getCategoryById(Long categoryId);
     Product getProductByID(Long id);
     ProductModerationDTO getProductByIdForModeration(Long productId);
-
+    Product addProduct(AddProductDTO addProductDTO, ProductCategory category, List<MultipartFile> imageFiles);
 }

@@ -55,7 +55,7 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
         System.out.println("productDetailsDTO : " + productDetailsDTO);
 
         // Set the image URLs to ProductDetailsDTO
-        productDetailsDTO.setImageurl(productImageUrls);
+        productDetailsDTO.setImageUrls(productImageUrls);
 
         productDetailsDTO .setCategory("Books");
 
@@ -77,12 +77,9 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
     }
 
     @Override
-
     public List<String> getImageUrls(Long productId) {
         Specification<ProductImage> spec = ProductImageSpecification.byProductId(productId);
         List<ProductImage> productImages = productImageRepository.findAll(spec);
-
-        // Extract image URLs from the productImages list
         return productImages.stream()
                 .map(ProductImage::getImageUrl)
                 .toList();

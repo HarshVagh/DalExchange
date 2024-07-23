@@ -12,11 +12,14 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -42,16 +45,17 @@ class ProductListingControllerTest {
         List<Product> products = List.of(product);
         Page<Product> productPage = new PageImpl<>(products);
         List<ProductListingDTO> productListingDTOs = List.of(productListingDTO);
+        Page<ProductListingDTO> productListingDTOPage = new PageImpl<>(productListingDTOs);
 
-        when(productListingService.findByCriteria(any(), any(), any(), any(), any(), any())).thenReturn(productPage);
-        when(productListingMapper.mapTo(product)).thenReturn(productListingDTO);
+        Pageable pageable = PageRequest.of(0, 10);
+
+        when(productListingService.findByCriteria(eq(pageable), any(), any(), any(), any(), any())).thenReturn(productListingDTOPage);
 
         PaginatedResponse<ProductListingDTO> result = productListingController.getProductListing(0, 10, null, null, null, null, null);
 
         assertEquals(productListingDTOs, result.getContent());
         assertEquals(1, result.getTotalPages());
         assertEquals(1, result.getTotalElements());
-        verify(productListingService).findByCriteria(any(), any(), any(), any(), any(), any());
-        verify(productListingMapper).mapTo(product);
+        verify(productListingService).findByCriteria(eq(pageable), any(), any(), any(), any(), any());
     }
 }

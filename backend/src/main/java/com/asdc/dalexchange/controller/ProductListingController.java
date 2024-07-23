@@ -2,20 +2,19 @@ package com.asdc.dalexchange.controller;
 
 import com.asdc.dalexchange.dto.PaginatedResponse;
 import com.asdc.dalexchange.dto.ProductListingDTO;
+import com.asdc.dalexchange.mappers.Mapper;
 import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.service.ProductListingService;
-import com.asdc.dalexchange.mappers.Mapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -54,14 +53,10 @@ public class ProductListingController {
                 page, size, search, categories, conditions, minPrice, maxPrice);
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<Product> productPage = productListingService.findByCriteria(pageable, search, categories, conditions, minPrice, maxPrice);
-
-        List<ProductListingDTO> content = productPage.getContent().stream()
-                .map(productListingMapper::mapTo)
-                .collect(Collectors.toList());
+        Page<ProductListingDTO> productPage = productListingService.findByCriteria(pageable, search, categories, conditions, minPrice, maxPrice);
 
         return new PaginatedResponse<>(
-                content,
+                productPage.getContent(),
                 productPage.getNumber(),
                 productPage.getSize(),
                 productPage.getTotalElements(),

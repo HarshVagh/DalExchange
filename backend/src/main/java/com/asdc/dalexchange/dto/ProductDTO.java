@@ -4,9 +4,14 @@ import com.asdc.dalexchange.enums.ProductCondition;
 import com.asdc.dalexchange.enums.ShippingType;
 import com.asdc.dalexchange.model.ProductCategory;
 import com.asdc.dalexchange.model.User;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -14,17 +19,16 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 public class ProductDTO {
-    public Long productId;
-    public User seller;
-    public String title;
-    public String description;
-    public double price;
-    public ProductCategory category;
-    public ProductCondition productCondition;
-    public String useDuration;
-    public ShippingType shippingType;
-    public Integer quantityAvailable;
-    public LocalDateTime createdAt;
-
-
+    private Long productId;
+    private User seller;
+    private String title;
+    private String description;
+    private double price;
+    private ProductCategory category;
+    private ProductCondition productCondition;
+    private String useDuration;
+    private ShippingType shippingType;
+    private Integer quantityAvailable;
+    private List<String> imageUrls;
+    private LocalDateTime createdAt;
 }

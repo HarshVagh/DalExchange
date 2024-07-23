@@ -71,12 +71,13 @@ public class TradeRequestServiceImpl implements TradeRequestService {
 
         Long productId = Long.valueOf(requestBody.get("productId").toString());
         Long sellerId = Long.valueOf(requestBody.get("sellerId").toString());
+        Long buyerId = AuthUtil.getCurrentUserId(userRepository);
         double requestedPrice = Double.parseDouble(requestBody.get("requestedPrice").toString());
 
         TradeRequest tradeRequest = new TradeRequest();
         Product product = findProductById(productId);
         User seller = findUserById(sellerId);
-        User buyer = findUserById(2L); // TODO: replace with current logged in user id
+        User buyer = findUserById(buyerId);
 
         tradeRequest.setProduct(product);
         tradeRequest.setSeller(seller);

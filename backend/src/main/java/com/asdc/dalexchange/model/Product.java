@@ -2,13 +2,26 @@ package com.asdc.dalexchange.model;
 
 import com.asdc.dalexchange.enums.ProductCondition;
 import com.asdc.dalexchange.enums.ShippingType;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Data
 @Entity
+@Getter
+@Setter
 @Table(name = "product")
 public class Product {
 
@@ -53,14 +66,4 @@ public class Product {
 
     @Column(name = "unlisted", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean unlisted;
-
-    @Column(name = "image_path")
-    private String imagePath;
-
-    public void setId(long l) {
-        this.productId = l;
-    }
-    public long getId(){
-        return this.productId;
-    }
 }
