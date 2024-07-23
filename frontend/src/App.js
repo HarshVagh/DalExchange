@@ -28,6 +28,7 @@ import OrderModeration from './features/admin_moderation/OrderModeration';
 import UserModeration from "./features/admin_moderation/UserModeration";
 import ProductModeration from "./features/admin_moderation/ProductModeration";
 import FeedbackModeration from "./features/admin_moderation/FeedbackModeration";
+import CancelPayment from "../src/components/CancelPayment";
 
 
 function App() {
@@ -69,6 +70,7 @@ function App() {
 
           <Route path="/notifications" element={<StudentPrivateRoute> <Notification/> </StudentPrivateRoute>} />
           <Route path="/not-authorized" element={<NotAuthorizedPage />} />
+          <Route path="/payment/fail" element={ <CancelPayment /> } />
 
 
         </Routes>

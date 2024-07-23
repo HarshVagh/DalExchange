@@ -1,6 +1,6 @@
 import AxiosInstance from "./AxiosInstance";
-import axios from 'axios';
-import { loadStripe } from "@stripe/stripe-js";
+//import axios from 'axios';
+//import { loadStripe } from "@stripe/stripe-js";
 
 export const TradeRequestApi = {
   getTradeRequests: async (setters) => {
@@ -55,5 +55,13 @@ export const TradeRequestApi = {
     } catch (error) {
       console.error('Error creating payment intent:', error);
     }
-  }
+  },
+  saveShippingAddress: async (body) => {
+    try {
+      const response = await AxiosInstance.post("api/payment/shippingaddress",body);
+      console.log("Trade request created successfully:", response.data);
+    } catch (error) {
+      console.error("Error creating trade request:", error);
+    }
+  },
 };

@@ -6,6 +6,7 @@ import Loader from "../../components/Loader";
 import ErrorAlert from "../../components/ErrorAlert";
 import placeholder from "../../assets/images/placeholder.png";
 import UserPlaceholder from "../../assets/images/placeholder-user.jpg";
+//import ShippingAddressModal from "../../components/ShippingAddressModal"
 
 const TradeRequests = () => {
   const [activeTab, setActiveTab] = useState("buy");
