@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import styled from 'styled-components';
 import Header from '../../components/Header';
 import SubHeader from '../../components/SubHeader';
 import {useNavigate} from 'react-router-dom';
+import AddProductApi from '../../services/AddProductApi';
 
 
 
@@ -112,7 +112,7 @@ const AddProduct = () => {
     profile: true
   };
 
-  const [file, setFile] = useState(null);
+  const [files, setFiles] = useState([]);
 
   const handleChange = (e) => {
     setProduct({
@@ -122,28 +122,26 @@ const AddProduct = () => {
   };
 
   const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
+    setFiles(Array.from(e.target.files));
   };
   
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append('file', file);
+    files.forEach((file, index) => {
+      formData.append(`files`, file);
+    });
     formData.append('addProductDTO', new Blob([JSON.stringify(product)], {
       type: 'application/json'
     }));
 
     try {
-      const response = await axios.post('http://localhost:8080/product/add-product', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
+      const response = await AddProductApi.add(formData);
       console.log('Product added successfully:', response.data);
       const productId = response.data.id;
       navigate(`/products/${productId}`);
-      
+
     } catch (error) {
       console.error('There was an error adding the product!', error);
     }
@@ -273,16 +271,17 @@ const AddProduct = () => {
             </FormGroup>
           </FormRow>
           <FormGroup>
-            <Label htmlFor="file">Upload Image</Label>
+            <Label htmlFor="file">Upload Images</Label>
             <Input
               type="file"
               id="file"
               name="file"
+              multiple
               onChange={handleFileChange}
             />
           </FormGroup>
           <FormActions>
-            <Button cancel type="button" onClick={() => console.log('Cancel')}>
+            <Button type="button" onClick={() => console.log('Cancel')}>
               Cancel
             </Button>
             <Button type="submit">Save Product</Button>
