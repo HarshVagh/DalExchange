@@ -1,6 +1,5 @@
 package com.asdc.dalexchange.service.impl;
 
-import com.asdc.dalexchange.dto.ProductModerationDTO;
 import com.asdc.dalexchange.dto.ProductRatingAdminDTO;
 import com.asdc.dalexchange.dto.ProductRatingDTO;
 import com.asdc.dalexchange.mappers.Mapper;
@@ -65,21 +64,40 @@ class ProductRatingServiceImplTest {
         // Mock static AuthUtil
         try (MockedStatic<AuthUtil> authUtilMock = mockStatic(AuthUtil.class)) {
             authUtilMock.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
-
-            // Mock data
+            // Call the service method
+            List<ProductRatingDTO> result = productRatingService.allReviewOfAllSoldItemsOfUser();
             Product product1 = new Product();
             product1.setProductId(101L);
+            product1.setSeller(seller);
+            product1.setTitle("Product 1");
+            product1.setDescription("Description 1");
+            product1.setPrice(100.0);
+            product1.setCategory(category);
+            product1.setProductCondition(ProductCondition.New);
+            product1.setUseDuration("1 month");
+            product1.setShippingType(ShippingType.Free);
+            product1.setQuantityAvailable(10);
+            product1.setCreatedAt(LocalDateTime.now());
+            product1.setUnlisted(false);
+
             Product product2 = new Product();
             product2.setProductId(102L);
+            product2.setSeller(seller);
+            product2.setTitle("Product 2");
+            product2.setDescription("Description 2");
+            product2.setPrice(200.0);
+            product2.setCategory(category);
+            product2.setProductCondition(ProductCondition.Used);
+            product2.setUseDuration("6 months");
+            product2.setShippingType(ShippingType.Paid);
+            product2.setQuantityAvailable(5);
+            product2.setCreatedAt(LocalDateTime.now());
+            product2.setUnlisted(false);
 
             when(productRepository.findAll(ProductSpecification.bySellerUserId(userId)))
                     .thenReturn(Arrays.asList(product1, product2));
             when(productRatingRepository.findByIdProductId(101L)).thenReturn(Collections.emptyList());
             when(productRatingRepository.findByIdProductId(102L)).thenReturn(Collections.emptyList());
-
-            // Call the service method
-            List<ProductRatingDTO> result = productRatingService.allReviewOfAllSoldItemsOfUser();
-
             // Assertions
             assertEquals(0, result.size());
         }

@@ -49,9 +49,9 @@ class ProductControllerTest {
         addProductDTO.setTitle("Test Product");
         addProductDTO.setDescription("Test Description");
         addProductDTO.setPrice(100.0);
-        addProductDTO.setProductCondition(ProductCondition.NEW);
+        addProductDTO.setProductCondition(ProductCondition.New);
         addProductDTO.setUseDuration("1 year");
-        addProductDTO.setShippingType(ShippingType.FREE);
+        addProductDTO.setShippingType(ShippingType.Free);
         addProductDTO.setQuantityAvailable(10);
         addProductDTO.setCategoryId(1L);
 

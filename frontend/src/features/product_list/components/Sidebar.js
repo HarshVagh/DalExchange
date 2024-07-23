@@ -5,7 +5,7 @@ import { SearchFilterContext } from '../../../context/SearchFilterContext';
 const Sidebar = ({ onFilterSubmit }) => {
   const { filters, setFilters } = useContext(SearchFilterContext);
   const [categories, setCategories] = useState([]);
-  const productConditions = ['New', 'Used', 'Vintage'];
+  const productConditions = [ "New", "Good", "Fair", "Used", "Poor"];
 
   useEffect(() => {
     fetchCategories();

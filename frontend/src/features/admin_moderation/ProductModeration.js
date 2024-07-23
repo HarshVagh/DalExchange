@@ -169,7 +169,6 @@ export default function ProductModeration() {
                       {categories.map((category) => (
                         <option key={category.categoryId} value={category.categoryId}>{category.name}</option>
                       ))}
-                      <option value="">No Category</option>
                     </select>
                   </div>
                   <div className="grid gap-2">
@@ -180,11 +179,11 @@ export default function ProductModeration() {
                       onChange={(e) => setEditedProduct({ ...editedProduct, productCondition: e.target.value })}
                       className="w-full p-2 border border-gray-300 rounded"
                     >
-                      <option value="NEW">New</option>
-                      <option value="LIKE_NEW">Like New</option>
-                      <option value="GOOD">Good</option>
-                      <option value="FAIR">Fair</option>
-                      <option value="POOR">Poor</option>
+                      <option value="New">New</option>
+                      <option value="Good">Good</option>
+                      <option value="Fair">Fair</option>
+                      <option value="Used">Used</option>
+                      <option value="Poor">Poor</option>
                     </select>
                   </div>
                   <div className="grid gap-2">
@@ -210,9 +209,8 @@ export default function ProductModeration() {
                       onChange={(e) => setEditedProduct({ ...editedProduct, shippingType: e.target.value })}
                       className="w-full p-2 border border-gray-300 rounded"
                     >
-                      <option value="free">Free</option>
-                      <option value="STANDARD">Standard</option>
-                      <option value="paid">Paid</option>
+                      <option value="Free">Free</option>
+                      <option value="Paid">Paid</option>
                     </select>
                   </div>
                   <div className="grid gap-2">
@@ -291,7 +289,7 @@ export default function ProductModeration() {
                   {products.map((product) => (
                     <tr key={product.productId} onClick={() => handleProductSelect(product.productId)} className="cursor-pointer hover:bg-gray-100">
                       <td className="px-6 py-4 whitespace-nowrap">{product.title}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{product.category ? product.category.name : 'No Category'}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{product.category.name}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{toPascalCase(product.productCondition)}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{product.quantityAvailable}</td>
                       <td className="px-6 py-4 whitespace-nowrap">${product.price.toFixed(2)}</td>

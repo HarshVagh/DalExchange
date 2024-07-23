@@ -4,14 +4,11 @@ import com.asdc.dalexchange.dto.*;
 import com.asdc.dalexchange.enums.OrderStatus;
 import com.asdc.dalexchange.mappers.Mapper;
 import com.asdc.dalexchange.model.OrderDetails;
-import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.model.ShippingAddress;
-import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.repository.OrderRepository;
 import com.asdc.dalexchange.repository.ShippingRepository;
 import com.asdc.dalexchange.service.OrderService;
 import jakarta.transaction.Transactional;
-import org.hibernate.query.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -153,7 +150,7 @@ public class OrderServiceImpl implements OrderService {
     public void cancelOrder(int orderId, String adminComments) {
         OrderDetails order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
-        order.setOrderStatus(OrderStatus.CANCELLED);
+        order.setOrderStatus(OrderStatus.Cancelled);
         order.setAdminComments(adminComments);
         orderRepository.save(order);
     }

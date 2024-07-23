@@ -10,13 +10,10 @@ import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.model.ProductCategory;
 import com.asdc.dalexchange.model.ProductImage;
 import com.asdc.dalexchange.model.User;
-import com.asdc.dalexchange.model.ProductImage;
-import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.repository.ProductCategoryRepository;
 import com.asdc.dalexchange.repository.ProductImageRepository;
 import com.asdc.dalexchange.repository.ProductRepository;
 import com.asdc.dalexchange.repository.UserRepository;
-import com.asdc.dalexchange.util.AuthUtil;
 import com.asdc.dalexchange.util.AuthUtil;
 import com.asdc.dalexchange.util.CloudinaryUtil;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
@@ -142,9 +139,9 @@ public class ProductServiceImplTest {
         productModerationDTO.setDescription("Updated Description");
         productModerationDTO.setPrice(100.0);
         productModerationDTO.setCategory(productCategory);
-        productModerationDTO.setProductCondition(ProductCondition.NEW);
+        productModerationDTO.setProductCondition(ProductCondition.New);
         productModerationDTO.setUseDuration("Updated Duration");
-        productModerationDTO.setShippingType(ShippingType.free);
+        productModerationDTO.setShippingType(ShippingType.Free);
         productModerationDTO.setQuantityAvailable(10);
 
         when(productRepository.findById(anyLong())).thenReturn(Optional.of(product));
@@ -274,9 +271,9 @@ public class ProductServiceImplTest {
         addProductDTO.setTitle("Test Product");
         addProductDTO.setDescription("Test Description");
         addProductDTO.setPrice(100.0);
-        addProductDTO.setProductCondition(ProductCondition.NEW);
+        addProductDTO.setProductCondition(ProductCondition.New);
         addProductDTO.setUseDuration("1 year");
-        addProductDTO.setShippingType(ShippingType.FREE);
+        addProductDTO.setShippingType(ShippingType.Free);
         addProductDTO.setQuantityAvailable(10);
         addProductDTO.setCategoryId(1L);
 
