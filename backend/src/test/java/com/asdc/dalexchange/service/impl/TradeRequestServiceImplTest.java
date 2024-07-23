@@ -9,10 +9,13 @@ import com.asdc.dalexchange.repository.ProductRepository;
 import com.asdc.dalexchange.repository.TradeRequestRepository;
 import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.specifications.TradeRequestSpecification;
+import com.asdc.dalexchange.util.AuthUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -23,6 +26,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -115,25 +119,29 @@ public class TradeRequestServiceImplTest {
         Product product = new Product();
         User seller = new User();
         User buyer = new User();
-        TradeRequest tradeRequest = new TradeRequest();
         TradeRequest createdTradeRequest = new TradeRequest();
         TradeRequestDTO createdTradeRequestDTO = new TradeRequestDTO();
 
-        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
-        when(userRepository.findById(1L)).thenReturn(Optional.of(seller));
-        when(userRepository.findById(2L)).thenReturn(Optional.of(buyer)); // TODO: replace with current logged in user id
-        when(tradeRequestRepository.save(any(TradeRequest.class))).thenReturn(createdTradeRequest);
-        when(tradeRequestMapper.mapTo(createdTradeRequest)).thenReturn(createdTradeRequestDTO);
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(seller));
 
-        TradeRequestDTO result = tradeRequestService.createTradeRequest(requestBody);
+        try (MockedStatic<AuthUtil> mockedAuthUtil = Mockito.mockStatic(AuthUtil.class)) {
+            mockedAuthUtil.when(() -> AuthUtil.getCurrentUser(userRepository)).thenReturn(buyer);
+            when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+            when(userRepository.findById(1L)).thenReturn(Optional.of(seller));
+            when(userRepository.findById(0L)).thenReturn(Optional.of(buyer));
+            when(tradeRequestRepository.save(any(TradeRequest.class))).thenReturn(createdTradeRequest);
+            when(tradeRequestMapper.mapTo(createdTradeRequest)).thenReturn(createdTradeRequestDTO);
 
-        assertNotNull(result);
-        assertEquals(createdTradeRequestDTO, result);
+            TradeRequestDTO result = tradeRequestService.createTradeRequest(requestBody);
 
-        verify(productRepository, times(1)).findById(1L);
-        verify(userRepository, times(1)).findById(1L);
-        verify(userRepository, times(1)).findById(2L);
-        verify(tradeRequestRepository, times(1)).save(any(TradeRequest.class));
-        verify(tradeRequestMapper, times(1)).mapTo(createdTradeRequest);
+            assertNotNull(result);
+            assertEquals(createdTradeRequestDTO, result);
+
+            verify(productRepository, times(1)).findById(1L);
+            verify(userRepository, times(1)).findById(1L);
+            verify(userRepository, times(1)).findById(0L);
+            verify(tradeRequestRepository, times(1)).save(any(TradeRequest.class));
+            verify(tradeRequestMapper, times(1)).mapTo(createdTradeRequest);
+        }
     }
 }
