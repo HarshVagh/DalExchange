@@ -3,6 +3,7 @@ import axios from 'axios';
 import styled from 'styled-components';
 import Header from '../../components/Header';
 import SubHeader from '../../components/SubHeader';
+import {useNavigate} from 'react-router-dom';
 
 
 
@@ -85,6 +86,7 @@ const Button = styled.button`
 `;
 
 const AddProduct = () => {
+  const navigate = useNavigate();
   const [product, setProduct] = useState({
     title: '',
     description: '',
@@ -139,6 +141,9 @@ const AddProduct = () => {
         }
       });
       console.log('Product added successfully:', response.data);
+      const productId = response.data.id;
+      navigate(`/products/${productId}`);
+      
     } catch (error) {
       console.error('There was an error adding the product!', error);
     }
