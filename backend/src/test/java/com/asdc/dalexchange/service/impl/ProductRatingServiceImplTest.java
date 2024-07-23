@@ -2,11 +2,11 @@ package com.asdc.dalexchange.service.impl;
 
 import com.asdc.dalexchange.dto.ProductRatingAdminDTO;
 import com.asdc.dalexchange.dto.ProductRatingDTO;
+import com.asdc.dalexchange.enums.ProductCondition;
+import com.asdc.dalexchange.enums.ShippingType;
 import com.asdc.dalexchange.mappers.Mapper;
 import com.asdc.dalexchange.mappers.impl.ProductRatingMapperImpl;
-import com.asdc.dalexchange.model.Product;
-import com.asdc.dalexchange.model.ProductRating;
-import com.asdc.dalexchange.model.ProductRatingID;
+import com.asdc.dalexchange.model.*;
 import com.asdc.dalexchange.repository.ProductRatingRepository;
 import com.asdc.dalexchange.repository.ProductRepository;
 import com.asdc.dalexchange.repository.UserRepository;
@@ -21,6 +21,7 @@ import org.mockito.MockedStatic;
 
 import jakarta.transaction.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -60,7 +61,13 @@ class ProductRatingServiceImplTest {
     @Test
     void testAllReviewOfAllSoldItemsOfUser_NoReviews() {
         Long userId = 1L;
+        User seller = new User();
+        seller.setUserId(userId);
 
+        ProductCategory category = new ProductCategory();
+        category.setCategoryId(1L);
+        category.setName("Electronics");
+        
         // Mock static AuthUtil
         try (MockedStatic<AuthUtil> authUtilMock = mockStatic(AuthUtil.class)) {
             authUtilMock.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
