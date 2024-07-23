@@ -220,12 +220,11 @@ const AddProduct = () => {
                 required
               >
                 <option value="">Select condition</option>
-                <option value="NEW">New</option>
-                <option value="LIKE_NEW">Like New</option>
-                <option value="GOOD">Good</option>
-                <option value="FAIR">Fair</option>
-                <option value="USED">Used</option>
-                <option value="POOR">Poor</option>
+                <option value="New">New</option>
+                <option value="Good">Good</option>
+                <option value="Fair">Fair</option>
+                <option value="Used">Used</option>
+                <option value="Poor">Poor</option>
               </Select>
             </FormGroup>
             <FormGroup>
@@ -252,9 +251,8 @@ const AddProduct = () => {
                 required
               >
                 <option value="">Select shipping type</option>
-                <option value="STANDARD">Standard</option>
-                <option value="FREE">Free</option>
-                <option value="PAID">Paid</option>
+                <option value="Free">Free</option>
+                <option value="Paid">Paid</option>
               </Select>
             </FormGroup>
             <FormGroup>

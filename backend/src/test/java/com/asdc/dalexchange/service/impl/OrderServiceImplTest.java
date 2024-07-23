@@ -5,7 +5,6 @@ import com.asdc.dalexchange.enums.OrderStatus;
 import com.asdc.dalexchange.mappers.Mapper;
 import com.asdc.dalexchange.model.OrderDetails;
 import com.asdc.dalexchange.model.ShippingAddress;
-import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.repository.OrderRepository;
 import com.asdc.dalexchange.repository.ShippingRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -187,7 +186,7 @@ class OrderServiceImplTest {
 
         OrderDetails updatedOrderDetails = new OrderDetails();
         updatedOrderDetails.setTotalAmount(150.0);
-        updatedOrderDetails.setOrderStatus(OrderStatus.SHIPPED);
+        updatedOrderDetails.setOrderStatus(OrderStatus.Shipped);
 
         OrderDTO updatedOrderDTO = new OrderDTO();
         updatedOrderDTO.setOrderId(orderId);
@@ -202,7 +201,7 @@ class OrderServiceImplTest {
 
         // Assert
         assertEquals(150.0, existingOrder.getTotalAmount());
-        assertEquals(OrderStatus.SHIPPED, existingOrder.getOrderStatus());
+        assertEquals(OrderStatus.Shipped, existingOrder.getOrderStatus());
         assertEquals(updatedOrderDTO, result);
     }
 
@@ -212,7 +211,7 @@ class OrderServiceImplTest {
         long orderId = 1L;
         OrderDetails order = new OrderDetails();
         order.setOrderId(orderId);
-        order.setOrderStatus(OrderStatus.SHIPPED);
+        order.setOrderStatus(OrderStatus.Shipped);
 
         when(orderRepository.findById((int) orderId)).thenReturn(Optional.of(order));
 
@@ -220,7 +219,7 @@ class OrderServiceImplTest {
         orderService.cancelOrder((int) orderId, "Cancelled by admin");
 
         // Assert
-        assertEquals(OrderStatus.CANCELLED, order.getOrderStatus());
+        assertEquals(OrderStatus.Cancelled, order.getOrderStatus());
         assertEquals("Cancelled by admin", order.getAdminComments());
         verify(orderRepository).save(order);
     }

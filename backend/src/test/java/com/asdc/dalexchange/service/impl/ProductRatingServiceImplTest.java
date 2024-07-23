@@ -1,6 +1,5 @@
 package com.asdc.dalexchange.service.impl;
 
-import com.asdc.dalexchange.dto.ProductModerationDTO;
 import com.asdc.dalexchange.dto.ProductRatingAdminDTO;
 import com.asdc.dalexchange.dto.ProductRatingDTO;
 import com.asdc.dalexchange.mappers.Mapper;
@@ -67,9 +66,9 @@ class ProductRatingServiceImplTest {
         product1.setDescription("Description 1");
         product1.setPrice(100.0);
         product1.setCategory(category);
-        product1.setProductCondition(ProductCondition.NEW);
+        product1.setProductCondition(ProductCondition.New);
         product1.setUseDuration("1 month");
-        product1.setShippingType(ShippingType.FREE);
+        product1.setShippingType(ShippingType.Free);
         product1.setQuantityAvailable(10);
         product1.setCreatedAt(LocalDateTime.now());
         product1.setUnlisted(false);
@@ -81,9 +80,9 @@ class ProductRatingServiceImplTest {
         product2.setDescription("Description 2");
         product2.setPrice(200.0);
         product2.setCategory(category);
-        product2.setProductCondition(ProductCondition.USED);
+        product2.setProductCondition(ProductCondition.Used);
         product2.setUseDuration("6 months");
-        product2.setShippingType(ShippingType.PAID);
+        product2.setShippingType(ShippingType.Paid);
         product2.setQuantityAvailable(5);
         product2.setCreatedAt(LocalDateTime.now());
         product2.setUnlisted(false);
