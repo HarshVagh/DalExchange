@@ -40,28 +40,25 @@ export const TradeRequestApi = {
   },
   createPaymentIntent: async (productId) => {
     try {
-      // Make a request to your backend to create a payment intent
-      const response = await AxiosInstance.post("/api/payment/create-payment-intent", { productId});
-
-      // Extract the session ID from the response
+      const response = await AxiosInstance.post("/payment/create_payment_intent", { productId });
       const { sessionId } = response.data;
-
-      // Redirect the user to Stripe Checkout
-      if (window.Stripe) {
-        window.Stripe('pk_test_51Pdgl8RuVIC7U6kcnDPmtuBFtSoX83Of4rWP09F9M6LkmxUPVCRgi0eRY5aAMXsxBOhCtlVpnF6JfUSRpF7NdHAh00DKHrJPs6').redirectToCheckout({ sessionId });
-      } else {
-        console.error('Stripe is not loaded');
-      }
+      return sessionId;
     } catch (error) {
       console.error('Error creating payment intent:', error);
+      throw error;
     }
   },
   saveShippingAddress: async (body) => {
     try {
-      const response = await AxiosInstance.post("api/payment/shippingaddress",body);
+      const response = await AxiosInstance.post("/payment/shipping_address", body);
       console.log("Trade request created successfully:", response.data);
+      if(response.status === 200) {
+        return true;
+      }
+      return false;
     } catch (error) {
       console.error("Error creating trade request:", error);
+      return false;
     }
   },
 };

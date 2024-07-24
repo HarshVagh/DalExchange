@@ -139,7 +139,7 @@ const AddProduct = () => {
     try {
       const response = await AddProductApi.add(formData);
       console.log('Product added successfully:', response.data);
-      const productId = response.data.id;
+      const productId = response.data.productId;
       navigate(`/products/${productId}`);
 
     } catch (error) {
