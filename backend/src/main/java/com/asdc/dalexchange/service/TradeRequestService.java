@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 public interface TradeRequestService {
-    List<TradeRequest> getBuyerTradeRequests();
-    List<TradeRequest> getSellerTradeRequests();
+    List<TradeRequestDTO> getBuyerTradeRequests();
+    List<TradeRequestDTO> getSellerTradeRequests();
     TradeRequest updateTradeRequestStatus(Long requestId, String status);
     TradeRequestDTO createTradeRequest(Map<String, Object> requestBody);
     double getApprovedTradeRequestAmount(Long productId);

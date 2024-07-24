@@ -53,7 +53,7 @@ public class PaymentServiceImpl implements PaymentService {
     //Long userId = AuthUtil.getCurrentUserId(userRepository);
 
     @Value("${frontend.endpoint}")
-    private String frontendEndpoint;
+    private String frontendURL;
 
     @Override
     public String createPaymentIntent( Long productId) {
@@ -61,10 +61,10 @@ public class PaymentServiceImpl implements PaymentService {
 
            Long userId = AuthUtil.getCurrentUserId(userRepository);
             double productPrice = tradeRequestService.getApprovedTradeRequestAmount(productId);
-            String successURL = APIendpoint + "/payment/success?amount=" + productPrice
+            String successURL = frontendURL + "/payment/success?amount=" + productPrice
                    + "&productId=" + productId + "&paymentIntentId={CHECKOUT_SESSION_ID}";
 
-            String failureURL = frontendEndpoint + "/payment/fail";
+            String failureURL = frontendURL + "/payment/fail";
 
             Stripe.apiKey = stripeSecretKey;
 

@@ -1,14 +1,16 @@
 package com.asdc.dalexchange.service.impl;
 
+import com.asdc.dalexchange.dto.ProductListingDTO;
 import com.asdc.dalexchange.dto.TradeRequestDTO;
 import com.asdc.dalexchange.mappers.Mapper;
 import com.asdc.dalexchange.model.Product;
+import com.asdc.dalexchange.model.ProductImage;
 import com.asdc.dalexchange.model.TradeRequest;
 import com.asdc.dalexchange.model.User;
+import com.asdc.dalexchange.repository.ProductImageRepository;
 import com.asdc.dalexchange.repository.ProductRepository;
 import com.asdc.dalexchange.repository.TradeRequestRepository;
 import com.asdc.dalexchange.repository.UserRepository;
-import com.asdc.dalexchange.specifications.TradeRequestSpecification;
 import com.asdc.dalexchange.util.AuthUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,6 +46,9 @@ public class TradeRequestServiceImplTest {
     private UserRepository userRepository;
 
     @Mock
+    private ProductImageRepository productImageRepository;
+
+    @Mock
     private Mapper<TradeRequest, TradeRequestDTO> tradeRequestMapper;
 
     @InjectMocks
@@ -56,36 +61,77 @@ public class TradeRequestServiceImplTest {
 
     @Test
     public void testGetBuyerTradeRequests() {
+
+        User buyer = new User();
+        buyer.setUserId(1L);
         Long buyerId = 1L;
-        TradeRequest tradeRequest = new TradeRequest();
-        Specification<TradeRequest> spec = TradeRequestSpecification.hasBuyerId(buyerId);
 
-        when(tradeRequestRepository.findAll(any(Specification.class))).thenReturn(List.of(tradeRequest));
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(buyer));
 
-        List<TradeRequest> result = tradeRequestService.getBuyerTradeRequests();
+        try (MockedStatic<AuthUtil> mockedAuthUtil = Mockito.mockStatic(AuthUtil.class)) {
+            mockedAuthUtil.when(() -> AuthUtil.getCurrentUserId(any(UserRepository.class))).thenReturn(buyerId);
 
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals(tradeRequest, result.get(0));
+            TradeRequest tradeRequest = new TradeRequest();
+            TradeRequestDTO tradeRequestDTO = new TradeRequestDTO();
+            tradeRequestDTO.setProduct(new ProductListingDTO());
+            tradeRequestDTO.getProduct().setProductId(1L);
 
-        verify(tradeRequestRepository, times(1)).findAll(any(Specification.class));
+            ProductImage productImage = new ProductImage();
+            productImage.setImageUrl("sample_image_url");
+
+            when(tradeRequestRepository.findAll(any(Specification.class))).thenReturn(List.of(tradeRequest));
+            when(tradeRequestMapper.mapTo(any(TradeRequest.class))).thenReturn(tradeRequestDTO);
+            when(productImageRepository.findAll(any(Specification.class))).thenReturn(List.of(productImage));
+
+            List<TradeRequestDTO> result = tradeRequestService.getBuyerTradeRequests();
+
+            assertNotNull(result);
+            assertEquals(1, result.size());
+            assertEquals(tradeRequestDTO, result.get(0));
+            assertEquals("sample_image_url", result.get(0).getProduct().getImageUrl());
+
+            verify(tradeRequestRepository, times(1)).findAll(any(Specification.class));
+            verify(productImageRepository, times(1)).findAll(any(Specification.class));
+            verify(tradeRequestMapper, times(1)).mapTo(any(TradeRequest.class));
+        }
     }
 
     @Test
     public void testGetSellerTradeRequests() {
+
+        User seller = new User();
+        seller.setUserId(1L);
         Long sellerId = 1L;
-        TradeRequest tradeRequest = new TradeRequest();
-        Specification<TradeRequest> spec = TradeRequestSpecification.hasSellerId(sellerId);
 
-        when(tradeRequestRepository.findAll(any(Specification.class))).thenReturn(List.of(tradeRequest));
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(seller));
 
-        List<TradeRequest> result = tradeRequestService.getSellerTradeRequests();
+        try (MockedStatic<AuthUtil> mockedAuthUtil = Mockito.mockStatic(AuthUtil.class)) {
+            mockedAuthUtil.when(() -> AuthUtil.getCurrentUserId(any(UserRepository.class))).thenReturn(sellerId);
 
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals(tradeRequest, result.get(0));
+            TradeRequest tradeRequest = new TradeRequest();
+            TradeRequestDTO tradeRequestDTO = new TradeRequestDTO();
+            tradeRequestDTO.setProduct(new ProductListingDTO());
+            tradeRequestDTO.getProduct().setProductId(1L);
 
-        verify(tradeRequestRepository, times(1)).findAll(any(Specification.class));
+            ProductImage productImage = new ProductImage();
+            productImage.setImageUrl("sample_image_url");
+
+            when(tradeRequestRepository.findAll(any(Specification.class))).thenReturn(List.of(tradeRequest));
+            when(tradeRequestMapper.mapTo(any(TradeRequest.class))).thenReturn(tradeRequestDTO);
+            when(productImageRepository.findAll(any(Specification.class))).thenReturn(List.of(productImage));
+
+            List<TradeRequestDTO> result = tradeRequestService.getSellerTradeRequests();
+
+            assertNotNull(result);
+            assertEquals(1, result.size());
+            assertEquals(tradeRequestDTO, result.get(0));
+            assertEquals("sample_image_url", result.get(0).getProduct().getImageUrl());
+
+            verify(tradeRequestRepository, times(1)).findAll(any(Specification.class));
+            verify(productImageRepository, times(1)).findAll(any(Specification.class));
+            verify(tradeRequestMapper, times(1)).mapTo(any(TradeRequest.class));
+        }
+
     }
 
     @Test
