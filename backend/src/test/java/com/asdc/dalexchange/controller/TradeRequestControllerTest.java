@@ -1,5 +1,6 @@
 package com.asdc.dalexchange.controller;
 
+import com.asdc.dalexchange.dto.ProductListingDTO;
 import com.asdc.dalexchange.dto.TradeRequestDTO;
 import com.asdc.dalexchange.mappers.Mapper;
 import com.asdc.dalexchange.model.Notification;
@@ -48,11 +49,11 @@ public class TradeRequestControllerTest {
 
     @Test
     public void testGetSellRequests() {
-        TradeRequest tradeRequest = new TradeRequest();
         TradeRequestDTO tradeRequestDTO = new TradeRequestDTO();
+        tradeRequestDTO.setProduct(new ProductListingDTO());
+        tradeRequestDTO.getProduct().setProductId(1L);
 
-        when(tradeRequestService.getSellerTradeRequests()).thenReturn(List.of(tradeRequest));
-        when(tradeRequestMapper.mapTo(tradeRequest)).thenReturn(tradeRequestDTO);
+        when(tradeRequestService.getSellerTradeRequests()).thenReturn(List.of(tradeRequestDTO));
 
         List<TradeRequestDTO> result = tradeRequestController.getSellRequests();
 
@@ -61,16 +62,15 @@ public class TradeRequestControllerTest {
         assertEquals(tradeRequestDTO, result.get(0));
 
         verify(tradeRequestService, times(1)).getSellerTradeRequests();
-        verify(tradeRequestMapper, times(1)).mapTo(tradeRequest);
     }
 
     @Test
     public void testGetBuyRequests() {
-        TradeRequest tradeRequest = new TradeRequest();
         TradeRequestDTO tradeRequestDTO = new TradeRequestDTO();
+        tradeRequestDTO.setProduct(new ProductListingDTO());
+        tradeRequestDTO.getProduct().setProductId(1L);
 
-        when(tradeRequestService.getBuyerTradeRequests()).thenReturn(List.of(tradeRequest));
-        when(tradeRequestMapper.mapTo(tradeRequest)).thenReturn(tradeRequestDTO);
+        when(tradeRequestService.getBuyerTradeRequests()).thenReturn(List.of(tradeRequestDTO));
 
         List<TradeRequestDTO> result = tradeRequestController.getBuyRequests();
 
@@ -79,7 +79,6 @@ public class TradeRequestControllerTest {
         assertEquals(tradeRequestDTO, result.get(0));
 
         verify(tradeRequestService, times(1)).getBuyerTradeRequests();
-        verify(tradeRequestMapper, times(1)).mapTo(tradeRequest);
     }
 
     @Test

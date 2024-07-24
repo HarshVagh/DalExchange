@@ -6,9 +6,6 @@ import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.model.VerificationRequest;
 import com.asdc.dalexchange.service.UserService;
 import com.asdc.dalexchange.util.JwtUtils;
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
-import org.hibernate.service.spi.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +17,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @RestController
@@ -68,6 +70,9 @@ public class AuthController {
             user.setPhoneNo(phoneNumber);
             user.setRole(Role.valueOf(role));
             user.setBio(bio);
+            user.setJoinedAt(LocalDateTime.now());
+            user.setSellerRating(0.0);
+            user.setActive(true);
 
             userService.registerUser(user, profilePicture);
             return ResponseEntity.ok("User registered successfully. Please check your email for verification code.");

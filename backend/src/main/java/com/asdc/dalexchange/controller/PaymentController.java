@@ -19,8 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/payment")
-@CrossOrigin("*")
+@RequestMapping("/payment")
 public class PaymentController {
 
     @Autowired
@@ -46,12 +45,11 @@ public class PaymentController {
         }
     }
 
-    @PostMapping("/shippingadress")
+    @PostMapping("/shipping_address")
     public ResponseEntity<String> saveShippingAddress(@RequestBody ShippingAddress address) {
         try {
             shippingAddressService.saveShippingAddress(address);
             return ResponseEntity.ok("Shipping address added successfully");
-
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("shippingaddrees is not stored  failed");
         }
@@ -71,7 +69,7 @@ public class PaymentController {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @PostMapping("/create-payment-intent")
+    @PostMapping("/create_payment_intent")
     public ResponseEntity<Map<String, Object>> createPaymentIntent(@RequestBody PaymentRequest request) {
         try {
             String sessionId = paymentService.createPaymentIntent(request.getProductId());
@@ -85,7 +83,7 @@ public class PaymentController {
 
 
     /// change the payment status
-    @PostMapping("/paymentsuccess")
+    @PostMapping("/payment_success")
     public  ResponseEntity<String> changeTradeRequestStatus(@RequestParam Long productId){
         try {
             String s = "succesfull";

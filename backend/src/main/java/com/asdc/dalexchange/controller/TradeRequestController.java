@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -49,19 +48,13 @@ public class TradeRequestController {
     @GetMapping(path = "/sell_requests")
     public List<TradeRequestDTO> getSellRequests() {
         log.info("get sell_requests api endpoint called");
-        List<TradeRequest> tradeRequests = tradeRequestService.getSellerTradeRequests();
-        return tradeRequests.stream()
-                .map(tradeRequestMapper::mapTo)
-                .collect(Collectors.toList());
+        return tradeRequestService.getSellerTradeRequests();
     }
 
     @GetMapping(path = "/buy_requests")
     public List<TradeRequestDTO> getBuyRequests() {
         log.info("get buy_requests api endpoint called");
-        List<TradeRequest> tradeRequests = tradeRequestService.getBuyerTradeRequests();
-        return tradeRequests.stream()
-                .map(tradeRequestMapper::mapTo)
-                .collect(Collectors.toList());
+        return tradeRequestService.getBuyerTradeRequests();
     }
 
     @PostMapping("/create_trade_request")

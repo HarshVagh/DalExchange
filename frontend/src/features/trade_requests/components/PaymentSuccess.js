@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import Header from '../../../components/Header';
+import SubHeader from '../../../components/SubHeader';
 
 const StarRating = ({ rating, onRatingChange }) => {
   const handleClick = (value) => {
@@ -26,38 +28,49 @@ const StarRating = ({ rating, onRatingChange }) => {
 const SuccessPage = () => {
   const [rating, setRating] = useState(0);
 
+  const headerConfig = {
+    search: false,
+    requests: true,
+    notifications: true,
+    add: true,
+    profile: true
+  };
+
   const handleRatingChange = (newRating) => {
     setRating(newRating);
   };
 
   const handleSubmit = () => {
     console.log('Submitted Rating:', rating);
-    // Handle submit logic here
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4 py-12 sm:px-6 lg:px-8">
-      <div className="max-w-md mx-auto text-center bg-white p-6 rounded-lg shadow-md">
-        <CircleCheckIcon className="mx-auto h-12 w-12 text-green-500" />
-        <h1 className="mt-4 text-3xl font-bold text-gray-900 sm:text-4xl">Payment Successful</h1>
-        <p className="mt-4 text-gray-600">Your payment has been processed successfully.</p>
-        <div className="mt-6 flex flex-col items-center gap-4">
-          <StarRating rating={rating} onRatingChange={handleRatingChange} />
-          <div className="flex w-full max-w-sm items-center space-x-2">
-            <Textarea
-              placeholder="Write your review"
-              className="flex-1 resize-none border-b border-gray-300 px-0 pb-2 text-sm focus:border-blue-500 focus:outline-none"
-            />
+    <>
+      <Header config={headerConfig}></Header>
+      <SubHeader title={'Payment Successful'} backPath={'/trade_requests'}></SubHeader>
+      <div className="flex items-center justify-center bg-gray-100 px-4 py-12 sm:px-6 lg:px-8">
+        <div className="max-w-md mx-auto text-center mt-16 mb-20 bg-white p-6 rounded-lg shadow-md">
+          <CircleCheckIcon className="mx-auto h-12 w-12 text-green-500" />
+          <h1 className="mt-4 text-3xl font-bold text-gray-900 sm:text-4xl">Payment Successful</h1>
+          <p className="mt-4 text-gray-600">Your payment has been processed successfully.</p>
+          <div className="mt-6 flex flex-col items-center gap-4">
+            <StarRating rating={rating} onRatingChange={handleRatingChange} />
+            <div className="flex w-full max-w-sm items-center space-x-2">
+              <textarea
+                placeholder="Write your review"
+                className="flex-1 resize-none border-b border-gray-300 px-0 pb-2 text-sm focus:border-blue-500 focus:outline-none"
+              />
+            </div>
+            <button
+              onClick={handleSubmit}
+              className="inline-flex items-center rounded-md bg-blue-600 px-10 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              Submit
+            </button>
           </div>
-          <Button
-            onClick={handleSubmit}
-            className="inline-flex items-center rounded-md bg-blue-600 px-10 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
-            Submit
-          </Button>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

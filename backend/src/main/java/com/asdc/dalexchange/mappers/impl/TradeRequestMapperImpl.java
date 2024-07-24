@@ -24,12 +24,14 @@ public class TradeRequestMapperImpl implements Mapper<TradeRequest, TradeRequest
         this.modelMapper = modelMapper;
         modelMapper.typeMap(TradeRequest.class, TradeRequestDTO.class).addMappings(mapper -> {
             mapper.map(src -> src.getSeller().getFullName(), TradeRequestDTO::setSellerName);
+            mapper.map(src -> src.getSeller().getProfilePicture(), TradeRequestDTO::setSellerImage);
             mapper.map(src -> src.getSeller().getJoinedAt(), TradeRequestDTO::setSellerJoiningDate);
-            mapper.map(src -> src.getSeller().getSellerRating(), TradeRequestDTO::setSellerJoiningDate);
+            mapper.map(src -> src.getSeller().getSellerRating(), TradeRequestDTO::setSellerRating);
 
             mapper.map(src -> src.getBuyer().getFullName(), TradeRequestDTO::setBuyerName);
+            mapper.map(src -> src.getBuyer().getProfilePicture(), TradeRequestDTO::setBuyerImage);
             mapper.map(src -> src.getBuyer().getJoinedAt(), TradeRequestDTO::setBuyerJoiningDate);
-            mapper.map(src -> src.getBuyer().getSellerRating(), TradeRequestDTO::setBuyerJoiningDate);
+            mapper.map(src -> src.getBuyer().getSellerRating(), TradeRequestDTO::setBuyerRating);
         });
     }
 

@@ -5,12 +5,12 @@ import SubHeader from '../../components/SubHeader';
 import HeartIcon from '../../assets/icons/heart-regular.svg';
 import Header from "../../components/Header";
 import FilledHeartIcon from '../../assets/icons/heart-solid.svg';
-import StarIcon from '../../assets/icons/star-regular.svg';
-import FilledStarIcon from '../../assets/icons/star-solid.svg';
 import ErrorAlert from '../../components/ErrorAlert';
 import ProductDetailsApi from '../../services/ProductDetailsApi'; // Import the new service
 import { TradeRequestApi } from '../../services/TradeRequestApi';
 import {useUser} from '../../context/UserContext'
+import Loader from '../../components/Loader';
+import StartRating from '../../components/StartRating';
 
 const ProductDetails = () => {
   const { productId } = useParams();
@@ -21,6 +21,7 @@ const ProductDetails = () => {
   const [showModal, setShowModal] = useState(false);
   const [requestedAmount, setRequestedAmount] = useState('');
   const [amountError, setAmountError] = useState('');
+  const [currentImage, setCurrentImage] = useState('');
   const headerConfig = {
     search: false,
     requests: true,
@@ -40,21 +41,25 @@ const ProductDetails = () => {
   }
 
   useEffect(() => {
-    fetchProductData(productId);
+    const fetchProductData = async () => {
+      try {
+        setLoading(true);
+        const data = await ProductDetailsApi.fetchProductDetails(productId);
+        console.log(data);
+        setProduct(data);
+        if(data?.imageUrls?.length > 0) {
+          setCurrentImage(data?.imageUrls[0]);
+        }
+        
+      } catch (error) {
+        console.error('Failed to fetch product data', error);
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProductData();
   }, [productId]);
-
-  const fetchProductData = async (productId) => {
-    try {
-      const data = await ProductDetailsApi.fetchProductDetails(productId);
-      console.log(data);
-      setProduct(data);
-      setLoading(false);
-    } catch (error) {
-      console.error('Failed to fetch product data', error);
-      setError(error);
-      setLoading(false);
-    }
-  };
 
   const addtoFavorite = async (productId) => {
     try {
@@ -79,7 +84,7 @@ const ProductDetails = () => {
     const requestBody = {
       productId: product.productId,
       sellerId: product.sellerId,
-      requestedPrice: requestedAmount // Replace with input value
+      requestedPrice: requestedAmount
     };
     try {
       await TradeRequestApi.create(requestBody);
@@ -91,24 +96,9 @@ const ProductDetails = () => {
     }
   };
 
-  const StarRating = ({ starCount }) => {
-    const totalStars = 5;
-    const stars = [];
-
-    for (let i = 0; i < totalStars; i++) {
-      if (i < starCount) {
-        stars.push(
-          <img key={i} src={FilledStarIcon} alt="star" className="h-6 w-6" />
-        );
-      } else {
-        stars.push(
-          <img key={i} src={StarIcon} alt="star" className="h-6 w-6" />
-        );
-      }
-    }
-
-    return <div className="flex flex-row">{stars}</div>;
-  };
+  const selectImage = (imageUrl) => {
+    setCurrentImage(imageUrl);
+  }
 
   const toggleModal = () => {
     setShowModal(!showModal);
@@ -116,23 +106,20 @@ const ProductDetails = () => {
     setAmountError('');
   };
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
   return (
     <div>
       <Header config={headerConfig} />
       <SubHeader title={'Products'} backPath={'/products'} />
-      {errors && <ErrorAlert message={errors.message} />}
-      {!errors && <main className="flex-1 p-6">
+      {loading && <Loader title={'Loading Product Details...'}></Loader>}
+      {!loading && errors && <ErrorAlert message={"Error loading product details."} />}
+      {!loading && !errors && <main className="flex-1 p-6">
         <div className="grid grid-cols-1 md:grid-cols-10 gap-8">
           <div className="md:col-span-3">
             <img
               alt="Product"
-              className="w-full rounded-lg"
+              className="w-full rounded-lg border"
               height={600}
-              src={placeholder}
+              src={currentImage ? currentImage: placeholder}
               style={{
                 aspectRatio: '1/1',
                 objectFit: 'cover',
@@ -140,14 +127,15 @@ const ProductDetails = () => {
               width={600}
             />
             <div className="grid grid-cols-4 gap-4 mt-4">
-              {[1, 2, 3, 4].map((index) => (
-                <button key={index} className="border rounded-lg overflow-hidden">
+              {product.imageUrls.map((imageUrl) => (
+                <button key={imageUrl} className="border rounded-lg overflow-hidden">
                   <img
-                    alt={`Thumbnail ${index}`}
+                    alt={`Thumbnail ${imageUrl}`}
                     className="w-full aspect-square object-cover"
                     height={100}
-                    src={placeholder}
                     width={100}
+                    src={imageUrl ? imageUrl : placeholder }
+                    onClick={() => selectImage(imageUrl)}
                   />
                 </button>
               ))}
@@ -160,7 +148,7 @@ const ProductDetails = () => {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold">${product?.price}</h2>
               {console.log(product?.sellerId !== user?.userId,"product & seller id")}
-             { (product?.sellerId !== user?.userId)  ? <div className="flex items-center gap-4 mr-12">
+              { (product?.sellerId !== user?.userId)  ? <div className="flex items-center gap-4 mr-12">
                 <button
                   className="flex flex-end gap-2 bg-transparent text-700 font-semibold py-2 px-4 border-2 border-gray-300 rounded"
                   onClick={() => addtoFavorite(product?.productId)}
@@ -211,13 +199,13 @@ const ProductDetails = () => {
                 <h3 className="text-base font-bold font-medium mb-2">Seller</h3>
                 <div className="flex items-center gap-2">
                   <div>
-                    <p className="font-medium">{product?.sellerName}</p>
-                    <p className="text-gray-600 text-sm mt-2">
-                      Seller since {product?.sellerJoiningDate || '2020'}
-                    </p>
-                    <div className="flex flew-col items-center gap-1 text-xs font-semibold">
-                      <StarRating starCount={product?.rating || 3} />
-                    </div>
+                    <p className="font-medium mb-1">{product?.sellerName}</p>
+                    {product?.sellerJoiningDate && 
+                      <p className="text-gray-600 text-sm mb-1">
+                        Seller since {product.sellerJoiningDate[2]}/{product.sellerJoiningDate[1]}/{product.sellerJoiningDate[0]}
+                      </p>
+                    }
+                    <StartRating totalStars={product?.rating || 0}></StartRating>
                   </div>
                 </div>
               </div>

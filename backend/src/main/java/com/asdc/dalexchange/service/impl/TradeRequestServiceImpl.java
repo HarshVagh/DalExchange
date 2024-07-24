@@ -3,12 +3,15 @@ package com.asdc.dalexchange.service.impl;
 import com.asdc.dalexchange.dto.TradeRequestDTO;
 import com.asdc.dalexchange.mappers.Mapper;
 import com.asdc.dalexchange.model.Product;
+import com.asdc.dalexchange.model.ProductImage;
 import com.asdc.dalexchange.model.TradeRequest;
 import com.asdc.dalexchange.model.User;
+import com.asdc.dalexchange.repository.ProductImageRepository;
 import com.asdc.dalexchange.repository.ProductRepository;
 import com.asdc.dalexchange.repository.TradeRequestRepository;
 import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.service.TradeRequestService;
+import com.asdc.dalexchange.specifications.ProductImageSpecification;
 import com.asdc.dalexchange.specifications.TradeRequestSpecification;
 import com.asdc.dalexchange.util.AuthUtil;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
@@ -28,33 +31,36 @@ public class TradeRequestServiceImpl implements TradeRequestService {
     private TradeRequestRepository tradeRequestRepository;
     private ProductRepository productRepository;
     private UserRepository userRepository;
+    private ProductImageRepository productImageRepository;
     private Mapper<TradeRequest, TradeRequestDTO> tradeRequestMapper;
 
     public TradeRequestServiceImpl(
             TradeRequestRepository tradeRequestRepository,
             ProductRepository productRepository,
             UserRepository userRepository,
+            ProductImageRepository productImageRepository,
             Mapper<TradeRequest, TradeRequestDTO> tradeRequestMapper) {
         this.tradeRequestRepository = tradeRequestRepository;
         this.productRepository = productRepository;
         this.userRepository = userRepository;
+        this.productImageRepository = productImageRepository;
         this.tradeRequestMapper = tradeRequestMapper;
     }
 
     @Override
-    public List<TradeRequest> getBuyerTradeRequests() {
+    public List<TradeRequestDTO> getBuyerTradeRequests() {
         log.info("getBuyerTradeRequests call started in the TradeRequestServiceImpl");
         Long buyerId = AuthUtil.getCurrentUserId(userRepository);
         Specification<TradeRequest> spec = TradeRequestSpecification.hasBuyerId(buyerId);
-        return tradeRequestRepository.findAll(spec);
+        return getTradeRequests(spec);
     }
 
     @Override
-    public List<TradeRequest> getSellerTradeRequests() {
+    public List<TradeRequestDTO> getSellerTradeRequests() {
         log.info("getSellerTradeRequests call started in the TradeRequestServiceImpl");
         Long sellerId = AuthUtil.getCurrentUserId(userRepository);
         Specification<TradeRequest> spec = TradeRequestSpecification.hasSellerId(sellerId);
-        return tradeRequestRepository.findAll(spec);
+        return getTradeRequests(spec);
     }
 
     @Override
@@ -90,6 +96,22 @@ public class TradeRequestServiceImpl implements TradeRequestService {
 
         TradeRequest createdTradeRequest = tradeRequestRepository.save(tradeRequest);
         return tradeRequestMapper.mapTo(createdTradeRequest);
+    }
+
+    private List<TradeRequestDTO> getTradeRequests(Specification<TradeRequest> spec) {
+        List<TradeRequest> tradeRequests = tradeRequestRepository.findAll(spec);
+        List<TradeRequestDTO> tradeRequestDTOs = tradeRequests.stream()
+                .map(tradeRequestMapper::mapTo)
+                .toList();
+        tradeRequestDTOs.forEach(TradeRequestDTO -> {
+            long productId = TradeRequestDTO.getProduct().getProductId();
+            Specification<ProductImage> imageSpec = ProductImageSpecification.byProductId(productId);
+            List<ProductImage> productImages = productImageRepository.findAll(imageSpec);
+            if (!productImages.isEmpty()) {
+                TradeRequestDTO.getProduct().setImageUrl(productImages.get(0).getImageUrl());
+            }
+        });
+        return tradeRequestDTOs;
     }
 
     private Product findProductById(Long productId) {

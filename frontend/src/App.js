@@ -28,7 +28,8 @@ import OrderModeration from './features/admin_moderation/OrderModeration';
 import UserModeration from "./features/admin_moderation/UserModeration";
 import ProductModeration from "./features/admin_moderation/ProductModeration";
 import FeedbackModeration from "./features/admin_moderation/FeedbackModeration";
-import CancelPayment from "../src/components/CancelPayment";
+import PaymentCancelled from './features/trade_requests/components/CancelPayment';
+import SuccessPage from './features/trade_requests/components/PaymentSuccess';
 
 
 function App() {
@@ -42,6 +43,7 @@ function App() {
           <Route path="/forgot-password" element={<UnauthenticatedRoute> <ForgotPassword /> </UnauthenticatedRoute>} />
           <Route path="/verify-email" element={<UnauthenticatedRoute> <VerifyEmail /> </UnauthenticatedRoute>} />
           <Route path="/reset-password" element={<UnauthenticatedRoute> <ResetPassword /> </UnauthenticatedRoute>} />
+          <Route path="/not-authorized" element={<NotAuthorizedPage />} />
 
           <Route path="/products" element={
             <StudentPrivateRoute>
@@ -69,8 +71,9 @@ function App() {
           <Route path="/profile/reviews" element={<StudentPrivateRoute> <Reviews /> </StudentPrivateRoute>} />
 
           <Route path="/notifications" element={<StudentPrivateRoute> <Notification/> </StudentPrivateRoute>} />
-          <Route path="/not-authorized" element={<NotAuthorizedPage />} />
-          <Route path="/payment/fail" element={ <CancelPayment /> } />
+          
+          <Route path="/payment/success" element={ <SuccessPage /> } />
+          <Route path="/payment/fail" element={ <PaymentCancelled /> } />
 
 
         </Routes>
