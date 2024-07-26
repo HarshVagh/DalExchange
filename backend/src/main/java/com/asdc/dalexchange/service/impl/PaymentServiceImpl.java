@@ -1,45 +1,39 @@
 package com.asdc.dalexchange.service.impl;
 
 
+import com.asdc.dalexchange.dto.PaymentDTO;
 import com.asdc.dalexchange.enums.OrderStatus;
 import com.asdc.dalexchange.enums.PaymentStatus;
-import com.asdc.dalexchange.model.*;
-import com.asdc.dalexchange.repository.*;
+import com.asdc.dalexchange.mappers.impl.PaymentMapperImpl;
+import com.asdc.dalexchange.model.OrderDetails;
+import com.asdc.dalexchange.model.Payment;
+import com.asdc.dalexchange.repository.OrderRepository;
+import com.asdc.dalexchange.repository.PaymentRepository;
 import com.asdc.dalexchange.service.PaymentService;
 import com.asdc.dalexchange.service.TradeRequestService;
-import com.asdc.dalexchange.util.AuthUtil;
+import com.asdc.dalexchange.specifications.PaymentSpecification;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
 import com.stripe.Stripe;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
-    @Value("${stripe.api.key}")
-    private String stripeSecretKey;
-
-
     @Autowired
-    private UserRepository userRepository;
-
-    @Value("${api.endpoint}")
-    private String APIendpoint;
+    private PaymentMapperImpl paymentMapper;
 
     @Autowired
     private OrderRepository orderRepository;
-
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private ShippingRepository shippingRepository;
 
     @Autowired
     private PaymentRepository paymentRepository;
@@ -47,22 +41,20 @@ public class PaymentServiceImpl implements PaymentService {
     @Autowired
     private TradeRequestService tradeRequestService;
 
-    @Autowired
-    private  TradeRequestRepository tradeRequestRepository;
-
-    //Long userId = AuthUtil.getCurrentUserId(userRepository);
-
-    @Value("${frontend.endpoint}")
+    @Value("${frontend.url}")
     private String frontendURL;
 
-    @Override
-    public String createPaymentIntent( Long productId) {
-        try {
+    @Value("${stripe.api.key}")
+    private String stripeSecretKey;
 
-           Long userId = AuthUtil.getCurrentUserId(userRepository);
+    @Override
+    public String createPaymentIntent( Map<String,Object> requestBody) {
+        try {
+            Long productId = Long.parseLong(requestBody.get("productId").toString());
+            Long orderId = Long.parseLong(requestBody.get("orderId").toString());
             double productPrice = tradeRequestService.getApprovedTradeRequestAmount(productId);
             String successURL = frontendURL + "/payment/success?amount=" + productPrice
-                   + "&productId=" + productId + "&paymentIntentId={CHECKOUT_SESSION_ID}";
+                   + "&productId=" + productId + "&paymentIntentId={CHECKOUT_SESSION_ID}" + "&orderId=" + orderId;
 
             String failureURL = frontendURL + "/payment/fail";
 
@@ -96,63 +88,29 @@ public class PaymentServiceImpl implements PaymentService {
 
 
     @Override
-    public void savePayment(String amount, Long productId, String paymentIntentId) {
-        Long userId = AuthUtil.getCurrentUserId(userRepository);
-        boolean soldStatus = true;
-
-        ///change the status of the product
-        Optional<Product> optionalProduct = productRepository.findById(productId);
-        if (optionalProduct.isPresent()) {
-            Product product = optionalProduct.get();
-            product.setSold(true); // Update the isSold status to true
-            productRepository.save(product);
-        } else {
-            throw new ResourceNotFoundException("Product not found with id " + productId);
+    public PaymentDTO savePayment(Map<String, Object> requestBody) {
+        Long orderId = Long.parseLong(requestBody.get("orderId").toString());
+        System.out.println("the order is :" + orderId);
+        Optional<OrderDetails> orderOptional = orderRepository.findById(orderId);
+        if (!orderOptional.isPresent()) {
+            throw new ResourceNotFoundException("Order not found");
         }
 
+        OrderDetails order = orderOptional.get();
+        order.setOrderStatus(OrderStatus.Delivered);
+        orderRepository.save(order);
 
-        // change the status of the tragerequest
+        Specification<Payment> spec = PaymentSpecification.hasPaymentId(orderId);
+        List<Payment> payments = paymentRepository.findAll(spec);
+        if (payments.isEmpty()) {
+            return new PaymentDTO(); // Or throw an exception if required
+        }
 
-       // TradeRequest tradeRequest = tradeRequestService.
-
-
-
-
-
-
-
-
-        User user = userRepository.findByUserId(userId);
-        // Fetch or create ShippingAddress
-
-        ShippingAddress shippingAddress = new ShippingAddress();
-        // Set shipping address details here
-        shippingRepository.save(shippingAddress);
-
-        // Create and save Payment
-        Payment payment = new Payment();
-        payment.setPaymentMethod("Card");
+        Payment payment = payments.get(0);
         payment.setPaymentStatus(PaymentStatus.completed);
         payment.setPaymentDate(LocalDateTime.now());
-        payment.setAmount(Double.parseDouble(amount));
-        paymentRepository.save(payment);
+        Payment savedPayment = paymentRepository.save(payment);
 
-        // Create and save OrderDetails
-        OrderDetails orderDetails = new OrderDetails();
-        orderDetails.setBuyer(user);
-        orderDetails.setProductId(new Product());
-        orderDetails.setTotalAmount(Double.parseDouble(amount));
-        orderDetails.setOrderStatus(OrderStatus.Pending);
-        orderDetails.setTransactionDatetime(LocalDateTime.now());
-        orderDetails.setShippingAddress(shippingAddress);
-        orderDetails.setPayment(payment);
-        orderRepository.save(orderDetails);
-
-    }
-
-
-
-    public Payment savePayment(Payment payment) {
-        return paymentRepository.save(payment);
+        return paymentMapper.mapTo(savedPayment);
     }
 }

@@ -28,9 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -420,6 +418,40 @@ public class ProductServiceImplTest {
         verify(productModerationMapper, times(0)).mapTo(any(Product.class));
     }
 
+    @Test
+    void testMarkProductAsSold_Success() {
+        // Arrange
+        Long productId = 1L;
+        Product product = new Product();
+        product.setProductId(productId);
+        product.setSold(false);
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("productId", productId);
+
+        when(productRepository.findById(productId)).thenReturn(Optional.of(product));
+
+        productService.markProductAsSold(requestBody);
+
+        verify(productRepository, times(1)).findById(productId);
+        verify(productRepository, times(1)).save(product);
+        assertTrue(product.isSold(), "Product should be marked as sold");
+    }
+
+    @Test
+    void testMarkProductAsSold_ProductNotFound() {
+        // Arrange
+        Long productId = 1L;
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("productId", productId);
+
+        when(productRepository.findById(productId)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> productService.markProductAsSold(requestBody),
+                "Expected markProductAsSold to throw, but it didn't");
+        verify(productRepository, times(1)).findById(productId);
+        verify(productRepository, times(0)).save(any(Product.class));
+    }
 
 
 }

@@ -11,7 +11,9 @@ import com.asdc.dalexchange.repository.ProductImageRepository;
 import com.asdc.dalexchange.repository.ProductRepository;
 import com.asdc.dalexchange.repository.TradeRequestRepository;
 import com.asdc.dalexchange.repository.UserRepository;
+import com.asdc.dalexchange.specifications.TradeRequestSpecification;
 import com.asdc.dalexchange.util.AuthUtil;
+import com.asdc.dalexchange.util.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -21,11 +23,9 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -190,4 +190,104 @@ public class TradeRequestServiceImplTest {
             verify(tradeRequestMapper, times(1)).mapTo(createdTradeRequest);
         }
     }
+    @Test
+    public void testGetApprovedTradeRequestAmount() {
+        Long productId = 1L;
+        Long userId = 123L;
+
+
+        try (var mockedAuthUtil = Mockito.mockStatic(AuthUtil.class)) {
+            mockedAuthUtil.when(() -> AuthUtil.getCurrentUserId(any())).thenReturn(userId);
+
+            TradeRequest tradeRequest = new TradeRequest();
+            tradeRequest.setRequestedPrice(100.00);
+
+            when(tradeRequestRepository.findAll(any(Specification.class)))
+                    .thenReturn(Collections.singletonList(tradeRequest));
+
+            double result = tradeRequestService.getApprovedTradeRequestAmount(productId);
+
+            assertEquals(100.00, result, 0.01); // Added delta for floating-point comparison
+        }
+    }
+
+
+    @Test
+    public void testGetApprovedTradeRequestAmount_noTradeRequests() {
+        Long productId = 1L;
+        Long userId = 123L;
+
+        try (var mockedAuthUtil = Mockito.mockStatic(AuthUtil.class)) {
+            mockedAuthUtil.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
+
+            when(tradeRequestRepository.findAll(Specification
+                    .where(TradeRequestSpecification.hasBuyerId(userId))
+                    .and(TradeRequestSpecification.hasProductId(productId))
+                    .and(TradeRequestSpecification.hasRequestStatus("approved"))))
+                    .thenReturn(Collections.emptyList());
+
+            assertThrows(IndexOutOfBoundsException.class, () -> tradeRequestService.getApprovedTradeRequestAmount(productId));
+        }
+    }
+
+    @Test
+    public void testUpdateStatusByProduct_success() {
+        Long productId = 1L;
+        Long userId = 123L;
+
+        try (var mockedAuthUtil = Mockito.mockStatic(AuthUtil.class)) {
+            mockedAuthUtil.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
+
+            TradeRequest tradeRequest = new TradeRequest();
+            tradeRequest.setRequestStatus("approved");
+
+            Specification<TradeRequest> spec = Specification
+                    .where(TradeRequestSpecification.hasProductId(productId))
+                    .and(TradeRequestSpecification.hasBuyerId(userId));
+            when(tradeRequestRepository.findOne(any(Specification.class))).thenReturn(Optional.of(tradeRequest));
+            when(tradeRequestRepository.save(any(TradeRequest.class))).thenAnswer(invocation -> {
+                TradeRequest savedRequest = invocation.getArgument(0);
+                savedRequest.setRequestStatus("completed");
+                return savedRequest;
+            });
+
+            Map<String, Object> requestBody = Map.of("productId", productId);
+
+            String result = tradeRequestService.updateStatusByProduct(requestBody);
+
+            assertEquals("Trade requestUpdated Successfully", result);
+            verify(tradeRequestRepository).findOne(any(Specification.class));
+            verify(tradeRequestRepository).save(any(TradeRequest.class));
+        }
+    }
+
+    @Test
+    public void testUpdateStatusByProduct_notFound() {
+        Long productId = 1L;
+        Long userId = 123L;
+
+        try (var mockedAuthUtil = Mockito.mockStatic(AuthUtil.class)) {
+            mockedAuthUtil.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
+
+            Specification<TradeRequest> spec = Specification
+                    .where(TradeRequestSpecification.hasProductId(productId))
+                    .and(TradeRequestSpecification.hasBuyerId(userId));
+            when(tradeRequestRepository.findOne(any(Specification.class))).thenReturn(Optional.empty());
+
+            Map<String, Object> requestBody = Map.of("productId", productId);
+
+            String result = tradeRequestService.updateStatusByProduct(requestBody);
+
+            assertEquals("TradeRequest not found for product ID: 1 and user ID: 123", result);
+            verify(tradeRequestRepository).findOne(any(Specification.class));
+        }
+    }
+
+
+
+
+
+
+
+
 }
