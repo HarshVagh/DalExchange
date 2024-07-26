@@ -26,6 +26,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+/**
+ * REST controller for authentication-related operations.
+ */
 @RestController
 @RequestMapping("/auth")
 @Slf4j
@@ -43,6 +46,19 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    /**
+     * Handles user signup requests.
+     *
+     * @param username       the username
+     * @param password       the password
+     * @param email          the email address
+     * @param firstName      the first name
+     * @param phoneNumber    the phone number
+     * @param profilePicture the profile picture
+     * @param role           the role
+     * @param bio            the bio
+     * @return a ResponseEntity with the signup result
+     */
     @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> signup(
             @RequestPart("username") String username,
@@ -81,6 +97,12 @@ public class AuthController {
         }
     }
 
+    /**
+     * Handles user login requests.
+     *
+     * @param user the user credentials
+     * @return a ResponseEntity with the login result
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
         log.info("Login attempt for email: {}", user.getEmail());
@@ -99,6 +121,12 @@ public class AuthController {
         }
     }
 
+    /**
+     * Handles email verification requests.
+     *
+     * @param request the verification request
+     * @return a ResponseEntity with the verification result
+     */
     @PostMapping("/verify")
     public ResponseEntity<?> verifyEmail(@RequestBody VerificationRequest request) {
         log.info("Received verification request: {}", request);
@@ -118,6 +146,11 @@ public class AuthController {
         }
     }
 
+    /**
+     * Retrieves the current authenticated user.
+     *
+     * @return a ResponseEntity with the current user information
+     */
     @GetMapping("/current-user")
     public ResponseEntity<?> getCurrentUser() {
         log.info("Fetching current user");
