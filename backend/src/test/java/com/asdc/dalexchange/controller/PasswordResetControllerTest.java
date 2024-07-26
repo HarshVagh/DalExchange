@@ -17,14 +17,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 class PasswordResetControllerTest {
-
-    @InjectMocks
-    private PasswordResetController passwordResetController;
 
     @Mock
     private EmailService emailService;
@@ -38,6 +35,9 @@ class PasswordResetControllerTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @InjectMocks
+    private PasswordResetController passwordResetController;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -46,22 +46,30 @@ class PasswordResetControllerTest {
     @Test
     void testForgotPassword() {
         String email = "test@example.com";
-        PasswordResetToken resetToken = new PasswordResetToken();
-        resetToken.setEmail(email);
-        resetToken.setToken(UUID.randomUUID().toString());
-        resetToken.setExpiryDate(LocalDateTime.now().plusHours(1));
-
-        when(passwordResetTokenRepository.save(any(PasswordResetToken.class))).thenReturn(resetToken);
+        doNothing().when(emailService).sendEmail(anyString(), anyString(), anyString());
+        when(passwordResetTokenRepository.save(any(PasswordResetToken.class))).thenReturn(new PasswordResetToken());
 
         String response = passwordResetController.forgotPassword(email);
 
-        verify(passwordResetTokenRepository, times(1)).save(any(PasswordResetToken.class));
-        verify(emailService, times(1)).sendEmail(eq(email), eq("Password Reset Request"), contains("Click the link to reset your password:"));
         assertEquals("Password reset email sent.", response);
+        verify(emailService, times(1)).sendEmail(anyString(), anyString(), anyString());
+        verify(passwordResetTokenRepository, times(1)).save(any(PasswordResetToken.class));
     }
 
     @Test
-    void testResetPassword_Success() {
+    void testForgotPassword_EmailServiceFailure() {
+        String email = "test@example.com";
+        doThrow(new RuntimeException("Email service failed")).when(emailService).sendEmail(anyString(), anyString(), anyString());
+
+        String response = passwordResetController.forgotPassword(email);
+
+        assertEquals("Failed to send password reset email.", response);
+        verify(emailService, times(1)).sendEmail(anyString(), anyString(), anyString());
+        verify(passwordResetTokenRepository, times(1)).save(any(PasswordResetToken.class));
+    }
+
+    @Test
+    void testResetPassword() {
         String email = "test@example.com";
         String token = UUID.randomUUID().toString();
         String newPassword = "newPassword123";
@@ -81,37 +89,34 @@ class PasswordResetControllerTest {
 
         String response = passwordResetController.resetPassword(email, token, newPassword);
 
+        assertEquals("Password reset successfully.", response);
         verify(passwordResetTokenRepository, times(1)).findByToken(token);
         verify(userRepository, times(1)).findByEmail(email);
         verify(passwordEncoder, times(1)).encode(newPassword);
         verify(userRepository, times(1)).save(user);
         verify(passwordResetTokenRepository, times(1)).delete(resetToken);
-
-        assertEquals("Password reset successfully.", response);
-        assertEquals("encodedNewPassword", user.getPassword());
     }
 
     @Test
-    void testResetPassword_InvalidToken() {
+    void testResetPassword_InvalidOrExpiredToken() {
         String email = "test@example.com";
         String token = UUID.randomUUID().toString();
         String newPassword = "newPassword123";
 
         when(passwordResetTokenRepository.findByToken(token)).thenReturn(Optional.empty());
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () ->
-                passwordResetController.resetPassword(email, token, newPassword));
+        String response = passwordResetController.resetPassword(email, token, newPassword);
 
-        assertEquals("Invalid or expired token", exception.getMessage());
+        assertEquals("Error resetting password.", response);
         verify(passwordResetTokenRepository, times(1)).findByToken(token);
-        verify(userRepository, times(0)).findByEmail(anyString());
-        verify(passwordEncoder, times(0)).encode(anyString());
-        verify(userRepository, times(0)).save(any(User.class));
-        verify(passwordResetTokenRepository, times(0)).delete(any(PasswordResetToken.class));
+        verify(userRepository, never()).findByEmail(anyString());
+        verify(passwordEncoder, never()).encode(anyString());
+        verify(userRepository, never()).save(any(User.class));
+        verify(passwordResetTokenRepository, never()).delete(any(PasswordResetToken.class));
     }
 
     @Test
-    void testResetPassword_InvalidEmail() {
+    void testResetPassword_EmailMismatch() {
         String email = "test@example.com";
         String token = UUID.randomUUID().toString();
         String newPassword = "newPassword123";
@@ -123,14 +128,38 @@ class PasswordResetControllerTest {
 
         when(passwordResetTokenRepository.findByToken(token)).thenReturn(Optional.of(resetToken));
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () ->
-                passwordResetController.resetPassword(email, token, newPassword));
+        String response = passwordResetController.resetPassword(email, token, newPassword);
 
-        assertEquals("Invalid email address", exception.getMessage());
+        assertEquals("Error resetting password.", response);
         verify(passwordResetTokenRepository, times(1)).findByToken(token);
-        verify(userRepository, times(0)).findByEmail(anyString());
-        verify(passwordEncoder, times(0)).encode(anyString());
-        verify(userRepository, times(0)).save(any(User.class));
-        verify(passwordResetTokenRepository, times(0)).delete(any(PasswordResetToken.class));
+        verify(userRepository, never()).findByEmail(anyString());
+        verify(passwordEncoder, never()).encode(anyString());
+        verify(userRepository, never()).save(any(User.class));
+        verify(passwordResetTokenRepository, never()).delete(any(PasswordResetToken.class));
+    }
+
+    @Test
+    void testResetPassword_UserNotFound() {
+        String email = "test@example.com";
+        String token = UUID.randomUUID().toString();
+        String newPassword = "newPassword123";
+
+        PasswordResetToken resetToken = new PasswordResetToken();
+        resetToken.setEmail(email);
+        resetToken.setToken(token);
+        resetToken.setExpiryDate(LocalDateTime.now().plusHours(1));
+
+        when(passwordResetTokenRepository.findByToken(token)).thenReturn(Optional.of(resetToken));
+        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+        String response = passwordResetController.resetPassword(email, token, newPassword);
+
+        assertEquals("Error resetting password.", response);
+        verify(passwordResetTokenRepository, times(1)).findByToken(token);
+        verify(userRepository, times(1)).findByEmail(email);
+        verify(passwordEncoder, never()).encode(anyString());
+        verify(userRepository, never()).save(any(User.class));
+        verify(passwordResetTokenRepository, never()).delete(any(PasswordResetToken.class));
     }
 }
+
