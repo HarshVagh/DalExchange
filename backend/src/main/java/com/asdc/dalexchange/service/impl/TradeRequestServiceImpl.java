@@ -126,28 +126,31 @@ public class TradeRequestServiceImpl implements TradeRequestService {
 
     @Override
     public double getApprovedTradeRequestAmount(Long productId) {
-        System.out.println("the productid : ");
         Long userId = AuthUtil.getCurrentUserId(userRepository);
-        System.out.println("thhhtherhehrrh:" + tradeRequestRepository.findAll(
-                where(TradeRequestSpecification.hasBuyerId(userId))
-                        .and(TradeRequestSpecification.hasProductId(productId))
-                        .and(TradeRequestSpecification.hasRequestStatus("approved"))));
         List<TradeRequest> tradeRequest = tradeRequestRepository.findAll(
                 where(TradeRequestSpecification.hasBuyerId(userId))
                         .and(TradeRequestSpecification.hasProductId(productId))
                         .and(TradeRequestSpecification.hasRequestStatus("approved")));
-        TradeRequest firsttraderequest = tradeRequest.get(0);
-        System.out.println("treaderequest payment"+firsttraderequest);
-        return firsttraderequest.getRequestedPrice();
+        TradeRequest firstTraderequest = tradeRequest.get(0);
+        return firstTraderequest.getRequestedPrice();
     }
 
-    public List<TradeRequest> getApprovedTradeRequests(Long productId) {
+    @Override
+    public String updateStatusByProduct(Map<String, Object> requestBody) {
+        Long productId = Long.parseLong(requestBody.get("productId").toString());
         Long userId = AuthUtil.getCurrentUserId(userRepository);
         Specification<TradeRequest> specification = Specification
                 .where(TradeRequestSpecification.hasProductId(productId))
-                .and(TradeRequestSpecification.hasBuyerId(userId))
-                .and(TradeRequestSpecification.hasRequestStatus("approved"));
+                .and(TradeRequestSpecification.hasBuyerId(userId));
 
-        return tradeRequestRepository.findAll(specification);
+        TradeRequest tradeRequest = tradeRequestRepository.findOne(specification).orElse(null);
+        System.out.println("the approved trade request :" +tradeRequest);
+        if (tradeRequest != null) {
+            tradeRequest.setRequestStatus("completed");
+            tradeRequestRepository.save(tradeRequest);
+            return ("Trade requestUpdated Successfully");
+        } else {
+            return ("TradeRequest not found for product ID: " + productId + " and user ID: " + userId);
+        }
     }
 }

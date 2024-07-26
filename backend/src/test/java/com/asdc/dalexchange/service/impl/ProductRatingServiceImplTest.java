@@ -12,6 +12,7 @@ import com.asdc.dalexchange.repository.ProductRepository;
 import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.specifications.ProductSpecification;
 import com.asdc.dalexchange.util.AuthUtil;
+import com.asdc.dalexchange.util.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -22,9 +23,7 @@ import org.mockito.MockedStatic;
 import jakarta.transaction.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -177,6 +176,102 @@ class ProductRatingServiceImplTest {
         productRatingService.deleteReview(productId, userId);
 
         verify(productRatingRepository, times(1)).deleteById(id);
+    }
+
+    @Test
+    void testSaveRating_Success() {
+        Long userId = 1L;
+        Long productId = 2L;
+        Integer rating = 5;
+        String review = "Excellent product!";
+
+        User user = new User();
+        user.setUserId(userId);
+
+        Product product = new Product();
+        product.setProductId(productId);
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("productId", productId);
+        requestBody.put("rating", rating);
+        requestBody.put("review", review);
+
+        ProductRating productRating = new ProductRating();
+        ProductRatingID productRatingID = new ProductRatingID(productId, userId);
+        productRating.setId(productRatingID);
+        productRating.setUser(user);
+        productRating.setProduct(product);
+        productRating.setRating(rating);
+        productRating.setReview(review);
+
+        try (MockedStatic<AuthUtil> authUtilMock = mockStatic(AuthUtil.class)) {
+            authUtilMock.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
+
+            when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+            when(productRepository.findById(productId)).thenReturn(Optional.of(product));
+
+            productRatingService.saveRating(requestBody);
+
+            verify(userRepository, times(1)).findById(userId);
+            verify(productRepository, times(1)).findById(productId);
+            verify(productRatingRepository, times(1)).save(any(ProductRating.class));
+        }
+    }
+
+    @Test
+    void testSaveRating_UserNotFound() {
+        Long userId = 1L;
+        Long productId = 2L;
+        Integer rating = 5;
+        String review = "Good product";
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("productId", productId);
+        requestBody.put("rating", rating);
+        requestBody.put("review", review);
+
+        try (MockedStatic<AuthUtil> authUtilMock = mockStatic(AuthUtil.class)) {
+            authUtilMock.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
+
+            when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+            assertThrows(ResourceNotFoundException.class, () -> productRatingService.saveRating(requestBody),
+                    "Expected saveRating to throw ResourceNotFoundException, but it didn't");
+
+            verify(userRepository, times(1)).findById(userId);
+            verify(productRepository, times(0)).findById(productId);
+            verify(productRatingRepository, times(0)).save(any(ProductRating.class));
+        }
+    }
+
+    @Test
+    void testSaveRating_ProductNotFound() {
+        Long userId = 1L;
+        Long productId = 2L;
+        Integer rating = 5;
+        String review = "Good product";
+
+        User user = new User();
+        user.setUserId(userId);
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("productId", productId);
+        requestBody.put("rating", rating);
+        requestBody.put("review", review);
+
+        try (MockedStatic<AuthUtil> authUtilMock = mockStatic(AuthUtil.class)) {
+            authUtilMock.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
+
+            when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+            when(productRepository.findById(productId)).thenReturn(Optional.empty());
+
+            assertThrows(ResourceNotFoundException.class, () -> productRatingService.saveRating(requestBody),
+                    "Expected saveRating to throw ResourceNotFoundException, but it didn't");
+
+            verify(userRepository, times(1)).findById(userId);
+            verify(productRepository, times(1)).findById(productId);
+            verify(productRatingRepository, times(0)).save(any(ProductRating.class));
+        }
     }
 
 }

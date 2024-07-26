@@ -1,6 +1,5 @@
 package com.asdc.dalexchange.service.impl;
 
-import com.asdc.dalexchange.dto.OrderDTO;
 import com.asdc.dalexchange.dto.ProductRatingAdminDTO;
 import com.asdc.dalexchange.dto.ProductRatingDTO;
 import com.asdc.dalexchange.mappers.Mapper;
@@ -18,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,7 +45,6 @@ public class ProductRatingServiceImpl implements ProductRatingService {
         List<Long> productIds = products.stream()
                 .map(Product::getProductId)
                 .collect(Collectors.toList());
-
         List<ProductRating> allProductRatings = productIds.stream()
                 .flatMap(productId -> productRatingRepository.findByIdProductId(productId).stream())
                 .collect(Collectors.toList());
@@ -78,20 +77,22 @@ public class ProductRatingServiceImpl implements ProductRatingService {
     }
 
     @Override
-    public  void  saveRating(Integer rating,String review,Long productId){
+    public  void  saveRating(Map<String,Object> requestBody){
+        Long productId = Long.parseLong(requestBody.get("productId").toString());
         Long userId = AuthUtil.getCurrentUserId(userRepository);
+        Integer rating = Integer.parseInt(requestBody.get("rating").toString());
+        String review  = requestBody.get("review").toString();
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + userId));
-
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id " + productId));
-
         ProductRating productRating = new ProductRating();
         productRating.setRating(rating);
         productRating.setReview(review);
         productRating.setProduct(product);
         productRating.setUser(user);
-
+        ProductRatingID productRatingID = new ProductRatingID(productId, userId);
+        productRating.setId(productRatingID);
         productRatingRepository.save(productRating);
     }
 }
