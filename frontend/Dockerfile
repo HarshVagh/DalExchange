@@ -7,9 +7,17 @@ WORKDIR /app
 # Copy package.json and package-lock.json (or yarn.lock)
 COPY package*.json ./
 
+# Install dependencies
+RUN npm install
+
 # Copy the rest of the project (excluding node_modules)
 COPY . .
+
+# Overwrite the development .env with the production .env
 COPY .env.prod .env
+
+# Build the project
+RUN npm run build
 
 # Use a smaller image for serving
 FROM nginx:alpine
