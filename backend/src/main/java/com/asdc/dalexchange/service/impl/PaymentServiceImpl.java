@@ -102,7 +102,7 @@ public class PaymentServiceImpl implements PaymentService {
         orderRepository.save(order);
 
         // Retrieve payments
-        Specification<Payment> spec = PaymentSpecification.hasProductId(orderId);
+        Specification<Payment> spec = PaymentSpecification.hasPaymentId(orderId);
         List<Payment> payments = paymentRepository.findAll(spec);
         if (payments.isEmpty()) {
             return new PaymentDTO(); // Or throw an exception if required

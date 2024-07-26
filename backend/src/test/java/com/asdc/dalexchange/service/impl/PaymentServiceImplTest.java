@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -135,7 +134,7 @@ class PaymentServiceImplTest {
 
         when(orderRepository.findById(orderId)).thenReturn(Optional.of(orderDetails));
 
-        Specification<Payment> spec = PaymentSpecification.hasProductId(orderId);
+        Specification<Payment> spec = PaymentSpecification.hasOrderId(orderId);
         when(paymentRepository.findAll(spec)).thenReturn(Collections.emptyList());
 
         PaymentDTO expectedPaymentDTO = new PaymentDTO();
