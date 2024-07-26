@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -148,6 +149,16 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
         return productModerationMapper.mapTo(product);
+    }
+
+    @Override
+    public void  markProductAsSold(Map<String,Object> requestBody){
+        Long productId = Long.parseLong(requestBody.get("productId").toString());
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        product.setSold(true);
+        productRepository.save(product);
+
     }
 
 }

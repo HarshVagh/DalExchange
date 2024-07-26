@@ -12,4 +12,5 @@ public interface TradeRequestService {
     TradeRequest updateTradeRequestStatus(Long requestId, String status);
     TradeRequestDTO createTradeRequest(Map<String, Object> requestBody);
     double getApprovedTradeRequestAmount(Long productId);
+    String updateStatusByProduct(Map<String, Object> requestBody);
 }

@@ -45,7 +45,8 @@ public class ProductListingServiceImpl implements ProductListingService {
         Specification<Product> spec = Specification.where(ProductSpecification.hasTitleOrDescriptionContaining(search))
                 .and(ProductSpecification.hasCategory(categories))
                 .and(ProductSpecification.hasCondition(conditions))
-                .and(ProductSpecification.hasPriceBetween(minPrice, maxPrice));
+                .and(ProductSpecification.hasPriceBetween(minPrice, maxPrice))
+                .and(ProductSpecification.isNotUnlisted());
         Page<Product> productPage = productRepository.findAll(spec, pageable);
 
         List<ProductListingDTO> productListingDTOs = productPage.getContent().stream().map(product -> {

@@ -2,36 +2,35 @@ package com.asdc.dalexchange.service.impl;
 
 import com.asdc.dalexchange.dto.SoldItemDTO;
 import com.asdc.dalexchange.mappers.impl.SoldItemMapperImpl;
+import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.model.SoldItem;
+import com.asdc.dalexchange.model.User;
+import com.asdc.dalexchange.repository.ProductRepository;
 import com.asdc.dalexchange.repository.SoldItemRepository;
-import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.specifications.SoldItemSpecification;
 import com.asdc.dalexchange.util.AuthUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.MockedStatic;
+import org.mockito.*;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.*;
+
+;
 
 public class SoldItemServiceImplTest {
 
     @Mock
     private SoldItemRepository soldItemRepository;
-
-    @Mock
-    private UserRepository userRepository;
-
     @Mock
     private SoldItemMapperImpl soldItemMapper;
+
+    @Mock
+    private ProductRepository productRepository;
+
 
     @InjectMocks
     private SoldItemServiceImpl soldItemService;
@@ -48,122 +47,67 @@ public class SoldItemServiceImplTest {
         Long userId = 1L;
 
         try (MockedStatic<AuthUtil> authUtilMock = mockStatic(AuthUtil.class)) {
-            // Mock AuthUtil
-            authUtilMock.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
-
-            // Mock SoldItemRepository
+            authUtilMock.when(() -> AuthUtil.getCurrentUserId(null)).thenReturn(userId);
             when(soldItemRepository.findAll(SoldItemSpecification.bySellerUserId(userId)))
                     .thenReturn(Collections.emptyList());
 
-            // Call the method to test
             List<SoldItemDTO> result = soldItemService.GetallSoldProduct();
 
-            // Verify the results
             assertTrue(result.isEmpty());
         }
     }
-}
+    @Test
+    public void testSaveSoldItem_ProductNotExists() {
+        Long productId = 1L;
+        Product product = new Product();
+        product.setSeller(new User());
 
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("productId", productId);
 
+        when(productRepository.findById(productId)).thenReturn(Optional.of(product));
+        when(soldItemRepository.existsByProduct_ProductId(productId)).thenReturn(false);
 
+        soldItemService.saveSoldItem(requestBody);
 
+        ArgumentCaptor<SoldItem> soldItemCaptor = ArgumentCaptor.forClass(SoldItem.class);
+        verify(soldItemRepository, times(1)).save(soldItemCaptor.capture());
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-package com.asdc.dalexchange.service.impl;
-import com.asdc.dalexchange.dto.SoldItemDTO;
-import com.asdc.dalexchange.mappers.impl.SoldItemMapperImpl;
-import com.asdc.dalexchange.model.SoldItem;
-import com.asdc.dalexchange.repository.SoldItemRepository;
-import com.asdc.dalexchange.specifications.SoldItemSpecification;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
-
-public class SoldItemServiceImplTest {
-
-    @Mock
-    private SoldItemRepository soldItemRepository;
-
-    @Mock
-    private SoldItemMapperImpl soldItemMapper;
-
-    @InjectMocks
-    private SoldItemServiceImpl soldItemService;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.initMocks(this);
+        SoldItem savedSoldItem = soldItemCaptor.getValue();
+        assertNotNull(savedSoldItem);
+        assertEquals(product, savedSoldItem.getProduct());
+        assertEquals(product.getSeller(), savedSoldItem.getSeller());
+        assertNotNull(savedSoldItem.getSoldDate());
     }
 
     @Test
-    void testGetallSoldProduct_Success() {
-        // Mock data
-        Long userId = 1L;
-        List<SoldItem> mockSoldItems = createMockSoldItems(userId);
-        List<SoldItemDTO> mockSoldItemDTOs = createMockSoldItemDTOs(userId);
+    public void testSaveSoldItem_ProductAlreadyExists() {
+        Long productId = 1L;
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("productId", productId);
 
-        // Mock repository behavior
-        when(soldItemRepository.findAll(SoldItemSpecification.bySellerUserId(userId))).thenReturn(mockSoldItems);
+        when(productRepository.findById(productId)).thenReturn(Optional.of(new Product()));
+        when(soldItemRepository.existsByProduct_ProductId(productId)).thenReturn(true);
 
-        // Mock mapper behavior
-        when(soldItemMapper.mapTo(any(SoldItem.class))).thenAnswer(invocation -> {
-            SoldItem soldItem = invocation.getArgument(0);
-            return createMockSoldItemDTO(soldItem);
-        });
+        soldItemService.saveSoldItem(requestBody);
 
-        // Call the service method
-        List<SoldItemDTO> soldItemDTOs = soldItemService.GetallSoldProduct();
-
-        // Assertions
-        assertEquals(mockSoldItemDTOs.size(), soldItemDTOs.size());
-        // Add more assertions based on your DTO and expected behavior
+        verify(soldItemRepository, never()).save(any(SoldItem.class));
     }
 
-    // Helper method to create mock sold items for testing
-    private List<SoldItem> createMockSoldItems(Long userId) {
-        List<SoldItem> soldItems = new ArrayList<>();
-        // Create mock SoldItem objects
-        return soldItems;
+    @Test
+    public void testSaveSoldItem_SaveException() {
+        Long productId = 1L;
+        Product product = new Product();
+        product.setSeller(new User());
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("productId", productId);
+
+        when(productRepository.findById(productId)).thenReturn(Optional.of(product));
+        when(soldItemRepository.existsByProduct_ProductId(productId)).thenReturn(false);
+        doThrow(new RuntimeException("Database error")).when(soldItemRepository).save(any(SoldItem.class));
+
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> soldItemService.saveSoldItem(requestBody));
+        assertEquals("Error saving SoldItem", thrown.getMessage());
     }
-
-    // Helper method to create mock SoldItemDTO objects for testing
-    private List<SoldItemDTO> createMockSoldItemDTOs(Long userId) {
-        List<SoldItemDTO> soldItemDTOs = new ArrayList<>();
-        // Create mock SoldItemDTO objects
-        return soldItemDTOs;
-    }
-
-    // Helper method to create a mock SoldItemDTO based on SoldItem for testing
-    private SoldItemDTO createMockSoldItemDTO(SoldItem soldItem) {
-        SoldItemDTO soldItemDTO = new SoldItemDTO();
-        // Map attributes from SoldItem to SoldItemDTO
-        return soldItemDTO;
-    }
-
-    // Add more test cases to cover edge cases and other methods as necessary
-
 }
-*/

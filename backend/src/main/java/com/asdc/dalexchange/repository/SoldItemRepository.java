@@ -9,4 +9,6 @@ import java.util.List;
 
 public interface SoldItemRepository extends JpaRepository<SoldItem, Integer>, JpaSpecificationExecutor<SoldItem> {
     List<SoldItem> findAll(Specification<SoldItem> specification);
+    boolean existsByProduct_ProductId(Long productId);
+
 }

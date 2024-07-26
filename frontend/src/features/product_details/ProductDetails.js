@@ -146,9 +146,14 @@ const ProductDetails = () => {
             <p className="text-gray-600 mb-6">{product?.description}</p>
 
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold">${product?.price}</h2>
-              {console.log(product?.sellerId !== user?.userId,"product & seller id")}
-              { (product?.sellerId !== user?.userId)  ? <div className="flex items-center gap-4 mr-12">
+             
+              <div className='flex gap-10 items-center'>
+                <h2 className="text-2xl font-bold">${product?.price}</h2>
+                {product?.sold && <div class="bg-gray-100 text-gray-800 text-2xl font-medium me-2 px-8 py-2 rounded  border border-gray-400">
+                  Sold
+                </div>}
+              </div> 
+              {!product?.sold && (product?.sellerId !== user?.userId)  ? <div className="flex items-center gap-4 mr-12">
                 <button
                   className="flex flex-end gap-2 bg-transparent text-700 font-semibold py-2 px-4 border-2 border-gray-300 rounded"
                   onClick={() => addtoFavorite(product?.productId)}

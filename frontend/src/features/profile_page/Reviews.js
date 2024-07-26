@@ -40,16 +40,16 @@ export default function Reviews() {
   }, []);
 
   return (
-    <div className="bg-gray-100 dark:bg-gray-950 py-8 h-screen max-h-100">
+    <div className="bg-gray-100 py-8 h-screen max-h-100">
       <Header config={headerConfig} />
       <SubHeader title={"Reviews"} backPath={"/profile"} />
       {isLoading && <Loader title={"There is no Review"} />}
       {!isLoading && error && <ErrorAlert message={error.message} />}
       {!isLoading && !error && reviews && reviews.length > 0 ? (
         <div className="py-8 mt-50">
-          <div className="border rounded-lg shadow-sm dark:border-gray-800 m-4">
-            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 dark:text-white">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <div className="border rounded-lg shadow-sm m-4">
+            <table className="w-full text-sm text-left rtl:text-right text-gray-500">
+              <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                 <tr>
                   <th className="px-6 py-3">No.</th>
                   <th className="px-6 py-3">Title</th>
@@ -60,11 +60,11 @@ export default function Reviews() {
               <tbody>
                 {reviews.map((item, index) => (
                   <tr
-                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                    className="bg-white border-b"
                     key={index}
                   >
                     <td className="px-6 py-4">{index + 1}</td>
-                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                       <div className="flex items-center gap-3">
                         <div>{item?.title}</div>
                       </div>

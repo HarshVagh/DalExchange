@@ -70,7 +70,7 @@ const Header = ({ config, onSearchSubmit }) => {
           {config?.add && (
             <button
               type='button'
-              className='flex px-2.5 py-2.5 text-sm text-white font-medium bg-blue-700 hover:bg-blue-800 rounded-full dark:bg-blue-600 focus:outline-none'
+              className='flex px-2.5 py-2.5 text-sm text-white font-medium bg-blue-700 hover:bg-blue-800 rounded-full focus:outline-none'
               onClick={() => navigate('/products/add-product')}
             >
               <img alt='' className='h-5 w-5' src={PlusIcon} />
