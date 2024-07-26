@@ -1,6 +1,5 @@
 package com.asdc.dalexchange.security;
 
-
 import com.asdc.dalexchange.service.CustomUserDetailsService;
 import com.asdc.dalexchange.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +16,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
+/**
+ * Filter to authenticate JWT tokens in incoming requests.
+ */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
