@@ -1,8 +1,9 @@
 package com.asdc.dalexchange.specifications;
 
-import jakarta.persistence.criteria.*;
-import org.springframework.data.jpa.domain.Specification;
 import com.asdc.dalexchange.model.Product;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Predicate;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 
@@ -54,6 +55,12 @@ public class ProductSpecification {
             Predicate titlePredicate = criteriaBuilder.like(root.get("title"), "%" + search + "%");
             Predicate descriptionPredicate = criteriaBuilder.like(root.get("description"), "%" + search + "%");
             return criteriaBuilder.or(titlePredicate, descriptionPredicate);
+        };
+    }
+
+    public static Specification<Product> isNotUnlisted() {
+        return (root, query, criteriaBuilder) -> {
+            return criteriaBuilder.isFalse(root.get("unlisted"));
         };
     }
 }

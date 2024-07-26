@@ -39,16 +39,16 @@ export default function PurchaseHistory() {
   }, []);
 
   return (
-    <div className="bg-gray-100 dark:bg-gray-950 py-8 h-full h-screen max-h-100">
+    <div className="bg-gray-100 py-8 h-full h-screen max-h-100">
       <Header config={headerConfig} />
       <SubHeader title={"Purchase History"} backPath={"/profile"} />
       {isLoading && <Loader title={"Loading Profile Details..."} />}
       {!isLoading && error && <ErrorAlert message={error.message} />}
       {!isLoading && !error && purchaseHistory && purchaseHistory.length > 0 ? (
         <div className="py-8 mt-50">
-          <div className="border rounded-lg shadow-sm dark:border-gray-800 ">
-            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 dark:text-white">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <div className="border rounded-lg shadow-sm">
+            <table className="w-full text-sm text-left rtl:text-right text-gray-500">
+              <thead className="text-xs text-gray-700 uppercase bg-gray-50 ">
                 <tr>
                   <th className="px-6 py-3">No.</th>
                   <th className="px-6 py-3">Title</th>
@@ -59,9 +59,9 @@ export default function PurchaseHistory() {
               </thead>
               <tbody>
                 {purchaseHistory.map((item, index) => (
-                  <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                  <tr key={index} className="bg-white border-b">
                     <td className="px-6 py-4">{index + 1}</td>
-                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                       <div className="flex items-center gap-3">
                         <div>{item?.title}</div>
                       </div>

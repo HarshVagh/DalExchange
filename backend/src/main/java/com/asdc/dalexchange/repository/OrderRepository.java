@@ -2,6 +2,7 @@ package com.asdc.dalexchange.repository;
 
 import com.asdc.dalexchange.model.OrderDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -10,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 
 @Repository
-public interface OrderRepository extends JpaRepository<OrderDetails, Integer> {
+public interface OrderRepository extends JpaRepository<OrderDetails, Long>, JpaSpecificationExecutor<OrderDetails> {
 
     @Query(value = "SELECT COUNT(*) FROM order_details WHERE transaction_datetime >= CURDATE() - INTERVAL 30 DAY", nativeQuery = true)
     Long countOrdersInLast30Days();

@@ -1,3 +1,4 @@
+
 import AxiosInstance from "./AxiosInstance";
 //import axios from 'axios';
 //import { loadStripe } from "@stripe/stripe-js";
@@ -38,9 +39,9 @@ export const TradeRequestApi = {
       console.error("Error creating trade request:", error);
     }
   },
-  createPaymentIntent: async (productId) => {
+  createPaymentIntent: async (productId, orderId) => {
     try {
-      const response = await AxiosInstance.post("/payment/create_payment_intent", { productId });
+      const response = await AxiosInstance.post("/payment/create_payment_intent", { productId, orderId});
       const { sessionId } = response.data;
       return sessionId;
     } catch (error) {
@@ -50,8 +51,47 @@ export const TradeRequestApi = {
   },
   saveShippingAddress: async (body) => {
     try {
-      const response = await AxiosInstance.post("/payment/shipping_address", body);
-      console.log("Trade request created successfully:", response.data);
+      const response = await AxiosInstance.post("/payment/save_order_details", body);
+      console.log("Address saved succefully:", response.data);
+      if(response.status === 200 || response.status === 201) {
+        return response.data;
+      }
+      return null;
+    } catch (error) {
+      console.error("Error saving shipping address:", error);
+      return null;
+    }
+  },
+  savePayment: async (body) => {
+    try {
+      const response = await AxiosInstance.post(`payment/save_payment`, body);
+      console.log("Payment added successfully:", response.data);
+      if(response.status === 200) {
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error("Error creating trade request:", error);
+      return false;
+    }
+  },
+  paymentSuccess: async (body) => {
+    try {
+      const response = await AxiosInstance.put(`payment/payment_success`, {productId: body.productId});
+      console.log("Payment added successfully:", response.data);
+      if(response.status === 200) {
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error("Error creating trade request:", error);
+      return false;
+    }
+  },
+  saveRating: async (body) => {
+    try {
+      const response = await AxiosInstance.post(`payment/save_rating`, body);
+      console.log("Payment added successfully:", response.data);
       if(response.status === 200) {
         return true;
       }

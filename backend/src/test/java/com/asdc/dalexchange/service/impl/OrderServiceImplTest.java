@@ -2,15 +2,18 @@ package com.asdc.dalexchange.service.impl;
 
 import com.asdc.dalexchange.dto.*;
 import com.asdc.dalexchange.enums.OrderStatus;
+import com.asdc.dalexchange.enums.PaymentStatus;
 import com.asdc.dalexchange.mappers.Mapper;
-import com.asdc.dalexchange.model.OrderDetails;
-import com.asdc.dalexchange.model.ShippingAddress;
-import com.asdc.dalexchange.repository.OrderRepository;
-import com.asdc.dalexchange.repository.ShippingRepository;
+import com.asdc.dalexchange.model.*;
+import com.asdc.dalexchange.repository.*;
+import com.asdc.dalexchange.service.TradeRequestService;
+import com.asdc.dalexchange.util.AuthUtil;
+import com.asdc.dalexchange.util.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDateTime;
@@ -29,10 +32,22 @@ class OrderServiceImplTest {
     private OrderRepository orderRepository;
 
     @Mock
-    private ShippingRepository shippingRepository;
+    private PaymentRepository paymentRepository;
+
+    @Mock
+    private ProductRepository productRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private TradeRequestService tradeRequestService;
 
     @InjectMocks
     private OrderServiceImpl orderService;
+
+    @Mock
+    private ShippingRepository shippingRepository;
 
     @Mock
     private Mapper<OrderDetails, OrderDTO> orderMapper;
@@ -121,6 +136,59 @@ class OrderServiceImplTest {
 
         assertEquals(50.0, result);
     }
+    @Test
+    public void testUpdateOrder_AdminComments() {
+        // Arrange
+        long orderId = 1L;
+        OrderDetails existingOrder = new OrderDetails();
+        existingOrder.setOrderId(orderId);
+
+        OrderDetails updatedOrderDetails = new OrderDetails();
+        updatedOrderDetails.setAdminComments("This is a comment");
+
+        OrderDTO updatedOrderDTO = new OrderDTO();
+        updatedOrderDTO.setOrderId(orderId);
+
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(existingOrder));
+        when(orderRepository.save(existingOrder)).thenReturn(existingOrder);
+        when(orderMapper.mapTo(existingOrder)).thenReturn(updatedOrderDTO);
+
+        // Act
+        OrderDTO result = orderService.updateOrder((int) orderId, updatedOrderDetails);
+
+        // Assert
+        assertEquals("This is a comment", existingOrder.getAdminComments());
+        assertEquals(updatedOrderDTO, result);
+    }
+
+    @Test
+    public void testUpdateOrder_Payment() {
+        long orderId = 1L;
+        OrderDetails existingOrder = new OrderDetails();
+        existingOrder.setOrderId(orderId);
+
+        Payment newPayment = new Payment();
+        newPayment.setPaymentMethod("Card");
+        newPayment.setPaymentStatus(PaymentStatus.completed);
+
+        OrderDetails updatedOrderDetails = new OrderDetails();
+        updatedOrderDetails.setPayment(newPayment);
+
+        OrderDTO updatedOrderDTO = new OrderDTO();
+        updatedOrderDTO.setOrderId(orderId);
+
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(existingOrder));
+        when(orderRepository.save(existingOrder)).thenReturn(existingOrder);
+        when(orderMapper.mapTo(existingOrder)).thenReturn(updatedOrderDTO);
+
+        // Act
+        OrderDTO result = orderService.updateOrder((int) orderId, updatedOrderDetails);
+
+        // Assert
+        assertEquals(newPayment, existingOrder.getPayment());
+        assertEquals(updatedOrderDTO, result);
+    }
+
 
     @Test
     public void testGetAllOrders() {
@@ -166,7 +234,7 @@ class OrderServiceImplTest {
         orderDTO.setOrderId(orderId);
         orderDTO.setTotalAmount(100.0);
 
-        when(orderRepository.findById((int) orderId)).thenReturn(Optional.of(order));
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
         when(orderMapper.mapTo(order)).thenReturn(orderDTO);
 
         // Act
@@ -192,7 +260,7 @@ class OrderServiceImplTest {
         updatedOrderDTO.setOrderId(orderId);
         updatedOrderDTO.setTotalAmount(150.0);
 
-        when(orderRepository.findById((int) orderId)).thenReturn(Optional.of(existingOrder));
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(existingOrder));
         when(orderRepository.save(existingOrder)).thenReturn(existingOrder);
         when(orderMapper.mapTo(existingOrder)).thenReturn(updatedOrderDTO);
 
@@ -213,7 +281,7 @@ class OrderServiceImplTest {
         order.setOrderId(orderId);
         order.setOrderStatus(OrderStatus.Shipped);
 
-        when(orderRepository.findById((int) orderId)).thenReturn(Optional.of(order));
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
 
         // Act
         orderService.cancelOrder((int) orderId, "Cancelled by admin");
@@ -236,7 +304,7 @@ class OrderServiceImplTest {
         orderDTO.setOrderId(orderId);
         orderDTO.setTotalAmount(150.0);
 
-        when(orderRepository.findById(Math.toIntExact(orderId))).thenReturn(Optional.of(order));
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
         when(orderRepository.save(order)).thenReturn(order);
         when(orderMapper.mapTo(order)).thenReturn(orderDTO);
 
@@ -261,17 +329,14 @@ class OrderServiceImplTest {
 
         when(shippingRepository.findById(addressId)).thenReturn(Optional.of(existingAddress));
 
-        // Act
         orderService.updateShippingAddress(addressId, updatedAddress);
 
-        // Assert
         assertEquals("New Name", existingAddress.getBillingName());
         verify(shippingRepository).save(existingAddress);
     }
 
     @Test
     public void testUpdateOrder_ShippingAddress() {
-        // Arrange
         long orderId = 1L;
         OrderDetails existingOrder = new OrderDetails();
         existingOrder.setOrderId(orderId);
@@ -292,7 +357,7 @@ class OrderServiceImplTest {
         OrderDTO updatedOrderDTO = new OrderDTO();
         updatedOrderDTO.setOrderId(orderId);
 
-        when(orderRepository.findById((int) orderId)).thenReturn(Optional.of(existingOrder));
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(existingOrder));
         when(shippingRepository.findById(existingAddress.getAddressId())).thenReturn(Optional.of(existingAddress));
         when(orderRepository.save(existingOrder)).thenReturn(existingOrder);
         when(orderMapper.mapTo(existingOrder)).thenReturn(updatedOrderDTO);
@@ -307,13 +372,12 @@ class OrderServiceImplTest {
 
     @Test
     public void testUpdateShippingAddress_NotFound() {
-        // Arrange
+
         long addressId = 1L;
         ShippingAddress updatedAddress = new ShippingAddress();
 
         when(shippingRepository.findById(addressId)).thenReturn(Optional.empty());
 
-        // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             orderService.updateShippingAddress(addressId, updatedAddress);
         });
@@ -323,7 +387,7 @@ class OrderServiceImplTest {
 
     @Test
     void testGetItemsSold() {
-        // Prepare mock data
+
         List<Object[]> mockData = Arrays.asList(
                 new Object[]{"2024-07", 10},
                 new Object[]{"2024-06", 20}
@@ -342,7 +406,7 @@ class OrderServiceImplTest {
 
     @Test
     void testGetTopSellingCategories() {
-        // Prepare mock data
+
         List<Object[]> mockData = Arrays.asList(
                 new Object[]{"Electronics", 50},
                 new Object[]{"Books", 30}
@@ -376,5 +440,50 @@ class OrderServiceImplTest {
         assertEquals(100, result.get(0).getItemsSold());
         assertEquals("Product B", result.get(1).getProductName());
         assertEquals(80, result.get(1).getItemsSold());
+    }
+
+
+    @Test
+    void testSaveNewOrder_Success() {
+        Long userId = 1L;
+        Long productId = 2L;
+        Double amount = 100.0;
+        ShippingAddress shippingAddress = new ShippingAddress();
+        shippingAddress.setAddressId(1L);
+
+        Product product = new Product();
+        product.setProductId(productId);
+        product.setSold(false);
+
+        User user = new User();
+        user.setUserId(userId);
+
+        Payment payment = new Payment();
+        payment.setPaymentMethod("Card");
+        payment.setPaymentStatus(PaymentStatus.completed);
+        payment.setAmount(amount);
+        payment.setPaymentDate(LocalDateTime.now());
+
+        OrderDetails orderDetails = new OrderDetails();
+        orderDetails.setOrderId(1L);
+
+        try (MockedStatic<AuthUtil> authUtilMock = mockStatic(AuthUtil.class)) {
+            authUtilMock.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
+            when(tradeRequestService.getApprovedTradeRequestAmount(productId)).thenReturn(amount);
+            when(productRepository.findById(productId)).thenReturn(Optional.of(product));
+            when(userRepository.findByUserId(userId)).thenReturn(user);
+            when(paymentRepository.save(any(Payment.class))).thenReturn(payment);
+            when(orderRepository.save(any(OrderDetails.class))).thenReturn(orderDetails);
+
+            Long resultOrderId = orderService.saveNewOrder(shippingAddress, productId);
+
+            assertEquals(1L, resultOrderId);
+            verify(tradeRequestService, times(1)).getApprovedTradeRequestAmount(productId);
+            verify(productRepository, times(1)).findById(productId);
+            verify(userRepository, times(1)).findByUserId(userId);
+            verify(paymentRepository, times(1)).save(any(Payment.class));
+            verify(orderRepository, times(1)).save(any(OrderDetails.class));
+            verify(productRepository, times(1)).save(product);
+        }
     }
 }

@@ -11,6 +11,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+/**
+ * Custom authentication provider for user authentication.
+ */
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
