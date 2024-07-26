@@ -2,11 +2,9 @@ package com.asdc.dalexchange.controller;
 
 import com.asdc.dalexchange.dto.PaginatedResponse;
 import com.asdc.dalexchange.dto.ProductListingDTO;
-import com.asdc.dalexchange.mappers.Mapper;
-import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.service.ProductListingService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,18 +16,10 @@ import java.util.List;
 
 @RestController
 @Slf4j
+@AllArgsConstructor
 public class ProductListingController {
 
-    @Autowired
     private ProductListingService productListingService;
-
-    @Autowired
-    private Mapper<Product, ProductListingDTO> productListingMapper;
-
-    public ProductListingController(ProductListingService productListingService, Mapper<Product, ProductListingDTO> productListingMapper) {
-        this.productListingService = productListingService;
-        this.productListingMapper = productListingMapper;
-    }
 
     @GetMapping(path = "/products_listing")
     public PaginatedResponse<ProductListingDTO> getProductListing(
@@ -43,13 +33,13 @@ public class ProductListingController {
 
         log.info("get products_listing api endpoint called!");
         log.info("get products_listing params: { " +
-                "page: {}, " +
-                "size: {}, " +
-                "search: {}, " +
-                "categories: {}, " +
-                "conditions: {}, " +
-                "minPrice: {}, " +
-                "maxPrice: {}, }",
+                        "page: {}, " +
+                        "size: {}, " +
+                        "search: {}, " +
+                        "categories: {}, " +
+                        "conditions: {}, " +
+                        "minPrice: {}, " +
+                        "maxPrice: {}, }",
                 page, size, search, categories, conditions, minPrice, maxPrice);
 
         Pageable pageable = PageRequest.of(page, size);

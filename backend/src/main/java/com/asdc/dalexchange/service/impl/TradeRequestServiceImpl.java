@@ -15,6 +15,7 @@ import com.asdc.dalexchange.specifications.ProductImageSpecification;
 import com.asdc.dalexchange.specifications.TradeRequestSpecification;
 import com.asdc.dalexchange.util.AuthUtil;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -27,25 +28,14 @@ import static org.springframework.data.jpa.domain.Specification.where;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class TradeRequestServiceImpl implements TradeRequestService {
+
     private TradeRequestRepository tradeRequestRepository;
     private ProductRepository productRepository;
     private UserRepository userRepository;
     private ProductImageRepository productImageRepository;
     private Mapper<TradeRequest, TradeRequestDTO> tradeRequestMapper;
-
-    public TradeRequestServiceImpl(
-            TradeRequestRepository tradeRequestRepository,
-            ProductRepository productRepository,
-            UserRepository userRepository,
-            ProductImageRepository productImageRepository,
-            Mapper<TradeRequest, TradeRequestDTO> tradeRequestMapper) {
-        this.tradeRequestRepository = tradeRequestRepository;
-        this.productRepository = productRepository;
-        this.userRepository = userRepository;
-        this.productImageRepository = productImageRepository;
-        this.tradeRequestMapper = tradeRequestMapper;
-    }
 
     @Override
     public List<TradeRequestDTO> getBuyerTradeRequests() {
@@ -67,7 +57,7 @@ public class TradeRequestServiceImpl implements TradeRequestService {
     public TradeRequest updateTradeRequestStatus(Long requestId, String status) {
         log.info("updateTradeRequestStatus call started in the TradeRequestServiceImpl with requestId: {} and status: {}", requestId, status);
         TradeRequest tradeRequest = tradeRequestRepository.findById(requestId)
-                .orElseThrow(() -> new ResourceNotFoundException("TradeRequest id: "+requestId));
+                .orElseThrow(() -> new ResourceNotFoundException("TradeRequest id: " + requestId));
 
         tradeRequest.setRequestStatus(status);
         return tradeRequestRepository.save(tradeRequest);
@@ -144,7 +134,7 @@ public class TradeRequestServiceImpl implements TradeRequestService {
                 .and(TradeRequestSpecification.hasBuyerId(userId));
 
         TradeRequest tradeRequest = tradeRequestRepository.findOne(specification).orElse(null);
-        System.out.println("the approved trade request :" +tradeRequest);
+        System.out.println("the approved trade request :" + tradeRequest);
         if (tradeRequest != null) {
             tradeRequest.setRequestStatus("completed");
             tradeRequestRepository.save(tradeRequest);

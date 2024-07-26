@@ -8,8 +8,8 @@ import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.service.NotificationService;
 import com.asdc.dalexchange.service.TradeRequestService;
 import com.asdc.dalexchange.util.NotificationUtil;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,24 +26,12 @@ import java.util.Map;
 
 @RestController
 @Slf4j
+@AllArgsConstructor
 public class TradeRequestController {
-    @Autowired
+
     private TradeRequestService tradeRequestService;
-
-    @Autowired
     private NotificationService notificationService;
-
-    @Autowired
     private Mapper<TradeRequest, TradeRequestDTO> tradeRequestMapper;
-
-    public TradeRequestController(
-            TradeRequestService tradeRequestService,
-            NotificationService notificationService,
-            Mapper<TradeRequest, TradeRequestDTO> tradeRequestMapper) {
-        this.tradeRequestService = tradeRequestService;
-        this.notificationService = notificationService;
-        this.tradeRequestMapper = tradeRequestMapper;
-    }
 
     @GetMapping(path = "/sell_requests")
     public List<TradeRequestDTO> getSellRequests() {
@@ -88,7 +76,7 @@ public class TradeRequestController {
         notification.setMessage(message);
         notificationService.sendNotification(notification);
 
-        if(status.equals("completed") || status.equals("canceled")) {
+        if (status.equals("completed") || status.equals("canceled")) {
             String sellerTitle = NotificationUtil.getSellerTitle(status);
             String sellerMessage = NotificationUtil.getSellerMessage(status, tradeRequest.getProduct().getTitle());
             notification.setUser(seller);

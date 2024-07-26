@@ -4,6 +4,7 @@ import com.asdc.dalexchange.dto.NotificationDTO;
 import com.asdc.dalexchange.mappers.Mapper;
 import com.asdc.dalexchange.model.Notification;
 import com.asdc.dalexchange.service.NotificationService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,17 +17,11 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/notifications")
+@AllArgsConstructor
 public class NotificationController {
 
     private NotificationService notificationService;
     private Mapper<Notification, NotificationDTO> notificationMapper;
-
-    public NotificationController(
-            NotificationService notificationService,
-            Mapper<Notification, NotificationDTO> notificationMapper) {
-        this.notificationService = notificationService;
-        this.notificationMapper = notificationMapper;
-    }
 
     @GetMapping("")
     public List<NotificationDTO> getNotifications() {
@@ -42,4 +37,3 @@ public class NotificationController {
         return ResponseEntity.ok(notification);
     }
 }
-

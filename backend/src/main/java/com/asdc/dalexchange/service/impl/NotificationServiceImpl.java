@@ -6,6 +6,7 @@ import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.service.NotificationService;
 import com.asdc.dalexchange.specifications.NotificationSpecification;
 import com.asdc.dalexchange.util.AuthUtil;
+import lombok.AllArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -15,17 +16,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
 
     private NotificationRepository notificationRepository;
     private UserRepository userRepository;
     private JavaMailSender mailSender;
-
-    public NotificationServiceImpl(NotificationRepository notificationRepository, UserRepository userRepository, JavaMailSender mailSender) {
-        this.notificationRepository = notificationRepository;
-        this.userRepository = userRepository;
-        this.mailSender = mailSender;
-    }
 
     public void sendNotification(Notification notification) {
         notificationRepository.save(notification);

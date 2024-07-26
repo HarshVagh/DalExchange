@@ -9,8 +9,8 @@ import com.asdc.dalexchange.repository.ProductRepository;
 import com.asdc.dalexchange.service.ProductListingService;
 import com.asdc.dalexchange.specifications.ProductImageSpecification;
 import com.asdc.dalexchange.specifications.ProductSpecification;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -22,34 +22,25 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class ProductListingServiceImpl implements ProductListingService {
 
     private final ProductRepository productRepository;
     private final ProductImageRepository productImageRepository;
     private final Mapper<Product, ProductListingDTO> productListingMapper;
 
-    @Autowired
-    public ProductListingServiceImpl(
-            ProductRepository productRepository,
-            ProductImageRepository productImageRepository,
-            Mapper<Product, ProductListingDTO> productListingMapper) {
-        this.productRepository = productRepository;
-        this.productImageRepository = productImageRepository;
-        this.productListingMapper = productListingMapper;
-    }
-
-
     @Override
     public Page<ProductListingDTO> findByCriteria(Pageable pageable, String search, List<String> categories, List<String> conditions, Double minPrice, Double maxPrice) {
         log.info("Find by Criteria call started in the ProductListingServiceImpl");
-        Specification<Product> spec = Specification.where(ProductSpecification.hasTitleOrDescriptionContaining(search))
-                .and(ProductSpecification.hasCategory(categories))
-                .and(ProductSpecification.hasCondition(conditions))
-                .and(ProductSpecification.hasPriceBetween(minPrice, maxPrice))
-                .and(ProductSpecification.isNotUnlisted());
-        Page<Product> productPage = productRepository.findAll(spec, pageable);
+        Page<Product> productPage = getProductsPage(pageable, search, categories, conditions, minPrice, maxPrice);
 
-        List<ProductListingDTO> productListingDTOs = productPage.getContent().stream().map(product -> {
+        List<ProductListingDTO> productListingDTOs = getProductListingDTOs(productPage);
+
+        return new PageImpl<>(productListingDTOs, pageable, productPage.getTotalElements());
+    }
+
+    private List<ProductListingDTO> getProductListingDTOs(Page<Product> productPage) {
+        return productPage.getContent().stream().map(product -> {
             ProductListingDTO productListingDTO = productListingMapper.mapTo(product);
             Specification<ProductImage> imageSpec = ProductImageSpecification.byProductId(productListingDTO.getProductId());
             List<ProductImage> productImages = productImageRepository.findAll(imageSpec);
@@ -58,7 +49,14 @@ public class ProductListingServiceImpl implements ProductListingService {
             }
             return productListingDTO;
         }).collect(Collectors.toList());
+    }
 
-        return new PageImpl<>(productListingDTOs, pageable, productPage.getTotalElements());
+    private Page<Product> getProductsPage(Pageable pageable, String search, List<String> categories, List<String> conditions, Double minPrice, Double maxPrice) {
+        Specification<Product> spec = Specification.where(ProductSpecification.hasTitleOrDescriptionContaining(search))
+                .and(ProductSpecification.hasCategory(categories))
+                .and(ProductSpecification.hasCondition(conditions))
+                .and(ProductSpecification.hasPriceBetween(minPrice, maxPrice))
+                .and(ProductSpecification.isNotUnlisted());
+        return productRepository.findAll(spec, pageable);
     }
 }

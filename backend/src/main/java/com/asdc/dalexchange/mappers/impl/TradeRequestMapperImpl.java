@@ -6,22 +6,21 @@ import com.asdc.dalexchange.mappers.Mapper;
 import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.model.TradeRequest;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TradeRequestMapperImpl implements Mapper<TradeRequest, TradeRequestDTO> {
 
-    @Autowired
-    private ModelMapper modelMapper;
-    private TypeMap<TradeRequest, TradeRequestDTO> propertyMapper;
-
-    @Autowired
-    private Mapper<Product, ProductListingDTO> productListingMapper;
+    private final ModelMapper modelMapper;
+    private final Mapper<Product, ProductListingDTO> productListingMapper;
 
     public TradeRequestMapperImpl(ModelMapper modelMapper, Mapper<Product, ProductListingDTO> productListingMapper) {
         this.modelMapper = modelMapper;
+        this.productListingMapper = productListingMapper;
+        setupMappings();
+    }
+
+    private void setupMappings() {
         modelMapper.typeMap(TradeRequest.class, TradeRequestDTO.class).addMappings(mapper -> {
             mapper.map(src -> src.getSeller().getFullName(), TradeRequestDTO::setSellerName);
             mapper.map(src -> src.getSeller().getProfilePicture(), TradeRequestDTO::setSellerImage);
