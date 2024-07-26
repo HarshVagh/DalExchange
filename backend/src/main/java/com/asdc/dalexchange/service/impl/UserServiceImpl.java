@@ -175,5 +175,4 @@ public class UserServiceImpl implements UserService {
     public User getCurrentUser() {
         return AuthUtil.getCurrentUser(userRepository);
     }
-
 }
