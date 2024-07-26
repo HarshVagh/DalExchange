@@ -8,17 +8,26 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing product categories.
+ */
 @RestController
 @Slf4j
 @AllArgsConstructor
 public class ProductCategoryController {
 
-    private ProductCategoryService productCategoryService;
+    private final ProductCategoryService productCategoryService;
 
+    /**
+     * Retrieve all product categories.
+     *
+     * @return a list of product category names.
+     */
     @GetMapping(path = "/product_categories")
     public List<String> getProductCategories() {
-        log.info("get product_categories api endpoint called");
-        return productCategoryService.findAll();
+        log.info("get product_categories API endpoint called.");
+        List<String> categories = productCategoryService.findAll();
+        log.debug("Fetched {} product categories.", categories.size());
+        return categories;
     }
-
 }
