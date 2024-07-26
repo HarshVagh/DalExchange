@@ -4,6 +4,13 @@ stages:
   - publish
   - deploy
 
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/backend/.m2/repository"
+
+cache:
+  paths:
+    - $CI_PROJECT_DIR/backend/.m2/repository
+
 backend_build:
   stage: build
   image: maven:3.9.7-sapmachine-17
@@ -24,11 +31,12 @@ backend_build:
 
 frontend_build:
   stage: build
-  image: node:alpine
+  image: node:latest
   before_script:
     - cd frontend/
   script:
     - echo "Frontend Build Started"
+    - npm cache clean --force
     - npm install
     - npm run build
     - echo "Frontend Build Completed"
@@ -39,7 +47,7 @@ frontend_build:
     - main
     - develop
   tags:
-    - dalfcs_docker_kvm
+    - dalfcs_gitlab_docker_ci
 
 backend_test:
   stage: test
