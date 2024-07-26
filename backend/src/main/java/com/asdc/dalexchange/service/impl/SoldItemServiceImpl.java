@@ -11,7 +11,8 @@ import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.service.SoldItemService;
 import com.asdc.dalexchange.specifications.SoldItemSpecification;
 import com.asdc.dalexchange.util.AuthUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,38 +21,42 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class SoldItemServiceImpl implements SoldItemService {
 
-    @Autowired
-    private SoldItemRepository soldItemRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private SoldItemMapperImpl soldItemMapper;
+    private final SoldItemRepository soldItemRepository;
+    private final UserRepository userRepository;
+    private final ProductRepository productRepository;
+    private final SoldItemMapperImpl soldItemMapper;
 
     @Override
     public List<SoldItemDTO> GetallSoldProduct() {
         Long userId = AuthUtil.getCurrentUserId(userRepository);
+        log.info("Fetching all sold products for userId: {}", userId);
+
         List<SoldItem> allSoldItems = soldItemRepository.findAll(SoldItemSpecification.bySellerUserId(userId));
-        return allSoldItems.stream()
+        List<SoldItemDTO> soldItemDTOs = allSoldItems.stream()
                 .map(soldItemMapper::mapTo)
                 .collect(Collectors.toList());
+
+        log.info("Fetched {} sold products for userId: {}", soldItemDTOs.size(), userId);
+        return soldItemDTOs;
     }
 
     public void saveSoldItem(Map<String, Object> requestBody) {
         Long productId = Long.parseLong(requestBody.get("productId").toString());
+        log.info("Attempting to save sold item for productId: {}", productId);
 
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> {
+                    log.error("Product not found with id: {}", productId);
+                    return new RuntimeException("Product not found");
+                });
 
         boolean exists = soldItemRepository.existsByProduct_ProductId(productId);
         if (exists) {
-            System.out.println("SoldItem for productId " + productId + " already exists. Skipping save.");
+            log.info("SoldItem for productId {} already exists. Skipping save.", productId);
             return;
         }
 
@@ -63,12 +68,10 @@ public class SoldItemServiceImpl implements SoldItemService {
 
         try {
             soldItemRepository.save(soldItem);
-            System.out.println("SoldItem saved successfully.");
+            log.info("SoldItem successfully saved for productId: {}", productId);
         } catch (Exception e) {
-            System.err.println("Error saving SoldItem: " + e.getMessage());
+            log.error("Error saving SoldItem for productId: {}. Error: {}", productId, e.getMessage());
             throw new RuntimeException("Error saving SoldItem", e);
         }
     }
-
-
 }

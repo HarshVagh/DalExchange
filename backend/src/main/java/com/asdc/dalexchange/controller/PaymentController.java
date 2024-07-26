@@ -16,25 +16,18 @@ import java.util.Map;
 @RequestMapping("/payment")
 public class PaymentController {
 
-    @Autowired
     private PaymentService paymentService;
 
-    @Autowired
     private ProductService productService;
 
-    @Autowired
     private  SoldItemService soldItemService;
 
-    @Autowired
     private ProductRatingService productRatingService;
 
-    @Autowired
     private OrderService orderService;
 
-    @Autowired
     private TradeRequestService tradeRequestService;
 
-    @Autowired
     private ShippingAddressService shippingAddressService;
 
     @PostMapping("/save_order_details")

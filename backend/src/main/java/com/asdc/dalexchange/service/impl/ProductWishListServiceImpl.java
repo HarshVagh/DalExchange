@@ -16,50 +16,57 @@ import com.asdc.dalexchange.service.ProductWishlistService;
 import com.asdc.dalexchange.specifications.ProductWishlistSpecification;
 import com.asdc.dalexchange.util.AuthUtil;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class ProductWishListServiceImpl implements ProductWishlistService {
 
-    @Autowired
-    private ProductWishlistRepository productWishlistRepository;
+    private final ProductWishlistRepository productWishlistRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private SavedProductMapperImpl savedProductMapper;
+    private final SavedProductMapperImpl savedProductMapper;
 
-    @Autowired
-    public OrderRepository orderRepository;
+    public final OrderRepository orderRepository;
 
-    @Autowired
-    private PurchaseProductMapperImpl purchaseProductMapper;
+    private final PurchaseProductMapperImpl purchaseProductMapper;
 
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
     @Transactional
     public boolean markProductAsFavorite(long productId) {
         Long userId = AuthUtil.getCurrentUserId(userRepository);
+        log.info("markProductAsFavorite called with productId: {} and userId: {}", productId, userId);
+
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + userId));
+                .orElseThrow(() -> {
+                    log.error("User not found with id: {}", userId);
+                    return new ResourceNotFoundException("User not found with id " + userId);
+                });
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id " + productId));
+                .orElseThrow(() -> {
+                    log.error("Product not found with id: {}", productId);
+                    return new ResourceNotFoundException("Product not found with id " + productId);
+                });
 
         Specification<ProductWishlist> spec = ProductWishlistSpecification.byUserIdAndProductId(userId, productId);
         List<ProductWishlist> existingWishlistItems = productWishlistRepository.findAll(spec);
 
         if (!existingWishlistItems.isEmpty()) {
+            log.info("ProductId: {} is already in the wishlist. Removing it.", productId);
             productWishlistRepository.deleteAll(existingWishlistItems);
             return false;
         } else {
+            log.info("Adding productId: {} to the wishlist.", productId);
             ProductWishlist productWishlist = new ProductWishlist();
             productWishlist.setUserId(user);
             productWishlist.setProductId(product);
@@ -68,10 +75,11 @@ public class ProductWishListServiceImpl implements ProductWishlistService {
         }
     }
 
-
     @Override
     public List<SavedProductDTO> getAllSavedProducts() {
         Long userId = AuthUtil.getCurrentUserId(userRepository);
+        log.info("getAllSavedProducts called for userId: {}", userId);
+
         Specification<ProductWishlist> spec = ProductWishlistSpecification.byUserId(userId);
         List<ProductWishlist> allWishlistedProducts = productWishlistRepository.findAll(spec);
 
@@ -80,6 +88,8 @@ public class ProductWishListServiceImpl implements ProductWishlistService {
                 .map(Product::getProductId)
                 .collect(Collectors.toList());
 
+        log.debug("Product IDs for wishlisted products: {}", productIds);
+
         List<Product> allSavedProducts = productRepository.findByProductIdIn(productIds);
 
         return allSavedProducts.stream()
@@ -87,24 +97,26 @@ public class ProductWishListServiceImpl implements ProductWishlistService {
                 .collect(Collectors.toList());
     }
 
-
-
     @Override
     public List<PurchaseProductDTO> getAllPurchasedProduct() {
         Long userId = AuthUtil.getCurrentUserId(userRepository);
+        log.info("getAllPurchasedProduct called for userId: {}", userId);
+
         List<OrderDetails> orderDetailsList = orderRepository.findByBuyerUserId(userId);
         return orderDetailsList.stream()
                 .map(purchaseProductMapper::mapTo)
                 .collect(Collectors.toList());
-
     }
 
-    public boolean checkProductIsFavoriteByGivenUser( long productId) {
+    public boolean checkProductIsFavoriteByGivenUser(long productId) {
         Long userId = AuthUtil.getCurrentUserId(userRepository);
+        log.info("checkProductIsFavoriteByGivenUser called with productId: {} and userId: {}", productId, userId);
+
         Specification<ProductWishlist> spec = ProductWishlistSpecification.byUserIdAndProductId(userId, productId);
         long count = productWishlistRepository.count(spec);
-        return count > 0;
+        boolean isFavorite = count > 0;
+
+        log.debug("ProductId: {} favorite status for userId: {} is {}", productId, userId, isFavorite);
+        return isFavorite;
     }
-
-
 }

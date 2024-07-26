@@ -20,15 +20,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
 @Service
 @Slf4j
 public class ProductDetailsServiceImpl implements ProductDetailsService {
 
-
-    private ProductRepository productRepository;
-    private UserRepository userRepository;
-    private ProductImageRepository productImageRepository;
+    private final ProductRepository productRepository;
+    private final UserRepository userRepository;
+    private final ProductImageRepository productImageRepository;
     private final ProductWishlistRepository productWishlistRepository;
     private final Mapper<Product, ProductDetailsDTO> productDetailsMapper;
 
@@ -47,60 +45,58 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
 
     @Override
     public ProductDetailsDTO getDetails(Long productId) {
+        log.info("Fetching details for productId: {}", productId);
 
         Long userId = AuthUtil.getCurrentUserId(userRepository);
+        log.debug("Current userId: {}", userId);
 
-
-        // Get all the details of the product
         Product product = getProductById(productId);
-        System.out.println("details of the product : " + product);
-
-        // Get all image URLs of the given product
         List<String> productImageUrls = getImageUrls(productId);
 
-        // Map Product to ProductDetailsDTO
         ProductDetailsDTO productDetailsDTO = productDetailsMapper.mapTo(product);
-        System.out.println("productDetailsDTO : " + productDetailsDTO);
-
-        // Set the image URLs to ProductDetailsDTO
         productDetailsDTO.setImageUrls(productImageUrls);
-
-        productDetailsDTO .setCategory("Books");
-
-        // Set the seller joining date and rating
+        productDetailsDTO.setCategory(product.getCategory().getName());
         productDetailsDTO.setSellerId(product.getSeller().getUserId());
         productDetailsDTO.setSellerJoiningDate(product.getSeller().getJoinedAt());
-        System.out.println("the Product details DTo " + productDetailsDTO);
-        Double sellerRating = product.getSeller().getSellerRating();
-        double rating = (sellerRating != null) ? sellerRating.doubleValue() : 0.0; // Default to 0.0 if null
-        productDetailsDTO.setRating(rating);
-        //productDetailsDTO.setRating(product.getSeller().getSellerRating());
 
-        log.info("userId is : " + userId);
+        Double sellerRating = product.getSeller().getSellerRating();
+        double rating = (sellerRating != null) ? sellerRating.doubleValue() : 0.0;
+        productDetailsDTO.setRating(rating);
         productDetailsDTO.setFavorite(getFavoriteStatus(userId, productId));
 
+        log.info("Fetched product details successfully for productId: {}", productId);
         return productDetailsDTO;
     }
 
     @Override
     public Product getProductById(Long productId) {
+        log.info("Fetching product by ID: {}", productId);
         return this.productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
+                .orElseThrow(() -> {
+                    log.error("Product not found with ID: {}", productId);
+                    return new ResourceNotFoundException("Product not found with ID: " + productId);
+                });
     }
 
     @Override
     public List<String> getImageUrls(Long productId) {
+        log.info("Fetching image URLs for productId: {}", productId);
         Specification<ProductImage> spec = ProductImageSpecification.byProductId(productId);
         List<ProductImage> productImages = productImageRepository.findAll(spec);
-        return productImages.stream()
+        List<String> imageUrls = productImages.stream()
                 .map(ProductImage::getImageUrl)
                 .toList();
+        log.debug("Image URLs fetched: {}", imageUrls);
+        return imageUrls;
     }
 
     @Override
     public boolean getFavoriteStatus(long userId, long productId) {
+        log.info("Checking favorite status for userId: {} and productId: {}", userId, productId);
         Specification<ProductWishlist> spec = ProductWishlistSpecification.byUserIdAndProductId(userId, productId);
         long count = productWishlistRepository.count(spec);
-        return count > 0;
+        boolean isFavorite = count > 0;
+        log.debug("Favorite status for userId: {} and productId: {} is {}", userId, productId, isFavorite);
+        return isFavorite;
     }
 }

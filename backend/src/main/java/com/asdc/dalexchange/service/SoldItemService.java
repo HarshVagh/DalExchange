@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface SoldItemService {
+
     List<SoldItemDTO> GetallSoldProduct();
     void  saveSoldItem(Map<String,Object> requestBody);
 }
