@@ -10,6 +10,7 @@ import com.asdc.dalexchange.service.EmailService;
 import com.asdc.dalexchange.service.UserService;
 import com.asdc.dalexchange.util.AuthUtil;
 import com.asdc.dalexchange.util.CloudinaryUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,7 +21,11 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of the UserService interface.
+ */
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -38,10 +43,20 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private CloudinaryUtil cloudinaryUtil;
 
-    public long newCustomers(){
-        return userRepository.countUsersJoinedInLast30Days();
+    /**
+     * Returns the number of new customers who joined in the last 30 days.
+     * @return the number of new customers
+     */
+    public long newCustomers() {
+        long count = userRepository.countUsersJoinedInLast30Days();
+        log.info("Number of new customers in the last 30 days: {}", count);
+        return count;
     }
 
+    /**
+     * Calculates the percentage change in the number of customers over the last 30 days.
+     * @return the percentage change in the number of customers
+     */
     public double customersChange() {
         LocalDateTime now = getCurrentDateTime();
         LocalDateTime startOfCurrentPeriod = now.minusDays(30);
@@ -57,14 +72,25 @@ public class UserServiceImpl implements UserService {
             totalCustomersPrevious30Days = 0L;
         }
 
-        return calculatePercentageIncrease(totalCustomersLast30Days.doubleValue(), totalCustomersPrevious30Days.doubleValue());
+        double percentageChange = calculatePercentageIncrease(totalCustomersLast30Days.doubleValue(), totalCustomersPrevious30Days.doubleValue());
+        log.info("Percentage change in number of customers over the last 30 days: {}", percentageChange);
+        return percentageChange;
     }
 
+    /**
+     * Returns the current date and time.
+     * @return the current date and time
+     */
     public LocalDateTime getCurrentDateTime() {
         return LocalDateTime.now();
     }
 
-
+    /**
+     * Calculates the percentage increase between two values.
+     * @param current the current value
+     * @param previous the previous value
+     * @return the percentage increase
+     */
     private double calculatePercentageIncrease(Double current, Double previous) {
         if (previous == null || previous == 0) {
             return current != null && current > 0 ? 100.0 : 0.0;
@@ -75,21 +101,39 @@ public class UserServiceImpl implements UserService {
         return ((current - previous) / previous) * 100;
     }
 
+    /**
+     * Retrieves all users as a list of UserDTO objects.
+     * @return a list of UserDTO objects
+     */
     @Override
     public List<UserDTO> getAllUsers() {
+        log.info("Fetching all users");
         return userRepository.findAll().stream()
                 .map(userMapper::mapTo)
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Retrieves the details of a user by user ID.
+     * @param userId the ID of the user
+     * @return an Optional containing the UserDTO if found, or empty if not found
+     */
     @Override
     public Optional<UserDTO> viewUserDetails(long userId) {
+        log.info("Fetching details for user with ID: {}", userId);
         return userRepository.findById(userId)
                 .map(userMapper::mapTo);
     }
 
+    /**
+     * Edits the details of an existing user.
+     * @param userId the ID of the user to edit
+     * @param updatedUserDetails the updated user details
+     * @return the updated UserDTO
+     */
     @Override
     public UserDTO editUserDetails(long userId, UserDTO updatedUserDetails) {
+        log.info("Editing user details for user with ID: {}", userId);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -109,41 +153,111 @@ public class UserServiceImpl implements UserService {
             user.setActive(updatedUserDetails.getActive());
         }
 
-        return userMapper.mapTo(userRepository.save(user));
+        User updatedUser = userRepository.save(user);
+        log.info("User details updated for user with ID: {}", userId);
+        return userMapper.mapTo(updatedUser);
     }
 
+    /**
+     * Activates a user by user ID.
+     * @param userId the ID of the user to activate
+     * @return the activated UserDTO
+     */
     @Override
     public UserDTO activateUser(long userId) {
+        log.info("Activating user with ID: {}", userId);
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             user.setActive(true);
-            return userMapper.mapTo(userRepository.save(user));
+            User activatedUser = userRepository.save(user);
+            log.info("User with ID: {} activated successfully", userId);
+            return userMapper.mapTo(activatedUser);
         } else {
+            log.error("User with ID: {} not found", userId);
             throw new RuntimeException("User not found");
         }
     }
 
+    /**
+     * Deactivates a user by user ID.
+     * @param userId the ID of the user to deactivate
+     * @return the deactivated UserDTO
+     */
     @Override
     public UserDTO deactivateUser(long userId) {
+        log.info("Deactivating user with ID: {}", userId);
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             user.setActive(false);
-            return userMapper.mapTo(userRepository.save(user));
+            User deactivatedUser = userRepository.save(user);
+            log.info("User with ID: {} deactivated successfully", userId);
+            return userMapper.mapTo(deactivatedUser);
         } else {
+            log.error("User with ID: {} not found", userId);
             throw new RuntimeException("User not found");
         }
     }
 
+    /**
+     * Deletes a user by user ID.
+     * @param userId the ID of the user to delete
+     */
     public void deleteUser(long userId) {
+        log.info("Deleting user with ID: {}", userId);
         userRepository.deleteById(userId);
+        log.info("User with ID: {} deleted successfully", userId);
     }
 
+    /**
+     * Verifies a user based on email and verification code.
+     * @param email the email of the user
+     * @param code the verification code
+     * @return true if the verification is successful, false otherwise
+     */
+    public boolean verifyUser(String email, String code) {
+        log.info("Verifying user with email: {} and code: {}", email, code);
+        Optional<VerificationCode> verificationCode = verificationCodeRepository.findByEmailAndCode(email, code);
+        boolean isValid = verificationCode.isPresent() && verificationCode.get().getExpiryDate().isAfter(LocalDateTime.now());
+        if (isValid) {
+            log.info("User verification successful for email: {}", email);
+        } else {
+            log.warn("User verification failed for email: {}", email);
+        }
+        return isValid;
+    }
+
+    /**
+     * Generates a random 6-digit verification code.
+     * @return the generated verification code
+     */
+    private String generateVerificationCode() {
+        Random random = new Random();
+        String code = String.format("%06d", random.nextInt(999999));
+        log.debug("Generated verification code: {}", code);
+        return code;
+    }
+
+    /**
+     * Retrieves the currently authenticated user.
+     * @return the currently authenticated user
+     */
+    public User getCurrentUser() {
+        log.info("Fetching currently authenticated user");
+        return AuthUtil.getCurrentUser(userRepository);
+    }
+
+    /**
+     * Registers a new user and uploads their profile picture.
+     * @param user the user to register
+     * @param profilePicture the profile picture file
+     * @return the registered user
+     */
     public User registerUser(User user, MultipartFile profilePicture) {
+        log.info("Registering new user with email: {}", user.getEmail());
 
         String profilePictureURL = cloudinaryUtil.uploadImage(profilePicture);
-
         user.setProfilePicture(profilePictureURL);
 
         User registeredUser = userRepository.save(user);
@@ -159,20 +273,7 @@ public class UserServiceImpl implements UserService {
         String text = "Your verification code is " + verificationCode;
         emailService.sendEmail(user.getEmail(), subject, text);
 
+        log.info("User registered and verification email sent to: {}", user.getEmail());
         return registeredUser;
-    }
-
-    public boolean verifyUser(String email, String code) {
-        Optional<VerificationCode> verificationCode = verificationCodeRepository.findByEmailAndCode(email, code);
-        return verificationCode.isPresent() && verificationCode.get().getExpiryDate().isAfter(LocalDateTime.now());
-    }
-
-    private String generateVerificationCode() {
-        Random random = new Random();
-        return String.format("%06d", random.nextInt(999999));
-    }
-
-    public User getCurrentUser() {
-        return AuthUtil.getCurrentUser(userRepository);
     }
 }

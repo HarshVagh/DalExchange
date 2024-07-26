@@ -17,6 +17,7 @@ import com.asdc.dalexchange.util.AuthUtil;
 import com.asdc.dalexchange.util.CloudinaryUtil;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,7 +26,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of the ProductService interface.
+ */
 @Service
+@Slf4j
 public class ProductServiceImpl implements ProductService {
 
     @Autowired
@@ -49,21 +54,42 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private CloudinaryUtil cloudinaryUtil;
 
+    /**
+     * Retrieves a product by its ID.
+     *
+     * @param productId the ID of the product to retrieve
+     * @return the ProductDTO of the retrieved product
+     */
     @Override
     public ProductDTO getProductById(Long productId) {
-        Product product = this.productRepository.findById(productId)
+        log.info("Fetching product with ID: {}", productId);
+        Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
         return productMapper.mapTo(product);
     }
 
+    /**
+     * Retrieves all products for moderation.
+     *
+     * @return a list of ProductModerationDTO objects
+     */
     public List<ProductModerationDTO> getAllProducts() {
+        log.info("Fetching all products for moderation");
         return productRepository.findAll().stream()
                 .map(productModerationMapper::mapTo)
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Updates a product's details.
+     *
+     * @param productId the ID of the product to update
+     * @param updatedProductDetails the updated product details
+     * @return the updated ProductModerationDTO
+     */
     @Transactional
     public ProductModerationDTO updateProduct(Long productId, ProductModerationDTO updatedProductDetails) {
+        log.info("Updating product with ID: {}", productId);
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
@@ -94,20 +120,41 @@ public class ProductServiceImpl implements ProductService {
             product.setQuantityAvailable(updatedProductDetails.getQuantityAvailable());
         }
 
-        return productModerationMapper.mapTo(productRepository.save(product));
+        Product updatedProduct = productRepository.save(product);
+        log.info("Product with ID: {} updated successfully", productId);
+        return productModerationMapper.mapTo(updatedProduct);
     }
 
+    /**
+     * Unlists a product.
+     *
+     * @param productId the ID of the product to unlist
+     * @param unlisted the unlisted status to set
+     */
     @Transactional
     public void unlistProduct(Long productId, boolean unlisted) {
+        log.info("Unlisting product with ID: {}. Unlisted status: {}", productId, unlisted);
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
         product.setUnlisted(unlisted);
         productRepository.save(product);
     }
 
+    /**
+     * Adds a new product along with its images.
+     *
+     * @param addProductDTO the DTO containing product details
+     * @param category the category of the product
+     * @param imageFiles the images of the product
+     * @return the added product
+     */
     public Product addProduct(AddProductDTO addProductDTO, ProductCategory category, List<MultipartFile> imageFiles) {
+        log.info("Adding new product with title: {}", addProductDTO.getTitle());
+
+        // Get the current authenticated user
         User seller = AuthUtil.getCurrentUser(userRepository);
 
+        // Create a new product and set its details
         Product product = new Product();
         product.setTitle(addProductDTO.getTitle());
         product.setDescription(addProductDTO.getDescription());
@@ -120,35 +167,59 @@ public class ProductServiceImpl implements ProductService {
         product.setSeller(seller);
         product.setCreatedAt(LocalDateTime.now());
 
+        // Save the product to the repository
         Product savedProduct = productRepository.save(product);
+        log.info("Product with ID: {} added successfully", savedProduct.getProductId());
 
+        // Upload images to Cloudinary and save their URLs to the product images
         List<ProductImage> images = imageFiles.stream().map(file -> {
-            String imageUrl = "";
-            imageUrl = cloudinaryUtil.uploadImage(file);
+            String imageUrl = cloudinaryUtil.uploadImage(file);
             ProductImage productImage = new ProductImage();
             productImage.setImageUrl(imageUrl);
             productImage.setProduct(savedProduct);
             return productImage;
         }).collect(Collectors.toList());
 
+        // Save all product images to the repository
         productImageRepository.saveAll(images);
+        log.info("Images for product with ID: {} uploaded and saved", savedProduct.getProductId());
+
         return savedProduct;
     }
 
+    /**
+     * Retrieves a product category by its ID.
+     *
+     * @param categoryId the ID of the category to retrieve
+     * @return the ProductCategory
+     */
     public ProductCategory getCategoryById(Long categoryId) {
+        log.info("Fetching category with ID: {}", categoryId);
         return productCategoryRepository.findById(categoryId).orElse(null);
     }
 
+    /**
+     * Retrieves a product by its ID.
+     *
+     * @param id the ID of the product to retrieve
+     * @return the Product
+     */
     public Product getProductByID(Long id) {
+        log.info("Fetching product with ID: {}", id);
         return productRepository.findById(id).orElse(null);
     }
 
+    /**
+     * Retrieves a product for moderation by its ID.
+     *
+     * @param productId the ID of the product to retrieve
+     * @return the ProductModerationDTO
+     */
     @Override
     public ProductModerationDTO getProductByIdForModeration(Long productId) {
+        log.info("Fetching product for moderation with ID: {}", productId);
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
         return productModerationMapper.mapTo(product);
     }
-
 }
-
