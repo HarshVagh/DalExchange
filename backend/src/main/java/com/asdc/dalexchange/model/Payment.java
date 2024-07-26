@@ -16,9 +16,9 @@ public class Payment {
     @Column(name = "payment_id")
     private Long paymentId;
 
-    @OneToOne
+/*    @OneToOne
     @JoinColumn(name = "order_id")
-    private OrderDetails order;
+    private OrderDetails order;*/
 
     @Column(name = "payment_method", nullable = false)
     private String paymentMethod;
