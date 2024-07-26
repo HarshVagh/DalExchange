@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="8e3688ab-9475-43e5-bea5-7c80d12957cb" name="Changes" comment="interfaces implemented for CustomUserDetailsService and EmailService and changed test cases">
+      <change beforePath="$PROJECT_DIR$/backend/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/asdc/dalexchange/model/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/asdc/dalexchange/model/Product.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/asdc/dalexchange/model/ProductCategory.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/asdc/dalexchange/model/ProductCategory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/asdc/dalexchange/service/ProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/asdc/dalexchange/service/ProductService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/asdc/dalexchange/service/impl/ProductServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/asdc/dalexchange/service/impl/ProductServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager">
+    <option name="groupingKeys">
+      <option value="directory" />
+    </option>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitLabMergeRequestFiltersHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPENED&quot;,
+    &quot;assignee&quot;: {
+      &quot;type&quot;: &quot;org.jetbrains.plugins.gitlab.mergerequest.ui.filters.GitLabMergeRequestsFiltersValue.MergeRequestsMemberFilterValue.MergeRequestsAssigneeFilterValue&quot;,
+      &quot;username&quot;: &quot;suppe&quot;,
+      &quot;fullname&quot;: &quot;Shivani Uppe&quot;
+    }
+  }
+}</component>
+  <component name="GitLabMergeRequestsSettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;first&quot;: &quot;https://git.cs.dal.ca/courses/2024-summer/csci-5308/group09.git&quot;,
+    &quot;second&quot;: &quot;641857eb-f8a4-421d-9fbc-6f8fc074e403&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="2iqUMVFqxYtdiIbcDDdxPCFfqFf" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;JUnit.AuthControllerTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AuthControllerTest.signupTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AuthControllerTest.signupTest_Exception.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.CustomUserDetailsServiceTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.DalexchangeApplicationTests.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.EmailServiceTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.PasswordResetControllerTest.executor&quot;: &quot;Debug&quot;,
+    &quot;JUnit.java in dalexchange.executor&quot;: &quot;Run&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Spring Boot.DalexchangeApplication.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;authentication&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/shivaniuppe/Desktop/dal-exchange/group09/backend/src/main/java/com/asdc/dalexchange/model&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/backend/src/main/java/com/asdc/dalexchange/model" />
+      <recent name="$PROJECT_DIR$/backend/src/main/java/com/asdc/dalexchange/enums" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.asdc.dalexchange.controller" />
+      <recent name="com.asdc.dalexchange.repository" />
+      <recent name="com.asdc.dalexchange.entity" />
+      <recent name="com.asdc.dalexchange.config" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Spring Boot.DalexchangeApplication">
+    <configuration name="AuthControllerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="dalexchange" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.asdc.dalexchange.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.asdc.dalexchange.controller" />
+      <option name="MAIN_CLASS_NAME" value="com.asdc.dalexchange.controller.AuthControllerTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AuthControllerTest.signupTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="dalexchange" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.asdc.dalexchange.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.asdc.dalexchange.controller" />
+      <option name="MAIN_CLASS_NAME" value="com.asdc.dalexchange.controller.AuthControllerTest" />
+      <option name="METHOD_NAME" value="signupTest" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AuthControllerTest.signupTest_Exception" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="dalexchange" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.asdc.dalexchange.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.asdc.dalexchange.controller" />
+      <option name="MAIN_CLASS_NAME" value="com.asdc.dalexchange.controller.AuthControllerTest" />
+      <option name="METHOD_NAME" value="signupTest_Exception" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CustomUserDetailsServiceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="dalexchange" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.asdc.dalexchange.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.asdc.dalexchange.service" />
+      <option name="MAIN_CLASS_NAME" value="com.asdc.dalexchange.service.CustomUserDetailsServiceTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="DalexchangeApplicationTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="dalexchange" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.asdc.dalexchange.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.asdc.dalexchange" />
+      <option name="MAIN_CLASS_NAME" value="com.asdc.dalexchange.DalexchangeApplicationTests" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="DalexchangeApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="dalexchange" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.asdc.dalexchange.DalexchangeApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.AuthControllerTest.signupTest" />
+        <item itemvalue="JUnit.AuthControllerTest.signupTest_Exception" />
+        <item itemvalue="JUnit.AuthControllerTest" />
+        <item itemvalue="JUnit.DalexchangeApplicationTests" />
+        <item itemvalue="JUnit.CustomUserDetailsServiceTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.17011.79" />
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-IU-241.17011.79" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8e3688ab-9475-43e5-bea5-7c80d12957cb" name="Changes" comment="" />
+      <created>1720217552562</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1720217552562</updated>
+      <workItem from="1720217553968" duration="1158000" />
+      <workItem from="1720218723065" duration="678000" />
+      <workItem from="1720219452129" duration="381000" />
+      <workItem from="1720278829082" duration="854000" />
+      <workItem from="1720579114562" duration="3210000" />
+      <workItem from="1720583794983" duration="137000" />
+      <workItem from="1720583935773" duration="133000" />
+      <workItem from="1720584072315" duration="832000" />
+      <workItem from="1720584912435" duration="2656000" />
+      <workItem from="1720642004700" duration="59000" />
+      <workItem from="1720642208814" duration="1123000" />
+      <workItem from="1720643338931" duration="469000" />
+      <workItem from="1720643813710" duration="1060000" />
+      <workItem from="1720644885897" duration="800000" />
+      <workItem from="1720989782206" duration="1027000" />
+      <workItem from="1720990830340" duration="1985000" />
+      <workItem from="1721101538291" duration="2670000" />
+      <workItem from="1721104657426" duration="366000" />
+      <workItem from="1721105030413" duration="1704000" />
+      <workItem from="1721152484434" duration="1085000" />
+      <workItem from="1721227263589" duration="79000" />
+      <workItem from="1721227345859" duration="27000" />
+      <workItem from="1721227387346" duration="100000" />
+      <workItem from="1721227547657" duration="1056000" />
+      <workItem from="1721237420565" duration="4000" />
+    </task>
+    <task id="LOCAL-00001" summary="Forgot Password API created">
+      <option name="closed" value="true" />
+      <created>1720218390331</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1720218390331</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Forgot Password UI created">
+      <option name="closed" value="true" />
+      <created>1720219808886</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1720219808886</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Interceptor created">
+      <option name="closed" value="true" />
+      <created>1720219828431</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1720219828432</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Integration changes">
+      <option name="closed" value="true" />
+      <created>1720587161431</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1720587161431</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Make changes to ForgotPassword, ResetPassword, Signup, Verify Email UI">
+      <option name="closed" value="true" />
+      <created>1720645589344</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1720645589344</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Made changes to User table">
+      <option name="closed" value="true" />
+      <created>1720645652668</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1720645652668</updated>
+    </task>
+    <task id="LOCAL-00007" summary="STMP email changed">
+      <option name="closed" value="true" />
+      <created>1720990150615</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1720990150615</updated>
+    </task>
+    <task id="LOCAL-00008" summary="STMP email changed">
+      <option name="closed" value="true" />
+      <created>1720990963023</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1720990963023</updated>
+    </task>
+    <task id="LOCAL-00009" summary="interfaces implemented for CustomUserDetailsService and EmailService">
+      <option name="closed" value="true" />
+      <created>1720991517297</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1720991517297</updated>
+    </task>
+    <task id="LOCAL-00010" summary="interfaces implemented for CustomUserDetailsService and EmailService and changed test cases">
+      <option name="closed" value="true" />
+      <created>1720992602850</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1720992602850</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Test cases for Forgot Password API added" />
+    <MESSAGE value="Forgot Password API created" />
+    <MESSAGE value="Forgot Password UI created" />
+    <MESSAGE value="Interceptor created" />
+    <MESSAGE value="Integration changes" />
+    <MESSAGE value="Make changes to ForgotPassword, ResetPassword, Signup, Verify Email UI" />
+    <MESSAGE value="Made changes to User table" />
+    <MESSAGE value="STMP email changed" />
+    <MESSAGE value="interfaces implemented for CustomUserDetailsService and EmailService" />
+    <MESSAGE value="interfaces implemented for CustomUserDetailsService and EmailService and changed test cases" />
+    <option name="LAST_COMMIT_MESSAGE" value="interfaces implemented for CustomUserDetailsService and EmailService and changed test cases" />
+  </component>
+</project>

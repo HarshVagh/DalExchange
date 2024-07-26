@@ -37,6 +37,8 @@ frontend_build:
   script:
     - echo "Frontend Build Started"
     - npm cache clean --force
+    - npx npm@latest install
+    - npm --version
     - npm install
     - npm run build
     - echo "Frontend Build Completed"
