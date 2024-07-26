@@ -8,12 +8,11 @@ import com.asdc.dalexchange.model.VerificationCode;
 import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.repository.VerificationCodeRepository;
 import com.asdc.dalexchange.service.EmailService;
+import com.asdc.dalexchange.util.AuthUtil;
 import com.asdc.dalexchange.util.CloudinaryUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -313,5 +312,38 @@ class UserServiceImplTest {
 
         assertFalse(isVerified);
         verify(verificationCodeRepository, times(1)).findByEmailAndCode(email, code);
+    }
+
+    @Test
+    void testGetCurrentUser() {
+        // Arrange
+        User expectedUser = new User();
+        expectedUser.setUserId(1L);
+        expectedUser.setEmail("test@dal.ca");
+
+        try (MockedStatic<AuthUtil> mockedAuthUtil = Mockito.mockStatic(AuthUtil.class)) {
+            mockedAuthUtil.when(() -> AuthUtil.getCurrentUser(userRepository)).thenReturn(expectedUser);
+
+            // Act
+            User actualUser = userService.getCurrentUser();
+
+            // Assert
+            assertEquals(expectedUser, actualUser);
+            mockedAuthUtil.verify(() -> AuthUtil.getCurrentUser(userRepository), times(1));
+        }
+    }
+
+    @Test
+    void testGetCurrentUser_NoUserFound() {
+        try (MockedStatic<AuthUtil> mockedAuthUtil = Mockito.mockStatic(AuthUtil.class)) {
+            mockedAuthUtil.when(() -> AuthUtil.getCurrentUser(userRepository)).thenReturn(null);
+
+            // Act
+            User actualUser = userService.getCurrentUser();
+
+            // Assert
+            assertEquals(null, actualUser);
+            mockedAuthUtil.verify(() -> AuthUtil.getCurrentUser(userRepository), times(1));
+        }
     }
 }

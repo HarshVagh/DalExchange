@@ -91,7 +91,6 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentDTO savePayment(Map<String, Object> requestBody) {
         Long orderId = Long.parseLong(requestBody.get("orderId").toString());
         System.out.println("the order is :" + orderId);
-        // Retrieve the order
         Optional<OrderDetails> orderOptional = orderRepository.findById(orderId);
         if (!orderOptional.isPresent()) {
             throw new ResourceNotFoundException("Order not found");
@@ -101,7 +100,6 @@ public class PaymentServiceImpl implements PaymentService {
         order.setOrderStatus(OrderStatus.Delivered);
         orderRepository.save(order);
 
-        // Retrieve payments
         Specification<Payment> spec = PaymentSpecification.hasPaymentId(orderId);
         List<Payment> payments = paymentRepository.findAll(spec);
         if (payments.isEmpty()) {
