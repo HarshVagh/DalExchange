@@ -47,7 +47,7 @@ frontend_build:
     - main
     - develop
   tags:
-    - dalfcs_gitlab_docker_ci
+    - dalfcs_docker_kvm
 
 backend_test:
   stage: test
