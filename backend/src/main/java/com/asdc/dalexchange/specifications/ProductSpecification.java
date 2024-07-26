@@ -1,8 +1,9 @@
 package com.asdc.dalexchange.specifications;
 
-import jakarta.persistence.criteria.*;
-import org.springframework.data.jpa.domain.Specification;
 import com.asdc.dalexchange.model.Product;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Predicate;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 
