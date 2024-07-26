@@ -32,4 +32,5 @@ public class ProductDetailsDTO {
     private String SellerName;
     private double Rating;
     private LocalDateTime sellerJoiningDate;
+    private boolean isSold;
 }

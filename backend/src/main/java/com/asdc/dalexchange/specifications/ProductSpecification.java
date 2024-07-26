@@ -56,4 +56,10 @@ public class ProductSpecification {
             return criteriaBuilder.or(titlePredicate, descriptionPredicate);
         };
     }
+
+    public static Specification<Product> isNotUnlisted() {
+        return (root, query, criteriaBuilder) -> {
+            return criteriaBuilder.isFalse(root.get("unlisted"));
+        };
+    }
 }

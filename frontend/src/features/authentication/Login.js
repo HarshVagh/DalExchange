@@ -52,7 +52,7 @@ const Login = () => {
                 <div className="w-full max-w-md space-y-6">
                     <div className="text-center">
                         <h2 className="text-3xl font-bold tracking-tight">Sign in to your account</h2>
-                        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                        <p className="mt-2 text-sm text-gray-500">
                             Don&apos;t have an account?{" "}
                             <Link to="/signup" className="font-medium hover:underline">
                                 Register

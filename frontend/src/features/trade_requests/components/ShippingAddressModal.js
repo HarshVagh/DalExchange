@@ -29,7 +29,7 @@ const ShippingAddressModal = ({ tradeRequest, onClose }) => {
     try {
       // Include productId in the request body
       const orderId = await TradeRequestApi.saveShippingAddress({ ...formData, productId: tradeRequest.product.productId });
-      if (orderId != -1) {
+      if (orderId !== -1) {
         makePayment(orderId);
       }
     } catch (error) {
