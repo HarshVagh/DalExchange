@@ -68,9 +68,6 @@ public class PaymentController {
         }
     }
 
-
-
-    @CrossOrigin(origins = "http://localhost:3000")
     @PutMapping("/payment_success")
     public  ResponseEntity<String> changeRequestStatus(@RequestBody Map<String,Object> requestBody){
         try {
@@ -83,12 +80,10 @@ public class PaymentController {
         }
     }
 
-
     @PostMapping("/save_rating")
     public  ResponseEntity<String> saveProductRating(@RequestBody Map<String,Object> requestBody) {
         productRatingService.saveRating(requestBody);
         return ResponseEntity.status(HttpStatus.OK).body("saved succefully");
     }
-
 
 }

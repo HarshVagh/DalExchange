@@ -29,9 +29,6 @@ import java.util.Optional;
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
-    @Value("${stripe.api.key}")
-    private String stripeSecretKey;
-
     @Autowired
     private PaymentMapperImpl paymentMapper;
 
@@ -44,8 +41,11 @@ public class PaymentServiceImpl implements PaymentService {
     @Autowired
     private TradeRequestService tradeRequestService;
 
-    @Value("${frontend.endpoint}")
+    @Value("${frontend.url}")
     private String frontendURL;
+
+    @Value("${stripe.api.key}")
+    private String stripeSecretKey;
 
     @Override
     public String createPaymentIntent( Map<String,Object> requestBody) {
