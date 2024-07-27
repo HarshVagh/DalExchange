@@ -114,16 +114,14 @@ class ProductWishListServiceImplTest {
         try (MockedStatic<AuthUtil> mockedAuthUtil = Mockito.mockStatic(AuthUtil.class)) {
             mockedAuthUtil.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
 
-            // Mock repository responses
             when(userRepository.findById(userId)).thenReturn(Optional.of(user));
             when(productRepository.findById(productId)).thenReturn(Optional.of(product));
             when(productWishlistRepository.findAll(any(Specification.class))).thenReturn(List.of(existingWishlist));
 
             boolean result = productWishListService.markProductAsFavorite(productId);
 
-            assertFalse(result); // Product was removed from the wishlist
+            assertFalse(result);
 
-            // Verify interactions
             verify(productWishlistRepository, times(1)).findAll(any(Specification.class));
             verify(productWishlistRepository, times(1)).deleteAll(any(List.class));
             verify(productWishlistRepository, never()).save(any(ProductWishlist.class));
@@ -142,7 +140,6 @@ class ProductWishListServiceImplTest {
         Product product = new Product();
         product.setProductId(productId);
 
-        // Mock repository responses
         try (MockedStatic<AuthUtil> mockedAuthUtil = Mockito.mockStatic(AuthUtil.class)) {
             mockedAuthUtil.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
 
@@ -150,17 +147,15 @@ class ProductWishListServiceImplTest {
             when(productRepository.findById(productId)).thenReturn(Optional.of(product));
             when(productWishlistRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
 
-            // Mock saving the wishlist item
             ProductWishlist wishlistItem = new ProductWishlist();
-            wishlistItem.setUserId(user);  // Make sure to set the User object
-            wishlistItem.setProductId(product);  // Make sure to set the Product object
+            wishlistItem.setUserId(user);
+            wishlistItem.setProductId(product);
             when(productWishlistRepository.save(any(ProductWishlist.class))).thenReturn(wishlistItem);
 
             boolean result = productWishListService.markProductAsFavorite(productId);
 
-            assertTrue(result); // Product was added to the wishlist
+            assertTrue(result);
 
-            // Verify interactions
             verify(productWishlistRepository, times(1)).findAll(any(Specification.class));
             verify(productWishlistRepository, times(1)).save(any(ProductWishlist.class));
             verify(productWishlistRepository, never()).deleteAll(any(List.class));
@@ -256,7 +251,6 @@ class ProductWishListServiceImplTest {
     void testGetAllPurchasedProduct_whenOrdersExist() {
         Long userId = 1L;
 
-        // Mock static AuthUtil
         try (MockedStatic<AuthUtil> authUtilMock = mockStatic(AuthUtil.class)) {
             authUtilMock.when(() -> AuthUtil.getCurrentUserId(any())).thenReturn(userId);
 
@@ -293,7 +287,7 @@ class ProductWishListServiceImplTest {
         List<PurchaseProductDTO> result = productWishListService.getAllPurchasedProduct();
 
         assertEquals(0, result.size());
-        verify(purchaseProductMapper, never()).mapTo(any()); // Ensure mapTo is never called when there are no orders
+        verify(purchaseProductMapper, never()).mapTo(any());
     }
 
     @Test

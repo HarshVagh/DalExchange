@@ -1,6 +1,5 @@
 package com.asdc.dalexchange.service.impl;
 
-
 import com.asdc.dalexchange.dto.PaymentDTO;
 import com.asdc.dalexchange.enums.OrderStatus;
 import com.asdc.dalexchange.enums.PaymentStatus;
@@ -16,7 +15,8 @@ import com.asdc.dalexchange.util.ResourceNotFoundException;
 import com.stripe.Stripe;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -26,20 +26,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Implementation of the {@link PaymentService} interface for managing payments.
+ * Provides functionality for creating payment intents with Stripe and saving payment details.
+ */
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class PaymentServiceImpl implements PaymentService {
 
-    @Autowired
-    private PaymentMapperImpl paymentMapper;
-
-    @Autowired
-    private OrderRepository orderRepository;
-
-    @Autowired
-    private PaymentRepository paymentRepository;
-
-    @Autowired
-    private TradeRequestService tradeRequestService;
+    private final PaymentMapperImpl paymentMapper;
+    private final OrderRepository orderRepository;
+    private final PaymentRepository paymentRepository;
+    private final TradeRequestService tradeRequestService;
 
     @Value("${frontend.url}")
     private String frontendURL;
@@ -47,15 +46,23 @@ public class PaymentServiceImpl implements PaymentService {
     @Value("${stripe.api.key}")
     private String stripeSecretKey;
 
+    /**
+     * Creates a payment intent using Stripe's checkout session API.
+     * Generates a Stripe checkout session URL for the specified product and order.
+     *
+     * @param requestBody a map containing the product ID and order ID.
+     * @return the Stripe checkout session ID.
+     * @throws RuntimeException if an error occurs during session creation.
+     */
     @Override
-    public String createPaymentIntent( Map<String,Object> requestBody) {
+    public String createPaymentIntent(Map<String, Object> requestBody) {
         try {
             Long productId = Long.parseLong(requestBody.get("productId").toString());
             Long orderId = Long.parseLong(requestBody.get("orderId").toString());
             double productPrice = tradeRequestService.getApprovedTradeRequestAmount(productId);
-            String successURL = frontendURL + "/payment/success?amount=" + productPrice
-                   + "&productId=" + productId + "&paymentIntentId={CHECKOUT_SESSION_ID}" + "&orderId=" + orderId;
 
+            String successURL = frontendURL + "/payment/success?amount=" + productPrice
+                    + "&productId=" + productId + "&paymentIntentId={CHECKOUT_SESSION_ID}&orderId=" + orderId;
             String failureURL = frontendURL + "/payment/fail";
 
             Stripe.apiKey = stripeSecretKey;
@@ -78,31 +85,46 @@ public class PaymentServiceImpl implements PaymentService {
                                             .build())
                             .build())
                     .build();
-            System.out.println("the param is " + params);
-            Session s = Session.create(params);
-            return s.getId();
+
+            log.info("Creating payment session with parameters: {}", params);
+            Session session = Session.create(params);
+            log.info("Payment session created successfully with ID: {}", session.getId());
+
+            return session.getId();
         } catch (Exception e) {
+            log.error("Failed to create payment intent: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to create payment intent: " + e.getMessage(), e);
         }
     }
 
-
+    /**
+     * Saves the payment details for the specified order and updates the order status.
+     * Updates the payment status to completed and the order status to delivered.
+     *
+     * @param requestBody a map containing the order ID.
+     * @return a {@link PaymentDTO} containing the saved payment details.
+     * @throws ResourceNotFoundException if the order with the specified ID is not found.
+     */
     @Override
     public PaymentDTO savePayment(Map<String, Object> requestBody) {
         Long orderId = Long.parseLong(requestBody.get("orderId").toString());
-        System.out.println("the order is :" + orderId);
+        log.info("Saving payment for order ID: {}", orderId);
+
         Optional<OrderDetails> orderOptional = orderRepository.findById(orderId);
         if (!orderOptional.isPresent()) {
+            log.error("Order with ID {} not found", orderId);
             throw new ResourceNotFoundException("Order not found");
         }
 
         OrderDetails order = orderOptional.get();
         order.setOrderStatus(OrderStatus.Delivered);
         orderRepository.save(order);
+        log.info("Order status updated to DELIVERED for order ID: {}", orderId);
 
         Specification<Payment> spec = PaymentSpecification.hasPaymentId(orderId);
         List<Payment> payments = paymentRepository.findAll(spec);
         if (payments.isEmpty()) {
+            log.warn("No payments found for order ID: {}", orderId);
             return new PaymentDTO(); // Or throw an exception if required
         }
 
@@ -110,6 +132,7 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setPaymentStatus(PaymentStatus.completed);
         payment.setPaymentDate(LocalDateTime.now());
         Payment savedPayment = paymentRepository.save(payment);
+        log.info("Payment status updated to COMPLETED for payment ID: {}", savedPayment.getPaymentId());
 
         return paymentMapper.mapTo(savedPayment);
     }

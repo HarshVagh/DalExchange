@@ -67,33 +67,26 @@ public class ProductServiceImplTest {
 
     @Test
     public void testGetProductById_Exists() {
-        // Mock data
         Long productId = 1L;
         Product mockProduct = new Product();
         mockProduct.setProductId(productId);
         ProductDTO mockProductDTO = new ProductDTO();
         mockProductDTO.setProductId(productId);
 
-        // Mock repository behavior
         when(productRepository.findById(productId)).thenReturn(Optional.of(mockProduct));
         when(productMapper.mapTo(mockProduct)).thenReturn(mockProductDTO);
 
-        // Call method under test
         ProductDTO result = productService.getProductById(productId);
 
-        // Assertions
         assertEquals(productId, result.getProductId());
     }
 
     @Test
     public void testGetProductById_NotFound() {
-        // Mock data
         Long productId = 2L;
 
-        // Mock repository behavior
         when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
-        // Call method under test and assert exception
         assertThrows(ResourceNotFoundException.class, () -> {
             productService.getProductById(productId);
         });
@@ -283,7 +276,6 @@ public class ProductServiceImplTest {
         seller.setUserId(1L);
         seller.setUsername("testUser");
 
-        // Mock the userRepository to return an Optional<User>
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(seller));
 
         try (MockedStatic<AuthUtil> mockedAuthUtil = Mockito.mockStatic(AuthUtil.class)) {
@@ -343,7 +335,6 @@ public class ProductServiceImplTest {
             assertEquals(addProductDTO.getQuantityAvailable(), product.getQuantityAvailable());
             assertEquals(seller, product.getSeller());
 
-            // Verify images were saved
             verify(productImageRepository, times(2)).saveAll(anyList());
             assertEquals(mockImageUrl1, images.get(0).getImageUrl());
             assertEquals(mockImageUrl2, images.get(1).getImageUrl());
@@ -420,7 +411,6 @@ public class ProductServiceImplTest {
 
     @Test
     void testMarkProductAsSold_Success() {
-        // Arrange
         Long productId = 1L;
         Product product = new Product();
         product.setProductId(productId);
@@ -440,7 +430,6 @@ public class ProductServiceImplTest {
 
     @Test
     void testMarkProductAsSold_ProductNotFound() {
-        // Arrange
         Long productId = 1L;
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("productId", productId);

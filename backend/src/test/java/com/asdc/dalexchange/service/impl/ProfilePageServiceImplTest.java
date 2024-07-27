@@ -38,43 +38,34 @@ public class ProfilePageServiceImplTest {
 
     @Test
     void testEditUserDetails_Success() {
-        // Mock data
+
         Long userId = AuthUtil.getCurrentUserId(userRepository);
         EditProfileDTO editProfileDTO = createEditProfileDTO();
         User user = createUser();
 
-        // Mock repository behavior
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-        // Mock mapper behavior
         when(modelMapper.map(editProfileDTO, User.class)).thenReturn(user);
 
-        // Mock repository save behavior
         when(userRepository.save(user)).thenReturn(user);
 
-        // Mock mapper for returning DTO
         when(editProfileMapper.mapTo(user)).thenReturn(editProfileDTO);
 
-        // Call the service method
         EditProfileDTO updatedProfile = profilePageService.editUserDetails(editProfileDTO);
 
-        // Assertions
         assertNotNull(updatedProfile);
         assertEquals(editProfileDTO.getUsername(), updatedProfile.getUsername());
         assertEquals(editProfileDTO.getEmail(), updatedProfile.getEmail());
-        // Add more assertions based on your DTO and expected behavior
     }
 
     @Test
     void testEditUserDetails_UserNotFound() {
-        // Mock data
         Long userId = 1L;
         EditProfileDTO editProfileDTO = createEditProfileDTO();
 
-        // Mock repository behavior
+
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        // Call the service method and expect RuntimeException
         assertThrows(RuntimeException.class, () -> {
             profilePageService.editUserDetails(editProfileDTO);
         });
@@ -82,33 +73,27 @@ public class ProfilePageServiceImplTest {
 
     @Test
     void testGetUserDetails_Success() {
-        // Mock data
+
         Long userId = 1L;
         User user = createUser();
         EditProfileDTO editProfileDTO = createEditProfileDTO();
 
-        // Mock AuthUtil
         try (MockedStatic<AuthUtil> authUtilMock = mockStatic(AuthUtil.class)) {
             authUtilMock.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
 
-            // Mock repository behavior
             when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-            // Mock mapper behavior
             when(modelMapper.map(user, EditProfileDTO.class)).thenReturn(editProfileDTO);
 
-            // Call the service method
             EditProfileDTO userDetails = profilePageService.editGetUserDetails();
 
-            // Assertions
             assertNotNull(userDetails);
             assertEquals(user.getUsername(), userDetails.getUsername());
             assertEquals(user.getEmail(), userDetails.getEmail());
-            // Add more assertions based on your DTO and expected behavior
+
         }
     }
 
-    // Helper methods for creating mock data
     private User createUser() {
         User user = new User();
         user.setUsername("testUser");
@@ -123,7 +108,22 @@ public class ProfilePageServiceImplTest {
         return dto;
     }
 
-    // Add more test cases to cover edge cases and other methods as necessary
+    @Test
+    void testGetUserDetails_UserNotFound() {
+        Long userId = 1L;
+
+        try (MockedStatic<AuthUtil> authUtilMock = mockStatic(AuthUtil.class)) {
+            authUtilMock.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
+
+            when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+            RuntimeException thrownException = assertThrows(RuntimeException.class, () -> {
+                profilePageService.editGetUserDetails();
+            });
+
+            assertEquals("User not found", thrownException.getMessage());
+        }
+    }
 
 }
 

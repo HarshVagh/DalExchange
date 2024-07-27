@@ -23,7 +23,11 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -190,6 +194,7 @@ public class TradeRequestServiceImplTest {
             verify(tradeRequestMapper, times(1)).mapTo(createdTradeRequest);
         }
     }
+
     @Test
     public void testGetApprovedTradeRequestAmount() {
         Long productId = 1L;
@@ -207,7 +212,7 @@ public class TradeRequestServiceImplTest {
 
             double result = tradeRequestService.getApprovedTradeRequestAmount(productId);
 
-            assertEquals(100.00, result, 0.01); // Added delta for floating-point comparison
+            assertEquals(100.00, result, 0.01);
         }
     }
 
@@ -226,7 +231,7 @@ public class TradeRequestServiceImplTest {
                     .and(TradeRequestSpecification.hasRequestStatus("approved"))))
                     .thenReturn(Collections.emptyList());
 
-            assertThrows(IndexOutOfBoundsException.class, () -> tradeRequestService.getApprovedTradeRequestAmount(productId));
+            assertThrows(ResourceNotFoundException.class, () -> tradeRequestService.getApprovedTradeRequestAmount(productId));
         }
     }
 
@@ -255,7 +260,7 @@ public class TradeRequestServiceImplTest {
 
             String result = tradeRequestService.updateStatusByProduct(requestBody);
 
-            assertEquals("Trade requestUpdated Successfully", result);
+            assertEquals("Trade request updated successfully", result);
             verify(tradeRequestRepository).findOne(any(Specification.class));
             verify(tradeRequestRepository).save(any(TradeRequest.class));
         }
@@ -282,12 +287,5 @@ public class TradeRequestServiceImplTest {
             verify(tradeRequestRepository).findOne(any(Specification.class));
         }
     }
-
-
-
-
-
-
-
 
 }

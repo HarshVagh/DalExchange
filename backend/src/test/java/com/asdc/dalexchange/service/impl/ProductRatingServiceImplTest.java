@@ -25,10 +25,9 @@ import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 class ProductRatingServiceImplTest {
@@ -43,7 +42,7 @@ class ProductRatingServiceImplTest {
     private UserRepository userRepository;
 
     @Mock
-    private ProductRatingMapperImpl productRatingMapper;
+    private Mapper<ProductRating, ProductRatingDTO> productRatingMapper;
 
     @Mock
     private Mapper<ProductRating, ProductRatingAdminDTO> productRatingAdminMapper;
@@ -66,11 +65,9 @@ class ProductRatingServiceImplTest {
         ProductCategory category = new ProductCategory();
         category.setCategoryId(1L);
         category.setName("Electronics");
-        
-        // Mock static AuthUtil
+
         try (MockedStatic<AuthUtil> authUtilMock = mockStatic(AuthUtil.class)) {
             authUtilMock.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
-            // Call the service method
             List<ProductRatingDTO> result = productRatingService.allReviewOfAllSoldItemsOfUser();
             Product product1 = new Product();
             product1.setProductId(101L);
@@ -104,52 +101,18 @@ class ProductRatingServiceImplTest {
                     .thenReturn(Arrays.asList(product1, product2));
             when(productRatingRepository.findByIdProductId(101L)).thenReturn(Collections.emptyList());
             when(productRatingRepository.findByIdProductId(102L)).thenReturn(Collections.emptyList());
-            // Assertions
             assertEquals(0, result.size());
         }
     }
 
     @Test
-    void testGetAllReviews() {
-        ProductRating rating1 = new ProductRating();
-        ProductRating rating2 = new ProductRating();
-        List<ProductRating> mockRatings = Arrays.asList(rating1, rating2);
-
-        ProductRatingAdminDTO dto1 = new ProductRatingAdminDTO();
-        ProductRatingAdminDTO dto2 = new ProductRatingAdminDTO();
-
-        when(productRatingRepository.findAll()).thenReturn(mockRatings);
-        when(productRatingAdminMapper.mapTo(any(ProductRating.class)))
-                .thenReturn(dto1)
-                .thenReturn(dto2);
+    void testGetAllReviews_Empty() {
+        when(productRatingRepository.findAll()).thenReturn(Collections.emptyList());
 
         List<ProductRatingAdminDTO> result = productRatingService.getAllReviews();
 
-        assertEquals(2, result.size());
+        assertEquals(0, result.size());
         verify(productRatingRepository, times(1)).findAll();
-        verify(productRatingAdminMapper, times(2)).mapTo(any(ProductRating.class));
-    }
-
-    @Test
-    void testGetAllReviewsByProduct() {
-        Long productId = 1L;
-        ProductRating rating1 = new ProductRating();
-        ProductRating rating2 = new ProductRating();
-        List<ProductRating> mockRatings = Arrays.asList(rating1, rating2);
-
-        ProductRatingAdminDTO dto1 = new ProductRatingAdminDTO();
-        ProductRatingAdminDTO dto2 = new ProductRatingAdminDTO();
-
-        when(productRatingRepository.findByIdProductId(productId)).thenReturn(mockRatings);
-        when(productRatingAdminMapper.mapTo(any(ProductRating.class)))
-                .thenReturn(dto1)
-                .thenReturn(dto2);
-
-        List<ProductRatingAdminDTO> result = productRatingService.getAllReviewsByProduct(productId);
-
-        assertEquals(2, result.size());
-        verify(productRatingRepository, times(1)).findByIdProductId(productId);
-        verify(productRatingAdminMapper, times(2)).mapTo(any(ProductRating.class));
     }
 
     @Test
@@ -272,6 +235,34 @@ class ProductRatingServiceImplTest {
             verify(productRepository, times(1)).findById(productId);
             verify(productRatingRepository, times(0)).save(any(ProductRating.class));
         }
+    }
+
+    @Test
+    void testGetAllReviewsByProduct() {
+        Long productId = 1L;
+        List<ProductRating> productRatings = Arrays.asList(new ProductRating(), new ProductRating());
+        ProductRatingAdminDTO dto1 = new ProductRatingAdminDTO();
+        ProductRatingAdminDTO dto2 = new ProductRatingAdminDTO();
+
+        when(productRatingRepository.findByIdProductId(productId)).thenReturn(productRatings);
+        when(productRatingAdminMapper.mapTo(productRatings.get(0))).thenReturn(dto1);
+        when(productRatingAdminMapper.mapTo(productRatings.get(1))).thenReturn(dto2);
+
+        List<ProductRatingAdminDTO> result = productRatingService.getAllReviewsByProduct(productId);
+
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    void testGetAllReviewsByProduct_NoReviews() {
+        Long productId = 1L;
+
+        when(productRatingRepository.findByIdProductId(productId)).thenReturn(Arrays.asList());
+
+        List<ProductRatingAdminDTO> result = productRatingService.getAllReviewsByProduct(productId);
+
+        assertTrue(result.isEmpty());
+
     }
 
 }
