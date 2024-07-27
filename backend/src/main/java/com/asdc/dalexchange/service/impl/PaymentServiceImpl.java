@@ -125,10 +125,11 @@ public class PaymentServiceImpl implements PaymentService {
         List<Payment> payments = paymentRepository.findAll(spec);
         if (payments.isEmpty()) {
             log.warn("No payments found for order ID: {}", orderId);
-            return new PaymentDTO(); // Or throw an exception if required
+            return new PaymentDTO();
         }
 
-        Payment payment = payments.get(0);
+        Long PaymentId = order.getPayment().getPaymentId();
+        Payment payment = paymentRepository.findById(PaymentId).get();
         payment.setPaymentStatus(PaymentStatus.completed);
         payment.setPaymentDate(LocalDateTime.now());
         Payment savedPayment = paymentRepository.save(payment);
