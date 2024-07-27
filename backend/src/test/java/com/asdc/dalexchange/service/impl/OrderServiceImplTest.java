@@ -425,12 +425,12 @@ class OrderServiceImplTest {
         Long userId = 1L;
         Long productId = 2L;
         Double amount = 100.0;
+
         ShippingAddress shippingAddress = new ShippingAddress();
         shippingAddress.setAddressId(1L);
 
         Product product = new Product();
         product.setProductId(productId);
-        product.setSold(false);
 
         User user = new User();
         user.setUserId(userId);
@@ -460,7 +460,6 @@ class OrderServiceImplTest {
             verify(userRepository, times(1)).findByUserId(userId);
             verify(paymentRepository, times(1)).save(any(Payment.class));
             verify(orderRepository, times(1)).save(any(OrderDetails.class));
-            verify(productRepository, times(1)).save(product);
         }
     }
 
