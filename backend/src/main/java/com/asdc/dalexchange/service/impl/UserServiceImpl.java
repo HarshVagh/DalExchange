@@ -38,6 +38,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Returns the number of new customers who joined in the last 30 days.
+     *
      * @return the number of new customers
      */
     public long newCustomers() {
@@ -48,6 +49,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Calculates the percentage change in the number of customers over the last 30 days.
+     *
      * @return the percentage change in the number of customers
      */
     public double customersChange() {
@@ -72,6 +74,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Returns the current date and time.
+     *
      * @return the current date and time
      */
     public LocalDateTime getCurrentDateTime() {
@@ -80,7 +83,8 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Calculates the percentage increase between two values.
-     * @param current the current value
+     *
+     * @param current  the current value
      * @param previous the previous value
      * @return the percentage increase
      */
@@ -96,6 +100,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Retrieves all users as a list of UserDTO objects.
+     *
      * @return a list of UserDTO objects
      */
     @Override
@@ -108,6 +113,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Retrieves the details of a user by user ID.
+     *
      * @param userId the ID of the user
      * @return an Optional containing the UserDTO if found, or empty if not found
      */
@@ -120,7 +126,8 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Edits the details of an existing user.
-     * @param userId the ID of the user to edit
+     *
+     * @param userId             the ID of the user to edit
      * @param updatedUserDetails the updated user details
      * @return the updated UserDTO
      */
@@ -153,6 +160,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Activates a user by user ID.
+     *
      * @param userId the ID of the user to activate
      * @return the activated UserDTO
      */
@@ -174,6 +182,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Deactivates a user by user ID.
+     *
      * @param userId the ID of the user to deactivate
      * @return the deactivated UserDTO
      */
@@ -195,6 +204,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Deletes a user by user ID.
+     *
      * @param userId the ID of the user to delete
      */
     public void deleteUser(long userId) {
@@ -205,8 +215,9 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Verifies a user based on email and verification code.
+     *
      * @param email the email of the user
-     * @param code the verification code
+     * @param code  the verification code
      * @return true if the verification is successful, false otherwise
      */
     public boolean verifyUser(String email, String code) {
@@ -223,6 +234,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Generates a random 6-digit verification code.
+     *
      * @return the generated verification code
      */
     private String generateVerificationCode() {
@@ -234,6 +246,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Retrieves the currently authenticated user.
+     *
      * @return the currently authenticated user
      */
     public User getCurrentUser() {
@@ -243,7 +256,8 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Registers a new user and uploads their profile picture.
-     * @param user the user to register
+     *
+     * @param user           the user to register
      * @param profilePicture the profile picture file
      * @return the registered user
      */

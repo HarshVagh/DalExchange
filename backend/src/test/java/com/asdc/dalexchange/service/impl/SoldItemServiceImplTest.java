@@ -1,12 +1,14 @@
 package com.asdc.dalexchange.service.impl;
 
 import com.asdc.dalexchange.dto.SoldItemDTO;
+import com.asdc.dalexchange.mappers.Mapper;
 import com.asdc.dalexchange.mappers.impl.SoldItemMapperImpl;
 import com.asdc.dalexchange.model.Product;
 import com.asdc.dalexchange.model.SoldItem;
 import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.repository.ProductRepository;
 import com.asdc.dalexchange.repository.SoldItemRepository;
+import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.specifications.SoldItemSpecification;
 import com.asdc.dalexchange.util.AuthUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,11 +27,15 @@ public class SoldItemServiceImplTest {
 
     @Mock
     private SoldItemRepository soldItemRepository;
+
     @Mock
-    private SoldItemMapperImpl soldItemMapper;
+    private UserRepository userRepository;
 
     @Mock
     private ProductRepository productRepository;
+
+    @Mock
+    private Mapper<SoldItem, SoldItemDTO> soldItemMapper;
 
 
     @InjectMocks
@@ -43,19 +49,21 @@ public class SoldItemServiceImplTest {
 
 
     @Test
-    public void testGetallSoldProduct_EmptyList() {
+    public void testGetAllSoldProduct_EmptyList() {
         Long userId = 1L;
 
         try (MockedStatic<AuthUtil> authUtilMock = mockStatic(AuthUtil.class)) {
-            authUtilMock.when(() -> AuthUtil.getCurrentUserId(null)).thenReturn(userId);
+            authUtilMock.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
+            when(soldItemMapper.mapTo(new SoldItem())).thenReturn(new SoldItemDTO());
             when(soldItemRepository.findAll(SoldItemSpecification.bySellerUserId(userId)))
                     .thenReturn(Collections.emptyList());
 
-            List<SoldItemDTO> result = soldItemService.GetallSoldProduct();
+            List<SoldItemDTO> result = soldItemService.GetAllSoldProduct();
 
             assertTrue(result.isEmpty());
         }
     }
+
     @Test
     public void testSaveSoldItem_ProductNotExists() {
         Long productId = 1L;
@@ -110,4 +118,17 @@ public class SoldItemServiceImplTest {
         RuntimeException thrown = assertThrows(RuntimeException.class, () -> soldItemService.saveSoldItem(requestBody));
         assertEquals("Error saving SoldItem", thrown.getMessage());
     }
+    @Test
+    public void testSaveSoldItem_ProductNotFound() {
+        Long productId = 1L;
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("productId", productId);
+
+        when(productRepository.findById(productId)).thenReturn(Optional.empty());
+
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> soldItemService.saveSoldItem(requestBody));
+        assertEquals("Product not found", thrown.getMessage());
+    }
+
 }
