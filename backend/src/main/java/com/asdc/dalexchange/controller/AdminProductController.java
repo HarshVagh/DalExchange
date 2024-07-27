@@ -2,6 +2,8 @@ package com.asdc.dalexchange.controller;
 
 import com.asdc.dalexchange.dto.ProductModerationDTO;
 import com.asdc.dalexchange.service.ProductService;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
@@ -14,14 +16,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/products")
 @Slf4j
+@AllArgsConstructor
 public class AdminProductController {
 
     private final ProductService productService;
-
-    @Autowired
-    public AdminProductController(ProductService productService) {
-        this.productService = productService;
-    }
 
     /**
      * Retrieves all products.

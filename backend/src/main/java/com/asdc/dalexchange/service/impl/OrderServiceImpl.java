@@ -10,6 +10,7 @@ import com.asdc.dalexchange.service.OrderService;
 import com.asdc.dalexchange.service.TradeRequestService;
 import com.asdc.dalexchange.util.AuthUtil;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,27 +26,15 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
+@AllArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
-    @Autowired
     private OrderRepository orderRepository;
-
-    @Autowired
     private UserRepository userRepository;
-
-    @Autowired
     private PaymentRepository paymentRepository;
-
-    @Autowired
     private ProductRepository productRepository;
-
-    @Autowired
     private TradeRequestService tradeRequestService;
-
-    @Autowired
     private ShippingRepository shippingRepository;
-
-    @Autowired
     private Mapper<OrderDetails, OrderDTO> orderMapper;
 
     /**

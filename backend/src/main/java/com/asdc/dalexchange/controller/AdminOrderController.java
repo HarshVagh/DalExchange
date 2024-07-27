@@ -3,6 +3,7 @@ package com.asdc.dalexchange.controller;
 import com.asdc.dalexchange.dto.OrderDTO;
 import com.asdc.dalexchange.model.OrderDetails;
 import com.asdc.dalexchange.service.OrderService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
@@ -15,14 +16,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/orders")
 @Slf4j
+@AllArgsConstructor
 public class AdminOrderController {
 
     private final OrderService orderService;
-
-    @Autowired
-    public AdminOrderController(OrderService orderService) {
-        this.orderService = orderService;
-    }
 
     /**
      * Retrieves all orders.
