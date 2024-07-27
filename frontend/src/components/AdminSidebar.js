@@ -5,6 +5,11 @@ import StoreIcon from "../assets/icons/store-solid.svg";
 function Sidebar() {
   const location = useLocation();
 
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.href = "/login";
+  };
+
   return (
     <aside className="fixed inset-y-0 left-0 flex flex-col w-64 bg-gray-200 p-6 border-r">
       <div className="flex items-center justify-center mb-8">
@@ -70,7 +75,9 @@ function Sidebar() {
       </nav>
       <div className="mt-auto">
         <Link to="/logout">
-          <button className="text-white bg-red-600 hover:bg-red-700 focus:outline-none font-large font-semibold rounded-lg text-sm py-2 w-full tracking-wide">
+          <button 
+          onClick={handleLogout}
+          className="text-white bg-red-600 hover:bg-red-700 focus:outline-none font-large font-semibold rounded-lg text-sm py-2 w-full tracking-wide">
             Logout
           </button>
         </Link>
