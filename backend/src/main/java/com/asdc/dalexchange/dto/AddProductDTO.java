@@ -3,9 +3,6 @@ package com.asdc.dalexchange.dto;
 import com.asdc.dalexchange.enums.ProductCondition;
 import com.asdc.dalexchange.enums.ShippingType;
 import lombok.*;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-
 
 @Data
 @Getter

@@ -27,7 +27,7 @@ backend_build:
     - main
     - develop
   tags:
-    - dalfcs_docker_kvm
+    - dalfcs_gitlab_docker_ci
 
 frontend_build:
   stage: build
@@ -37,8 +37,6 @@ frontend_build:
   script:
     - echo "Frontend Build Started"
     - npm cache clean --force
-    - npx npm@latest install
-    - npm --version
     - npm install
     - npm run build
     - echo "Frontend Build Completed"
@@ -64,7 +62,7 @@ backend_test:
     - main
     - develop
   tags:
-    - dalfcs_docker_kvm
+    - dalfcs_gitlab_docker_ci
 
 publish_backend:
   stage: publish
@@ -93,7 +91,7 @@ publish_backend:
   only:
     - main
   tags:
-    - dalfcs_docker_kvm
+    - dalfcs_gitlab_docker_ci
 
 publish_frontend:
   stage: publish
@@ -122,13 +120,13 @@ publish_frontend:
   only:
     - main
   tags:
-    - dalfcs_docker_kvm
+    - dalfcs_gitlab_docker_ci
 
 deploy_backend:
   image: alpine:latest
   stage: deploy
   tags:
-    - dalfcs_docker_kvm
+    - dalfcs_gitlab_docker_ci
   script:
     - echo "Deploying Backend..."
     - apk update && apk add openssh-client sshpass
