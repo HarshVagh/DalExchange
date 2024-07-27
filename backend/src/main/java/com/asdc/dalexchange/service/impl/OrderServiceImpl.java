@@ -10,6 +10,7 @@ import com.asdc.dalexchange.service.OrderService;
 import com.asdc.dalexchange.service.TradeRequestService;
 import com.asdc.dalexchange.util.AuthUtil;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 
 
 @Service
+@Slf4j
 public class OrderServiceImpl implements OrderService {
 
     @Autowired
@@ -181,16 +183,27 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public Long saveNewOrder(ShippingAddress getSavedShippingAddress, Long productId) {
+        log.info("Saving new order for productId: {}", productId);
+
         Long userId = AuthUtil.getCurrentUserId(userRepository);
         Double amount = tradeRequestService.getApprovedTradeRequestAmount(productId);
 
-        Optional<Product> getProduct = productRepository.findById(productId);
-        Product product = getProduct.get();
+        Optional<Product> optionalProduct = productRepository.findById(productId);
+        if (!optionalProduct.isPresent()) {
+            log.error("Product with id {} not found", productId);
+            throw new RuntimeException("Product not found");
+        }
+
+        Product product = optionalProduct.get();
         product.setSold(true);
         productRepository.save(product);
+        log.info("Product with id {} marked as sold", productId);
 
         User user = userRepository.findByUserId(userId);
-        OrderDetails orderDetails = new OrderDetails();
+        if (user == null) {
+            log.error("User with id {} not found", userId);
+            throw new RuntimeException("User not found");
+        }
 
         Payment payment = new Payment();
         payment.setPaymentMethod("Card");
@@ -198,7 +211,9 @@ public class OrderServiceImpl implements OrderService {
         payment.setAmount(amount);
         payment.setPaymentDate(LocalDateTime.now());
         Payment savedPayment = paymentRepository.save(payment);
+        log.info("Payment saved with id: {}", savedPayment.getPaymentId());
 
+        OrderDetails orderDetails = new OrderDetails();
         orderDetails.setBuyer(user);
         orderDetails.setProductId(product);
         orderDetails.setTotalAmount(amount);
@@ -206,7 +221,10 @@ public class OrderServiceImpl implements OrderService {
         orderDetails.setTransactionDatetime(LocalDateTime.now());
         orderDetails.setShippingAddress(getSavedShippingAddress);
         orderDetails.setPayment(savedPayment);
+
         OrderDetails savedOrder = orderRepository.save(orderDetails);
+        log.info("Order saved with id: {}", savedOrder.getOrderId());
+
         return savedOrder.getOrderId();
     }
 

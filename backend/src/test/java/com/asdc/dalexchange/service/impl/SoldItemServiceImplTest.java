@@ -43,7 +43,7 @@ public class SoldItemServiceImplTest {
 
 
     @Test
-    public void testGetallSoldProduct_EmptyList() {
+    public void testGetAllSoldProduct_EmptyList() {
         Long userId = 1L;
 
         try (MockedStatic<AuthUtil> authUtilMock = mockStatic(AuthUtil.class)) {
@@ -51,7 +51,7 @@ public class SoldItemServiceImplTest {
             when(soldItemRepository.findAll(SoldItemSpecification.bySellerUserId(userId)))
                     .thenReturn(Collections.emptyList());
 
-            List<SoldItemDTO> result = soldItemService.GetallSoldProduct();
+            List<SoldItemDTO> result = soldItemService.GetAllSoldProduct();
 
             assertTrue(result.isEmpty());
         }

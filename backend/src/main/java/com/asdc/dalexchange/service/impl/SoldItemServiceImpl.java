@@ -31,7 +31,7 @@ public class SoldItemServiceImpl implements SoldItemService {
     private final SoldItemMapperImpl soldItemMapper;
 
     @Override
-    public List<SoldItemDTO> GetallSoldProduct() {
+    public List<SoldItemDTO> GetAllSoldProduct() {
         Long userId = AuthUtil.getCurrentUserId(userRepository);
         log.info("Fetching all sold products for userId: {}", userId);
 

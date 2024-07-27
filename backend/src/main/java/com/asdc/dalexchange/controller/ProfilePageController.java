@@ -43,7 +43,7 @@ public class ProfilePageController {
     @GetMapping("/sold_products")
     public ResponseEntity<List<SoldItemDTO>> getAllSoldProducts() {
         log.info("Fetching all sold products");
-        List<SoldItemDTO> soldProductDTOs = soldItemService.GetallSoldProduct();
+        List<SoldItemDTO> soldProductDTOs = soldItemService.GetAllSoldProduct();
         log.info("Fetched {} sold products", soldProductDTOs.size());
         return ResponseEntity.ok(soldProductDTOs);
     }

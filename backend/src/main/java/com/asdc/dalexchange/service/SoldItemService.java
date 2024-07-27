@@ -7,6 +7,6 @@ import java.util.Map;
 
 public interface SoldItemService {
 
-    List<SoldItemDTO> GetallSoldProduct();
+    List<SoldItemDTO> GetAllSoldProduct();
     void  saveSoldItem(Map<String,Object> requestBody);
 }
