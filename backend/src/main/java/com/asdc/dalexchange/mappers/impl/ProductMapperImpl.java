@@ -3,6 +3,7 @@ package com.asdc.dalexchange.mappers.impl;
 import com.asdc.dalexchange.dto.ProductDTO;
 import com.asdc.dalexchange.mappers.Mapper;
 import com.asdc.dalexchange.model.Product;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,20 +14,11 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
+@AllArgsConstructor
 public class ProductMapperImpl implements Mapper<Product, ProductDTO> {
 
     private final ModelMapper modelMapper;
 
-    /**
-     * Constructor to initialize the ProductMapperImpl with a ModelMapper.
-     *
-     * @param modelMapper the ModelMapper to be used for mapping.
-     */
-    @Autowired
-    public ProductMapperImpl(ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
-        log.info("Initialized ProductMapperImpl with ModelMapper.");
-    }
 
     /**
      * Maps a Product entity to a ProductDTO.

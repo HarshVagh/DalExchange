@@ -1,5 +1,6 @@
 package com.asdc.dalexchange.controller;
 
+import com.asdc.dalexchange.model.ProductCategory;
 import com.asdc.dalexchange.service.ProductCategoryService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,19 @@ public class ProductCategoryController {
         log.info("get product_categories API endpoint called.");
         List<String> categories = productCategoryService.findAll();
         log.debug("Fetched {} product categories.", categories.size());
+        return categories;
+    }
+
+    /**
+     * Retrieve all product categories with details.
+     *
+     * @return a list of ProductCategory objects.
+     */
+    @GetMapping(path = "/categories")
+    public List<ProductCategory> getCategories() {
+        log.info("get categories API endpoint called.");
+        List<ProductCategory> categories = productCategoryService.findAllCategories();
+        log.debug("Fetched {} categories.", categories.size());
         return categories;
     }
 }

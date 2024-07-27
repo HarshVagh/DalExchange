@@ -56,7 +56,6 @@ public class ProfilePageServiceImplTest {
         assertNotNull(updatedProfile);
         assertEquals(editProfileDTO.getUsername(), updatedProfile.getUsername());
         assertEquals(editProfileDTO.getEmail(), updatedProfile.getEmail());
-        // Add more assertions based on your DTO and expected behavior
     }
 
     @Test
@@ -111,26 +110,18 @@ public class ProfilePageServiceImplTest {
 
     @Test
     void testGetUserDetails_UserNotFound() {
-        // Mock data
         Long userId = 1L;
 
-        // Mock AuthUtil
         try (MockedStatic<AuthUtil> authUtilMock = mockStatic(AuthUtil.class)) {
             authUtilMock.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
 
-            // Mock repository behavior to return empty
             when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-            // Expectation of exception
             RuntimeException thrownException = assertThrows(RuntimeException.class, () -> {
                 profilePageService.editGetUserDetails();
             });
 
-            // Assertion for exception message
             assertEquals("User not found", thrownException.getMessage());
-
-            // Optionally, you can verify that the logger was called with the error message
-            // verify(log, times(1)).error("User not found with id: {}", userId);
         }
     }
 

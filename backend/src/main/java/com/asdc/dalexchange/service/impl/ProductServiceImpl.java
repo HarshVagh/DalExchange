@@ -17,7 +17,7 @@ import com.asdc.dalexchange.util.AuthUtil;
 import com.asdc.dalexchange.util.CloudinaryUtil;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,15 +33,21 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
-@AllArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
+    @Autowired
     private ProductRepository productRepository;
+    @Autowired
     private ProductCategoryRepository productCategoryRepository;
+    @Autowired
     private UserRepository userRepository;
+    @Autowired
     private ProductImageRepository productImageRepository;
+    @Autowired
     private Mapper<Product, ProductDTO> productMapper;
+    @Autowired
     private Mapper<Product, ProductModerationDTO> productModerationMapper;
+    @Autowired
     private CloudinaryUtil cloudinaryUtil;
 
     /**
@@ -63,6 +69,7 @@ public class ProductServiceImpl implements ProductService {
      *
      * @return a list of ProductModerationDTO objects
      */
+    @Override
     public List<ProductModerationDTO> getAllProducts() {
         log.info("Fetching all products for moderation");
         return productRepository.findAll().stream()
@@ -77,6 +84,7 @@ public class ProductServiceImpl implements ProductService {
      * @param updatedProductDetails the updated product details
      * @return the updated ProductModerationDTO
      */
+    @Override
     @Transactional
     public ProductModerationDTO updateProduct(Long productId, ProductModerationDTO updatedProductDetails) {
         log.info("Updating product with ID: {}", productId);
@@ -121,6 +129,7 @@ public class ProductServiceImpl implements ProductService {
      * @param productId the ID of the product to unlist
      * @param unlisted the unlisted status to set
      */
+    @Override
     @Transactional
     public void unlistProduct(Long productId, boolean unlisted) {
         log.info("Unlisting product with ID: {}. Unlisted status: {}", productId, unlisted);
@@ -138,6 +147,7 @@ public class ProductServiceImpl implements ProductService {
      * @param imageFiles the images of the product
      * @return the added product
      */
+    @Override
     public Product addProduct(AddProductDTO addProductDTO, ProductCategory category, List<MultipartFile> imageFiles) {
         log.info("Adding new product with title: {}", addProductDTO.getTitle());
 
@@ -183,6 +193,7 @@ public class ProductServiceImpl implements ProductService {
      * @param categoryId the ID of the category to retrieve
      * @return the ProductCategory
      */
+    @Override
     public ProductCategory getCategoryById(Long categoryId) {
         log.info("Fetching category with ID: {}", categoryId);
         return productCategoryRepository.findById(categoryId).orElse(null);
@@ -194,6 +205,7 @@ public class ProductServiceImpl implements ProductService {
      * @param id the ID of the product to retrieve
      * @return the Product
      */
+    @Override
     public Product getProductByID(Long id) {
         log.info("Fetching product with ID: {}", id);
         return productRepository.findById(id).orElse(null);

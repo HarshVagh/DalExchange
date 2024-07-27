@@ -31,7 +31,6 @@ public class EmailServiceImplTest {
 
     @Test
     public void sendEmailTest() throws Exception {
-        // Arrange
         String to = "test@example.com";
         String subject = "Test Subject";
         String text = "Test Text";
@@ -39,17 +38,14 @@ public class EmailServiceImplTest {
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
         doNothing().when(emailSender).send(mimeMessage);
 
-        // Act
         emailService.sendEmail(to, subject, text);
 
-        // Assert
         verify(emailSender, times(1)).createMimeMessage();
         verify(emailSender, times(1)).send(mimeMessage);
     }
 
     @Test
     public void sendEmailTest_ThrowsException() throws Exception {
-        // Arrange
         String to = "test@example.com";
         String subject = "Test Subject";
         String text = "Test Text";
@@ -57,7 +53,6 @@ public class EmailServiceImplTest {
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
         doThrow(new RuntimeException("Email sending failed")).when(emailSender).send(mimeMessage);
 
-        // Act & Assert
         try {
             emailService.sendEmail(to, subject, text);
         } catch (RuntimeException e) {

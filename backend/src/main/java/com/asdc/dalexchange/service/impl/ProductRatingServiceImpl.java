@@ -152,13 +152,7 @@ public class ProductRatingServiceImpl implements ProductRatingService {
         productRating.setUser(user);
         ProductRatingID productRatingID = new ProductRatingID(productId, userId);
         productRating.setId(productRatingID);
-
-        try {
-            productRatingRepository.save(productRating);
-            log.info("Successfully saved rating for productId: {} by userId: {}", productId, userId);
-        } catch (Exception e) {
-            log.error("Error saving rating for productId: {} by userId: {}. Error: {}", productId, userId, e.getMessage());
-            throw new RuntimeException("Error saving rating", e);
-        }
+        productRatingRepository.save(productRating);
+        log.info("Successfully saved rating for productId: {} by userId: {}", productId, userId);
     }
 }

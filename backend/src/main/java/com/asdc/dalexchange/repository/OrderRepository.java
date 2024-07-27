@@ -53,7 +53,7 @@ public interface OrderRepository extends JpaRepository<OrderDetails, Long>, JpaS
     @Query(value = "SELECT pc.name AS category_name, COUNT(od.product_id) AS items_sold " +
             "FROM order_details od " +
             "JOIN product p ON od.product_id = p.product_id " +
-            "JOIN product_category pc ON p.category = pc.category_id " +
+            "JOIN product_category pc ON p.category_id = pc.category_id " +
             "GROUP BY pc.name " +
             "ORDER BY items_sold DESC", nativeQuery = true)
     List<Object[]> findTopSellingCategories();

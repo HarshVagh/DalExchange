@@ -212,7 +212,7 @@ public class TradeRequestServiceImplTest {
 
             double result = tradeRequestService.getApprovedTradeRequestAmount(productId);
 
-            assertEquals(100.00, result, 0.01); // Added delta for floating-point comparison
+            assertEquals(100.00, result, 0.01);
         }
     }
 
