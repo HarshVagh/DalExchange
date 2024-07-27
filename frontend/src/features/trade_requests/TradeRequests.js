@@ -247,7 +247,7 @@ const TradeRequests = () => {
                       </div>
                       <div className="ml-2 px-3 py-2 rounded-lg border border-gray-300 max-h-24">
                         <div className="flex flex-col items-center justify-end">
-                          <dt className="mb-2 text-3xl font-medium">{tradeRequest.requestedPrice}</dt>
+                          <dt className="mb-2 text-3xl font-medium">${tradeRequest.requestedPrice}</dt>
                           <dd className="text-gray-800">Requested</dd>
                         </div>
                       </div>

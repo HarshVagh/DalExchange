@@ -2,12 +2,22 @@ package com.asdc.dalexchange.controller;
 
 import com.asdc.dalexchange.dto.PaymentDTO;
 import com.asdc.dalexchange.model.ShippingAddress;
-import com.asdc.dalexchange.service.*;
-import lombok.RequiredArgsConstructor;
+import com.asdc.dalexchange.service.OrderService;
+import com.asdc.dalexchange.service.PaymentService;
+import com.asdc.dalexchange.service.ProductRatingService;
+import com.asdc.dalexchange.service.ProductService;
+import com.asdc.dalexchange.service.ShippingAddressService;
+import com.asdc.dalexchange.service.SoldItemService;
+import com.asdc.dalexchange.service.TradeRequestService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +27,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/payment")
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Slf4j
 public class PaymentController {
 
