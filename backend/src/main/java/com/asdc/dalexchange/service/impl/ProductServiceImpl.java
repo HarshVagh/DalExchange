@@ -17,6 +17,7 @@ import com.asdc.dalexchange.util.AuthUtil;
 import com.asdc.dalexchange.util.CloudinaryUtil;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,27 +33,15 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
+@AllArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
-    @Autowired
     private ProductRepository productRepository;
-
-    @Autowired
     private ProductCategoryRepository productCategoryRepository;
-
-    @Autowired
     private UserRepository userRepository;
-
-    @Autowired
     private ProductImageRepository productImageRepository;
-
-    @Autowired
     private Mapper<Product, ProductDTO> productMapper;
-
-    @Autowired
     private Mapper<Product, ProductModerationDTO> productModerationMapper;
-
-    @Autowired
     private CloudinaryUtil cloudinaryUtil;
 
     /**
