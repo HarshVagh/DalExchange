@@ -9,6 +9,7 @@ import com.asdc.dalexchange.repository.*;
 import com.asdc.dalexchange.service.TradeRequestService;
 import com.asdc.dalexchange.util.AuthUtil;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -484,6 +485,90 @@ class OrderServiceImplTest {
             verify(paymentRepository, times(1)).save(any(Payment.class));
             verify(orderRepository, times(1)).save(any(OrderDetails.class));
             verify(productRepository, times(1)).save(product);
+        }
+    }
+
+
+    @Test
+    void testSaveNewOrder_ProductNotFound() {
+        Long userId = 1L;
+        Long productId = 2L;
+        ShippingAddress shippingAddress = new ShippingAddress();
+        shippingAddress.setAddressId(1L);
+
+        try (MockedStatic<AuthUtil> authUtilMock = mockStatic(AuthUtil.class)) {
+            authUtilMock.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
+            when(tradeRequestService.getApprovedTradeRequestAmount(productId)).thenReturn(100.0);
+            when(productRepository.findById(productId)).thenReturn(Optional.empty());
+
+            Exception exception = assertThrows(RuntimeException.class, () -> {
+                orderService.saveNewOrder(shippingAddress, productId);
+            });
+
+            assertEquals("Product not found", exception.getMessage());
+        }
+    }
+
+    @Test
+    void testSaveNewOrder_UserNotFound() {
+        Long userId = 1L;
+        Long productId = 2L;
+        Product product = new Product();
+        product.setProductId(productId);
+        product.setSold(false);
+        ShippingAddress shippingAddress = new ShippingAddress();
+        shippingAddress.setAddressId(1L);
+
+        try (MockedStatic<AuthUtil> authUtilMock = mockStatic(AuthUtil.class)) {
+            authUtilMock.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
+            when(tradeRequestService.getApprovedTradeRequestAmount(productId)).thenReturn(100.0);
+            when(productRepository.findById(productId)).thenReturn(Optional.of(product));
+            when(userRepository.findByUserId(userId)).thenReturn(null);
+
+            Exception exception = assertThrows(RuntimeException.class, () -> {
+                orderService.saveNewOrder(shippingAddress, productId);
+            });
+
+            assertEquals("User not found", exception.getMessage());
+        }
+    }
+
+    @Test
+    void testSaveNewOrder_FailedPaymentSave() {
+        Long userId = 1L;
+        Long productId = 2L;
+        Double amount = 100.0;
+        ShippingAddress shippingAddress = new ShippingAddress();
+        shippingAddress.setAddressId(1L);
+
+        Product product = new Product();
+        product.setProductId(productId);
+        product.setSold(false);
+
+        User user = new User();
+        user.setUserId(userId);
+
+        Payment payment = new Payment();
+        payment.setPaymentMethod("Card");
+        payment.setPaymentStatus(PaymentStatus.completed);
+        payment.setAmount(amount);
+        payment.setPaymentDate(LocalDateTime.now());
+
+        OrderDetails orderDetails = new OrderDetails();
+        orderDetails.setOrderId(1L);
+
+        try (MockedStatic<AuthUtil> authUtilMock = mockStatic(AuthUtil.class)) {
+            authUtilMock.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
+            when(tradeRequestService.getApprovedTradeRequestAmount(productId)).thenReturn(amount);
+            when(productRepository.findById(productId)).thenReturn(Optional.of(product));
+            when(userRepository.findByUserId(userId)).thenReturn(user);
+            when(paymentRepository.save(any(Payment.class))).thenThrow(new RuntimeException("Failed to save payment"));
+
+            Exception exception = assertThrows(RuntimeException.class, () -> {
+                orderService.saveNewOrder(shippingAddress, productId);
+            });
+
+            assertEquals("Failed to save payment", exception.getMessage());
         }
     }
 }

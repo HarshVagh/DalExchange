@@ -13,6 +13,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Implementation of the {@link ProfilePageService} interface for managing user profile details.
+ * Provides functionality for editing and fetching user profile details.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -22,6 +26,13 @@ public class ProfilePageServiceImpl implements ProfilePageService {
     private final EditProfileMapperImpl editProfileMapper;
     private final ModelMapper modelMapper;
 
+    /**
+     * Updates the user details based on the provided {@link EditProfileDTO}.
+     *
+     * @param editProfileDTO the DTO containing user details to be updated.
+     * @return the updated {@link EditProfileDTO} with the new user details.
+     * @throws RuntimeException if the user with the provided ID is not found.
+     */
     @Override
     public EditProfileDTO editUserDetails(EditProfileDTO editProfileDTO) {
         Long userId = AuthUtil.getCurrentUserId(userRepository);
@@ -40,6 +51,12 @@ public class ProfilePageServiceImpl implements ProfilePageService {
         }
     }
 
+    /**
+     * Retrieves the user details for the currently authenticated user.
+     *
+     * @return the {@link EditProfileDTO} containing the user's profile details.
+     * @throws RuntimeException if the user with the current ID is not found.
+     */
     @Override
     public EditProfileDTO editGetUserDetails() {
         Long userId = AuthUtil.getCurrentUserId(userRepository);

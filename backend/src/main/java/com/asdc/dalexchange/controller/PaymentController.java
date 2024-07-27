@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ *Controller for managing payment.
+ */
 @RestController
 @RequestMapping("/payment")
 @RequiredArgsConstructor
@@ -26,6 +29,12 @@ public class PaymentController {
     private final TradeRequestService tradeRequestService;
     private final ShippingAddressService shippingAddressService;
 
+    /**
+     * Saves the details of a new order, including the shipping address.
+     *
+     * @param requestBody a {@link Map} containing order details including product ID and shipping address.
+     * @return a {@link ResponseEntity} containing the order ID if successful, or an error status if an exception occurs.
+     */
     @PostMapping("/save_order_details")
     public ResponseEntity<Long> saveOrderDetails(@RequestBody Map<String, Object> requestBody) {
         try {
@@ -43,6 +52,12 @@ public class PaymentController {
         }
     }
 
+    /**
+     * Saves payment details for an order.
+     *
+     * @param requestBody a {@link Map} containing payment details.
+     * @return a {@link ResponseEntity} containing the {@link PaymentDTO} if successful.
+     */
     @PostMapping("/save_payment")
     public ResponseEntity<PaymentDTO> savePayment(@RequestBody Map<String, Object> requestBody) {
         log.info("Saving payment details");
@@ -53,7 +68,12 @@ public class PaymentController {
         return ResponseEntity.ok(payment);
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    /**
+     * Creates a new payment intent for a transaction.
+     *
+     * @param requestBody a {@link Map} containing payment intent details.
+     * @return a {@link ResponseEntity} containing a {@link Map} with the payment session ID.
+     */
     @PostMapping("/create_payment_intent")
     public ResponseEntity<Map<String, Object>> createPaymentIntent(@RequestBody Map<String, Object> requestBody) {
         try {
@@ -71,6 +91,12 @@ public class PaymentController {
         }
     }
 
+    /**
+     * Processes the success of a payment and updates related entities.
+     *
+     * @param requestBody a {@link Map} containing payment success details.
+     * @return a {@link ResponseEntity} with a success message if successful.
+     */
     @PutMapping("/payment_success")
     public ResponseEntity<String> changeRequestStatus(@RequestBody Map<String, Object> requestBody) {
         try {
@@ -88,6 +114,12 @@ public class PaymentController {
         }
     }
 
+    /**
+     * Saves a rating for a product.
+     *
+     * @param requestBody a {@link Map} containing product rating details.
+     * @return a {@link ResponseEntity} with a success message if the rating is saved successfully.
+     */
     @PostMapping("/save_rating")
     public ResponseEntity<String> saveProductRating(@RequestBody Map<String, Object> requestBody) {
         log.info("Saving product rating");

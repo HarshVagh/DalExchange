@@ -20,6 +20,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Implementation of the {@link ProductDetailsService} interface that provides methods
+ * to retrieve and process details about products, including product images, favorite status,
+ * and product information.
+ */
 @Service
 @Slf4j
 public class ProductDetailsServiceImpl implements ProductDetailsService {
@@ -30,6 +35,15 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
     private final ProductWishlistRepository productWishlistRepository;
     private final Mapper<Product, ProductDetailsDTO> productDetailsMapper;
 
+    /**
+     * Constructs a {@link ProductDetailsServiceImpl} with the specified repositories and mapper.
+     *
+     * @param productRepository the repository for accessing product data.
+     * @param userRepository the repository for accessing user data.
+     * @param productImageRepository the repository for accessing product image data.
+     * @param productWishlistRepository the repository for accessing product wishlist data.
+     * @param productDetailsMapper the mapper to convert between {@link Product} and {@link ProductDetailsDTO}.
+     */
     public ProductDetailsServiceImpl(
             ProductRepository productRepository,
             UserRepository userRepository,
@@ -43,6 +57,14 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
         this.productDetailsMapper = productDetailsMapper;
     }
 
+    /**
+     * Fetches detailed information about a product, including images, category, seller details,
+     * and favorite status.
+     *
+     * @param productId the ID of the product to retrieve details for.
+     * @return a {@link ProductDetailsDTO} containing detailed information about the product.
+     * @throws ResourceNotFoundException if the product with the specified ID is not found.
+     */
     @Override
     public ProductDetailsDTO getDetails(Long productId) {
         log.info("Fetching details for productId: {}", productId);
@@ -68,6 +90,13 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
         return productDetailsDTO;
     }
 
+    /**
+     * Retrieves a {@link Product} entity by its ID.
+     *
+     * @param productId the ID of the product to retrieve.
+     * @return the {@link Product} entity with the specified ID.
+     * @throws ResourceNotFoundException if the product with the specified ID is not found.
+     */
     @Override
     public Product getProductById(Long productId) {
         log.info("Fetching product by ID: {}", productId);
@@ -78,6 +107,12 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
                 });
     }
 
+    /**
+     * Retrieves the URLs of images associated with a given product ID.
+     *
+     * @param productId the ID of the product to retrieve image URLs for.
+     * @return a list of image URLs associated with the specified product.
+     */
     @Override
     public List<String> getImageUrls(Long productId) {
         log.info("Fetching image URLs for productId: {}", productId);
@@ -90,6 +125,13 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
         return imageUrls;
     }
 
+    /**
+     * Checks whether a product is marked as a favorite by a user.
+     *
+     * @param userId the ID of the user.
+     * @param productId the ID of the product.
+     * @return true if the product is marked as a favorite by the user; false otherwise.
+     */
     @Override
     public boolean getFavoriteStatus(long userId, long productId) {
         log.info("Checking favorite status for userId: {} and productId: {}", userId, productId);

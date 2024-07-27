@@ -4,25 +4,32 @@ import com.asdc.dalexchange.dto.ProductDetailsDTO;
 import com.asdc.dalexchange.dto.ProductWishlistDTO;
 import com.asdc.dalexchange.service.ProductDetailsService;
 import com.asdc.dalexchange.service.ProductWishlistService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for handling product-details.
+ */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/product_details")
 @Slf4j
 public class ProductDetailsController {
 
-    @Autowired
-    private ProductDetailsService productDetailsService;
+    private final ProductDetailsService productDetailsService;
+    private final ProductWishlistService productWishlistService;
 
-    @Autowired
-    private ProductWishlistService productWishlistService;
-
+    /**
+     * Retrieves the details of a product based on the provided product ID.
+     *
+     * @param productId the ID of the product to retrieve details for.
+     * @return a {@link ResponseEntity} containing the {@link ProductDetailsDTO} with product details.
+     */
     @GetMapping("")
     public ResponseEntity<ProductDetailsDTO> product(
             @RequestParam(defaultValue = "0") Long productId) {
@@ -32,6 +39,12 @@ public class ProductDetailsController {
         return ResponseEntity.ok().body(productDetailsDTO);
     }
 
+    /**
+     * Marks a product as a favorite and adds it to the user's wishlist.
+     *
+     * @param productId the ID of the product to be marked as a favorite.
+     * @return a {@link ResponseEntity} with a message indicating that the product was successfully added to the wishlist.
+     */
     @GetMapping("/favorite")
     public ResponseEntity<String> markAsFavorite(
             @RequestParam(defaultValue = "0") Long productId) {

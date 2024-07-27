@@ -16,6 +16,7 @@ import com.asdc.dalexchange.specifications.ProductSpecification;
 import com.asdc.dalexchange.util.AuthUtil;
 import com.asdc.dalexchange.util.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of the {@link ProductRatingService} interface for managing product ratings.
+ * Provides functionality for saving, deleting, and retrieving product reviews.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -32,9 +37,14 @@ public class ProductRatingServiceImpl implements ProductRatingService {
     private final ProductRatingRepository productRatingRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
-    private final ProductRatingMapperImpl productRatingMapper;
+    private final Mapper<ProductRating, ProductRatingDTO> productRatingMapper;
     private final Mapper<ProductRating, ProductRatingAdminDTO> productRatingAdminMapper;
 
+    /**
+     * Retrieves all product reviews for all sold items of the current user.
+     *
+     * @return a list of {@link ProductRatingDTO} representing the reviews for all sold items of the current user.
+     */
     @Override
     public List<ProductRatingDTO> allReviewOfAllSoldItemsOfUser() {
         Long userId = AuthUtil.getCurrentUserId(userRepository);
@@ -57,6 +67,11 @@ public class ProductRatingServiceImpl implements ProductRatingService {
         return productRatingDTOs;
     }
 
+    /**
+     * Retrieves all product ratings for administrative purposes.
+     *
+     * @return a list of {@link ProductRatingAdminDTO} representing all product reviews.
+     */
     @Override
     public List<ProductRatingAdminDTO> getAllReviews() {
         log.info("Fetching all product ratings");
@@ -69,6 +84,12 @@ public class ProductRatingServiceImpl implements ProductRatingService {
         return allReviews;
     }
 
+    /**
+     * Retrieves all product reviews for a specific product.
+     *
+     * @param productId the ID of the product whose reviews are to be fetched.
+     * @return a list of {@link ProductRatingAdminDTO} representing the reviews for the specified product.
+     */
     @Override
     public List<ProductRatingAdminDTO> getAllReviewsByProduct(Long productId) {
         log.info("Fetching all reviews for productId: {}", productId);
@@ -81,6 +102,12 @@ public class ProductRatingServiceImpl implements ProductRatingService {
         return reviewsByProduct;
     }
 
+    /**
+     * Deletes a product review for a specific product and user.
+     *
+     * @param productId the ID of the product whose review is to be deleted.
+     * @param userId the ID of the user whose review is to be deleted.
+     */
     @Transactional
     @Override
     public void deleteReview(Long productId, Long userId) {
@@ -91,6 +118,12 @@ public class ProductRatingServiceImpl implements ProductRatingService {
         log.info("Deleted review with productId: {} and userId: {}", productId, userId);
     }
 
+    /**
+     * Saves a product rating and review provided in the request body.
+     *
+     * @param requestBody a map containing the product ID, user ID, rating, and review.
+     * @throws ResourceNotFoundException if the user or product is not found.
+     */
     @Override
     public void saveRating(Map<String, Object> requestBody) {
         Long productId = Long.parseLong(requestBody.get("productId").toString());

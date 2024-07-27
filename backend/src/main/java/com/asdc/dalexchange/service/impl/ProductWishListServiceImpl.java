@@ -25,23 +25,30 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of the {@link ProductWishlistService} interface for managing product wishlists.
+ * Provides functionality for marking products as favorite, retrieving saved and purchased products,
+ * and checking if a product is favorited by a user.
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class ProductWishListServiceImpl implements ProductWishlistService {
 
     private final ProductWishlistRepository productWishlistRepository;
-
     private final UserRepository userRepository;
-
     private final SavedProductMapperImpl savedProductMapper;
-
     public final OrderRepository orderRepository;
-
     private final PurchaseProductMapperImpl purchaseProductMapper;
-
     private final ProductRepository productRepository;
 
+    /**
+     * Marks a product as favorite for the current user. If the product is already in the wishlist, it is removed.
+     *
+     * @param productId the ID of the product to be marked as favorite.
+     * @return {@code true} if the product was added to the wishlist, {@code false} if it was removed.
+     * @throws ResourceNotFoundException if the user or product is not found.
+     */
     @Transactional
     public boolean markProductAsFavorite(long productId) {
         Long userId = AuthUtil.getCurrentUserId(userRepository);
@@ -75,6 +82,11 @@ public class ProductWishListServiceImpl implements ProductWishlistService {
         }
     }
 
+    /**
+     * Retrieves all products that are saved in the wishlist of the current user.
+     *
+     * @return a list of {@link SavedProductDTO} representing the saved products.
+     */
     @Override
     public List<SavedProductDTO> getAllSavedProducts() {
         Long userId = AuthUtil.getCurrentUserId(userRepository);
@@ -97,6 +109,11 @@ public class ProductWishListServiceImpl implements ProductWishlistService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Retrieves all products purchased by the current user.
+     *
+     * @return a list of {@link PurchaseProductDTO} representing the purchased products.
+     */
     @Override
     public List<PurchaseProductDTO> getAllPurchasedProduct() {
         Long userId = AuthUtil.getCurrentUserId(userRepository);
@@ -108,6 +125,12 @@ public class ProductWishListServiceImpl implements ProductWishlistService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Checks if a given product is marked as favorite by the current user.
+     *
+     * @param productId the ID of the product to check.
+     * @return {@code true} if the product is marked as favorite by the user, {@code false} otherwise.
+     */
     public boolean checkProductIsFavoriteByGivenUser(long productId) {
         Long userId = AuthUtil.getCurrentUserId(userRepository);
         log.info("checkProductIsFavoriteByGivenUser called with productId: {} and userId: {}", productId, userId);

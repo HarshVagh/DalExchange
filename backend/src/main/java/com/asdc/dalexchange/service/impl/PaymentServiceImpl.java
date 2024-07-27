@@ -26,6 +26,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Implementation of the {@link PaymentService} interface for managing payments.
+ * Provides functionality for creating payment intents with Stripe and saving payment details.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -42,6 +46,14 @@ public class PaymentServiceImpl implements PaymentService {
     @Value("${stripe.api.key}")
     private String stripeSecretKey;
 
+    /**
+     * Creates a payment intent using Stripe's checkout session API.
+     * Generates a Stripe checkout session URL for the specified product and order.
+     *
+     * @param requestBody a map containing the product ID and order ID.
+     * @return the Stripe checkout session ID.
+     * @throws RuntimeException if an error occurs during session creation.
+     */
     @Override
     public String createPaymentIntent(Map<String, Object> requestBody) {
         try {
@@ -85,6 +97,14 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
+    /**
+     * Saves the payment details for the specified order and updates the order status.
+     * Updates the payment status to completed and the order status to delivered.
+     *
+     * @param requestBody a map containing the order ID.
+     * @return a {@link PaymentDTO} containing the saved payment details.
+     * @throws ResourceNotFoundException if the order with the specified ID is not found.
+     */
     @Override
     public PaymentDTO savePayment(Map<String, Object> requestBody) {
         Long orderId = Long.parseLong(requestBody.get("orderId").toString());

@@ -9,6 +9,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+/**
+ * Implementation of the {@link ShippingAddressService} interface for managing shipping addresses.
+ * Provides functionality for saving shipping address details.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -16,6 +20,13 @@ public class ShippingAddressImpl implements ShippingAddressService {
 
     private final ShippingRepository shippingRepository;
 
+    /**
+     * Saves a new shipping address based on the provided request body.
+     *
+     * @param requestBody a map containing shipping address details with keys:
+     *                    "billingName", "country", "line1", "line2", "city", "state", and "postalCode".
+     * @return the saved {@link ShippingAddress} object with generated ID.
+     */
     @Override
     public ShippingAddress saveShippingAddress(Map<String, Object> requestBody) {
         log.info("Saving shipping address with requestBody: {}", requestBody);
