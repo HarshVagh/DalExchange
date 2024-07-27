@@ -10,6 +10,7 @@ import com.asdc.dalexchange.service.EmailService;
 import com.asdc.dalexchange.service.UserService;
 import com.asdc.dalexchange.util.AuthUtil;
 import com.asdc.dalexchange.util.CloudinaryUtil;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,21 +27,13 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    @Autowired
     private UserRepository userRepository;
-
-    @Autowired
     private VerificationCodeRepository verificationCodeRepository;
-
-    @Autowired
     private EmailService emailService;
-
-    @Autowired
     private Mapper<User, UserDTO> userMapper;
-
-    @Autowired
     private CloudinaryUtil cloudinaryUtil;
 
     /**
