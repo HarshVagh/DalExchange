@@ -34,23 +34,19 @@ public class ProductDetailsMapperImplTest {
 
     @Test
     public void testMapToProductDetailsDTO() {
-        // Mock Product data
+
         Long productId = 1L;
         LocalDateTime joiningDate = LocalDateTime.now();
         Product product = createMockProduct(productId, joiningDate);
 
-        // Mock ModelMapper behavior
         ProductDetailsDTO expectedDTO = createExpectedProductDetailsDTO(productId, joiningDate);
         when(modelMapper.map(product, ProductDetailsDTO.class)).thenReturn(expectedDTO);
 
-        // Call the method under test
         ProductDetailsDTO resultDTO = productDetailsMapper.mapTo(product);
 
-        // Assertions
         assertEquals(expectedDTO.getProductId(), resultDTO.getProductId());
         assertEquals(expectedDTO.getSellerJoiningDate(), resultDTO.getSellerJoiningDate());
         assertEquals(expectedDTO.getCategory(), resultDTO.getCategory());
-        // Add more assertions as needed
     }
 
     private Product createMockProduct(Long productId, LocalDateTime joiningDate) {
@@ -73,7 +69,6 @@ public class ProductDetailsMapperImplTest {
         ProductCategory category = new ProductCategory();
         category.setCategoryId(1L);
         category.setName("Test Category");
-        // Set other attributes as needed
         return category;
     }
 
@@ -81,7 +76,6 @@ public class ProductDetailsMapperImplTest {
         User user = new User();
         user.setUserId(1L);
         user.setUsername("testuser");
-        // Set other attributes as needed
         return user;
     }
 
@@ -90,7 +84,6 @@ public class ProductDetailsMapperImplTest {
         dto.setProductId(productId);
         dto.setSellerJoiningDate(joiningDate);
         dto.setCategory("Test Category");
-        // Set other attributes as needed
         return dto;
     }
 }

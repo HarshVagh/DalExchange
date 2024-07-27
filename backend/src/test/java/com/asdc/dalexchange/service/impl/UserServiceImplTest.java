@@ -72,12 +72,17 @@ class UserServiceImplTest {
 
         assertEquals(25.0, result);
 
-        // Additional checks to ensure line coverage for null values
         when(userRepository.countUsersJoinedSince(any(LocalDateTime.class))).thenReturn(null);
         when(userRepository.countUsersJoinedBetween(any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(null);
 
         result = userService.customersChange();
         assertEquals(0.0, result);
+
+        when(userRepository.countUsersJoinedSince(any(LocalDateTime.class))).thenReturn(50L);
+        when(userRepository.countUsersJoinedBetween(any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(null);
+
+        result = userService.customersChange();
+        assertEquals(100.0, result);
     }
 
     @Test
@@ -87,7 +92,6 @@ class UserServiceImplTest {
     }
     @Test
     public void testGetAllUsers() {
-        // Arrange
         User user1 = new User();
         user1.setUserId(1L);
         user1.setEmail("user1@example.com");
@@ -108,10 +112,8 @@ class UserServiceImplTest {
         when(userMapper.mapTo(user1)).thenReturn(userDTOs.get(0));
         when(userMapper.mapTo(user2)).thenReturn(userDTOs.get(1));
 
-        // Act
         List<UserDTO> result = userService.getAllUsers();
 
-        // Assert
         assertEquals(2, result.size());
         assertEquals("user1@example.com", result.get(0).getEmail());
         assertEquals("user2@example.com", result.get(1).getEmail());
@@ -119,7 +121,6 @@ class UserServiceImplTest {
 
     @Test
     public void testViewUserDetails() {
-        // Arrange
         long userId = 1L;
         User user = new User();
         user.setUserId(userId);
@@ -132,16 +133,13 @@ class UserServiceImplTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(userMapper.mapTo(user)).thenReturn(userDTO);
 
-        // Act
         Optional<UserDTO> result = userService.viewUserDetails(userId);
 
-        // Assert
         assertEquals(userDTO, result.get());
     }
 
     @Test
     public void testEditUserDetails() {
-        // Arrange
         long userId = 1L;
         User user = new User();
         user.setUserId(userId);
@@ -158,10 +156,8 @@ class UserServiceImplTest {
         when(userRepository.save(user)).thenReturn(user);
         when(userMapper.mapTo(user)).thenReturn(updatedUserDetails);
 
-        // Act
         UserDTO result = userService.editUserDetails(userId, updatedUserDetails);
 
-        // Assert
         assertEquals("new@example.com", user.getEmail());
         assertEquals("123456789", user.getPhoneNo());
         assertEquals("New Name", user.getFullName());
@@ -172,7 +168,6 @@ class UserServiceImplTest {
 
     @Test
     public void testActivateUser() {
-        // Arrange
         long userId = 1L;
         User user = new User();
         user.setUserId(userId);
@@ -186,22 +181,17 @@ class UserServiceImplTest {
         when(userRepository.save(user)).thenReturn(user);
         when(userMapper.mapTo(user)).thenReturn(userDTO);
 
-        // Act
         UserDTO result = userService.activateUser(userId);
-
-        // Assert
         assertEquals(true, user.getActive());
         assertEquals(userDTO, result);
     }
 
     @Test
     public void testActivateUser_NotFound() {
-        // Arrange
         long userId = 1L;
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             userService.activateUser(userId);
         });
@@ -211,7 +201,6 @@ class UserServiceImplTest {
 
     @Test
     public void testDeactivateUser() {
-        // Arrange
         long userId = 1L;
         User user = new User();
         user.setUserId(userId);
@@ -225,22 +214,18 @@ class UserServiceImplTest {
         when(userRepository.save(user)).thenReturn(user);
         when(userMapper.mapTo(user)).thenReturn(userDTO);
 
-        // Act
         UserDTO result = userService.deactivateUser(userId);
 
-        // Assert
         assertEquals(false, user.getActive());
         assertEquals(userDTO, result);
     }
 
     @Test
     public void testDeactivateUser_NotFound() {
-        // Arrange
         long userId = 1L;
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             userService.deactivateUser(userId);
         });
@@ -316,7 +301,6 @@ class UserServiceImplTest {
 
     @Test
     void testGetCurrentUser() {
-        // Arrange
         User expectedUser = new User();
         expectedUser.setUserId(1L);
         expectedUser.setEmail("test@dal.ca");
@@ -324,10 +308,8 @@ class UserServiceImplTest {
         try (MockedStatic<AuthUtil> mockedAuthUtil = Mockito.mockStatic(AuthUtil.class)) {
             mockedAuthUtil.when(() -> AuthUtil.getCurrentUser(userRepository)).thenReturn(expectedUser);
 
-            // Act
             User actualUser = userService.getCurrentUser();
 
-            // Assert
             assertEquals(expectedUser, actualUser);
             mockedAuthUtil.verify(() -> AuthUtil.getCurrentUser(userRepository), times(1));
         }
@@ -338,10 +320,8 @@ class UserServiceImplTest {
         try (MockedStatic<AuthUtil> mockedAuthUtil = Mockito.mockStatic(AuthUtil.class)) {
             mockedAuthUtil.when(() -> AuthUtil.getCurrentUser(userRepository)).thenReturn(null);
 
-            // Act
             User actualUser = userService.getCurrentUser();
 
-            // Assert
             assertEquals(null, actualUser);
             mockedAuthUtil.verify(() -> AuthUtil.getCurrentUser(userRepository), times(1));
         }

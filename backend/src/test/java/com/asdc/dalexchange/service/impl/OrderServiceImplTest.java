@@ -68,7 +68,6 @@ class OrderServiceImplTest {
 
         assertEquals(25.0, result);
 
-        // Additional checks to ensure line coverage for null values
         when(orderRepository.getTotalSalesSince(any(LocalDateTime.class))).thenReturn(null);
         when(orderRepository.getTotalSalesBetween(any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(null);
 
@@ -86,7 +85,6 @@ class OrderServiceImplTest {
 
         assertEquals(25.0, result);
 
-        // Additional checks to ensure line coverage for null values
         when(orderRepository.countOrdersSince(any(LocalDateTime.class))).thenReturn(null);
         when(orderRepository.countOrdersBetween(any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(null);
 
@@ -139,7 +137,6 @@ class OrderServiceImplTest {
     }
     @Test
     public void testUpdateOrder_AdminComments() {
-        // Arrange
         long orderId = 1L;
         OrderDetails existingOrder = new OrderDetails();
         existingOrder.setOrderId(orderId);
@@ -154,10 +151,8 @@ class OrderServiceImplTest {
         when(orderRepository.save(existingOrder)).thenReturn(existingOrder);
         when(orderMapper.mapTo(existingOrder)).thenReturn(updatedOrderDTO);
 
-        // Act
         OrderDTO result = orderService.updateOrder((int) orderId, updatedOrderDetails);
 
-        // Assert
         assertEquals("This is a comment", existingOrder.getAdminComments());
         assertEquals(updatedOrderDTO, result);
     }
@@ -182,10 +177,8 @@ class OrderServiceImplTest {
         when(orderRepository.save(existingOrder)).thenReturn(existingOrder);
         when(orderMapper.mapTo(existingOrder)).thenReturn(updatedOrderDTO);
 
-        // Act
         OrderDTO result = orderService.updateOrder((int) orderId, updatedOrderDetails);
 
-        // Assert
         assertEquals(newPayment, existingOrder.getPayment());
         assertEquals(updatedOrderDTO, result);
     }
@@ -193,7 +186,6 @@ class OrderServiceImplTest {
 
     @Test
     public void testGetAllOrders() {
-        // Arrange
         OrderDetails order1 = new OrderDetails();
         order1.setOrderId(1L);
         order1.setTotalAmount(100.0);
@@ -214,10 +206,8 @@ class OrderServiceImplTest {
         when(orderMapper.mapTo(order1)).thenReturn(orderDTOs.get(0));
         when(orderMapper.mapTo(order2)).thenReturn(orderDTOs.get(1));
 
-        // Act
         List<OrderDTO> result = orderService.getAllOrders();
 
-        // Assert
         assertEquals(2, result.size());
         assertEquals(100.0, result.get(0).getTotalAmount());
         assertEquals(200.0, result.get(1).getTotalAmount());
@@ -225,7 +215,6 @@ class OrderServiceImplTest {
 
     @Test
     public void testGetOrderById() {
-        // Arrange
         long orderId = 1L;
         OrderDetails order = new OrderDetails();
         order.setOrderId(orderId);
@@ -238,16 +227,14 @@ class OrderServiceImplTest {
         when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
         when(orderMapper.mapTo(order)).thenReturn(orderDTO);
 
-        // Act
         OrderDTO result = orderService.getOrderById((int) orderId);
 
-        // Assert
         assertEquals(orderDTO, result);
     }
 
     @Test
     public void testUpdateOrder() {
-        // Arrange
+
         long orderId = 1L;
         OrderDetails existingOrder = new OrderDetails();
         existingOrder.setOrderId(orderId);
@@ -265,10 +252,8 @@ class OrderServiceImplTest {
         when(orderRepository.save(existingOrder)).thenReturn(existingOrder);
         when(orderMapper.mapTo(existingOrder)).thenReturn(updatedOrderDTO);
 
-        // Act
         OrderDTO result = orderService.updateOrder((int) orderId, updatedOrderDetails);
 
-        // Assert
         assertEquals(150.0, existingOrder.getTotalAmount());
         assertEquals(OrderStatus.Shipped, existingOrder.getOrderStatus());
         assertEquals(updatedOrderDTO, result);
@@ -276,18 +261,15 @@ class OrderServiceImplTest {
 
     @Test
     public void testCancelOrder() {
-        // Arrange
+
         long orderId = 1L;
         OrderDetails order = new OrderDetails();
         order.setOrderId(orderId);
         order.setOrderStatus(OrderStatus.Shipped);
 
         when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
-
-        // Act
         orderService.cancelOrder((int) orderId, "Cancelled by admin");
 
-        // Assert
         assertEquals(OrderStatus.Cancelled, order.getOrderStatus());
         assertEquals("Cancelled by admin", order.getAdminComments());
         verify(orderRepository).save(order);
@@ -295,7 +277,6 @@ class OrderServiceImplTest {
 
     @Test
     public void testProcessRefund() {
-        // Arrange
         long orderId = 1L;
         OrderDetails order = new OrderDetails();
         order.setOrderId(orderId);
@@ -309,17 +290,14 @@ class OrderServiceImplTest {
         when(orderRepository.save(order)).thenReturn(order);
         when(orderMapper.mapTo(order)).thenReturn(orderDTO);
 
-        // Act
         OrderDTO result = orderService.processRefund((int) orderId, 50.0);
 
-        // Assert
         assertEquals(150.0, order.getTotalAmount());
         assertEquals(orderDTO, result);
     }
 
     @Test
     public void testUpdateShippingAddress() {
-        // Arrange
         long addressId = 1L;
         ShippingAddress existingAddress = new ShippingAddress();
         existingAddress.setAddressId(addressId);
@@ -363,10 +341,8 @@ class OrderServiceImplTest {
         when(orderRepository.save(existingOrder)).thenReturn(existingOrder);
         when(orderMapper.mapTo(existingOrder)).thenReturn(updatedOrderDTO);
 
-        // Act
         OrderDTO result = orderService.updateOrder((int) orderId, updatedOrderDetails);
 
-        // Assert
         assertEquals("New Name", existingAddress.getBillingName());
         assertEquals(updatedOrderDTO, result);
     }
