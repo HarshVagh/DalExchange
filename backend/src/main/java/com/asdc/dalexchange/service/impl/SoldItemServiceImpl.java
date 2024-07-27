@@ -75,11 +75,11 @@ public class SoldItemServiceImpl implements SoldItemService {
         Long productId = Long.parseLong(requestBody.get("productId").toString());
         log.info("Attempting to save sold item for productId: {}", productId);
 
-            Product product = productRepository.findById(productId)
-                    .orElseThrow(() -> {
-                        log.error("Product not found with id: {}", productId);
-                        return new RuntimeException("Product not found");
-                    });
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> {
+                    log.error("Product not found with id: {}", productId);
+                    return new RuntimeException("Product not found");
+                });
 
         boolean exists = soldItemRepository.existsByProduct_ProductId(productId);
         if (exists) {

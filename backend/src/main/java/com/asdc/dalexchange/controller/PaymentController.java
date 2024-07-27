@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *Controller for managing payment.
+ * Controller for managing payment.
  */
 @RestController
 @RequestMapping("/payment")

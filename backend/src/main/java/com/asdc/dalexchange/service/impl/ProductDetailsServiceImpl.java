@@ -38,11 +38,11 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
     /**
      * Constructs a {@link ProductDetailsServiceImpl} with the specified repositories and mapper.
      *
-     * @param productRepository the repository for accessing product data.
-     * @param userRepository the repository for accessing user data.
-     * @param productImageRepository the repository for accessing product image data.
+     * @param productRepository         the repository for accessing product data.
+     * @param userRepository            the repository for accessing user data.
+     * @param productImageRepository    the repository for accessing product image data.
      * @param productWishlistRepository the repository for accessing product wishlist data.
-     * @param productDetailsMapper the mapper to convert between {@link Product} and {@link ProductDetailsDTO}.
+     * @param productDetailsMapper      the mapper to convert between {@link Product} and {@link ProductDetailsDTO}.
      */
     public ProductDetailsServiceImpl(
             ProductRepository productRepository,
@@ -128,7 +128,7 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
     /**
      * Checks whether a product is marked as a favorite by a user.
      *
-     * @param userId the ID of the user.
+     * @param userId    the ID of the user.
      * @param productId the ID of the product.
      * @return true if the product is marked as a favorite by the user; false otherwise.
      */
