@@ -5,6 +5,7 @@ import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.repository.PasswordResetTokenRepository;
 import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.service.EmailService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,19 +24,13 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/auth")
 @Slf4j
+@RequiredArgsConstructor
 public class PasswordResetController {
 
-    @Autowired
-    private EmailService emailService;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordResetTokenRepository passwordResetTokenRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    final private EmailService emailService;
+    final private UserRepository userRepository;
+    final private PasswordResetTokenRepository passwordResetTokenRepository;
+    final private PasswordEncoder passwordEncoder;
 
     @Value("${frontend.url}")
     private String frontendUrl;

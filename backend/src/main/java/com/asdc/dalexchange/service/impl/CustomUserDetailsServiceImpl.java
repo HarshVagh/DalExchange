@@ -3,8 +3,8 @@ package com.asdc.dalexchange.service.impl;
 import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.repository.UserRepository;
 import com.asdc.dalexchange.service.CustomUserDetailsService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -14,9 +14,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Slf4j
+@AllArgsConstructor
 public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 
-    @Autowired
     private UserRepository userRepository;
 
     /**

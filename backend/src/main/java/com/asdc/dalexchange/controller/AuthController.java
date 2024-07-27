@@ -5,8 +5,8 @@ import com.asdc.dalexchange.model.User;
 import com.asdc.dalexchange.model.VerificationRequest;
 import com.asdc.dalexchange.service.UserService;
 import com.asdc.dalexchange.util.JwtUtils;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,18 +32,12 @@ import java.util.Map;
 @RestController
 @RequestMapping("/auth")
 @Slf4j
+@AllArgsConstructor
 public class AuthController {
 
-    @Autowired
     private UserService userService;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @Autowired
     private JwtUtils jwtUtils;
-
-    @Autowired
     private AuthenticationManager authenticationManager;
 
     /**
