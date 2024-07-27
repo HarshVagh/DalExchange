@@ -8,6 +8,5 @@ import java.util.Map;
 
 @Service
 public interface ShippingAddressService {
-
     ShippingAddress saveShippingAddress(Map<String,Object> requestBody);
 }

@@ -213,14 +213,27 @@ public class ProductServiceImpl implements ProductService {
         return productModerationMapper.mapTo(product);
     }
 
+    /**
+     * Marks a product as sold based on the provided product ID.
+     *
+     * @param requestBody A map containing the product ID under the key "productId".
+     * @throws RuntimeException If the product with the given ID is not found in the repository.
+     */
     @Override
-    public void  markProductAsSold(Map<String,Object> requestBody){
+    public void markProductAsSold(Map<String, Object> requestBody) {
         Long productId = Long.parseLong(requestBody.get("productId").toString());
+        log.info("Attempting to mark product as sold with ID: {}", productId);
+
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> {
+                    log.error("Product with ID {} not found", productId);
+                    return new RuntimeException("Product not found");
+                });
+
         product.setSold(true);
         productRepository.save(product);
 
+        log.info("Product with ID {} marked as sold successfully", productId);
     }
 
 }
