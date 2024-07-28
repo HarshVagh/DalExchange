@@ -1,8 +1,9 @@
 # DalExchange
+
 ## Overview
 DalExchange is a web-based thrift store platform specifically designed for Dalhousie University students. This platform creates a convenient and secure marketplace for buying and selling second-hand items within the student community. By restricting access to Dalhousie students, DalExchange aims to foster a trusted environment where users can confidently exchange goods. Equipped with essential features to ensure a seamless user experience from product listing to payment processing and fulfillment, DalExchange offers a comprehensive solution for student-to-student transactions.
 
-## Tools & Tech Stacks used : -
+## Tech Stack 
 - [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-green)](https://spring.io/projects/spring-boot)
 - ![HTML](https://img.shields.io/badge/HTML-orange)
 - ![CSS](https://img.shields.io/badge/CSS-blue)
@@ -12,14 +13,13 @@ DalExchange is a web-based thrift store platform specifically designed for Dalho
 - [![GitLab](https://img.shields.io/badge/GitLab-blue)](https://about.gitlab.com/)
 
 # Backend Setup
-## Prerequisites
 
+## Prerequisite
 - **Java**
 - **Spring Boot**
 - **Maven**
 
 ## Dependencies 
-
 | Dependency Group              | Description                                              | Artifact                       | Version    |
 |-------------------------------|----------------------------------------------------------|--------------------------------|------------|
 | org.springframework.boot      | Starter for building web, including RESTful, applications| spring-boot-starter-web        |            |
@@ -47,6 +47,7 @@ DalExchange is a web-based thrift store platform specifically designed for Dalho
 | org.mockito                   | Mockito JUnit Jupiter                                    | mockito-junit-jupiter          |            |
 | org.junit.jupiter             | JUnit Jupiter                                            | junit-jupiter                  |            |
 | com.stripe                    | Stripe API for Java                                      | stripe-java                    | 20.118.0   |
+
 ## Execution
 Steps to run the project locally:
 
@@ -74,14 +75,12 @@ mvn clean install
 mvn spring-boot:run
 ```
 Finally, the application backend will start running locally.
-# Frontend Setup
-## Prerequisites
 
+# Frontend Setup
+
+## Prerequisite
 - **NodeJS**
 - **npm**
-
-
-
 
 ## Dependencies
 
@@ -106,8 +105,8 @@ Finally, the application backend will start running locally.
 | tailwindcss                     | A utility-first CSS framework                      | tailwindcss                   | 3.4.4    |
 | tailwindcss-animate             | Tailwind CSS plugin for animations                 | tailwindcss-animate           | 1.0.7    |
 
-
 # Walkthrough
+
 ## Landing page
 Via the homepage, you can either login or signup.
 
@@ -118,29 +117,150 @@ Via the homepage, you can either login or signup.
 
 Once registered, the user will be asked to verify in order to authenticate.
 
+![alt text](screenshot/VerifyEmail.png)
+
 ## Login
 User can login via valid credentials used in previous steps.
 
 ![alt text](screenshot/Login.png)
 
 ## Homepage
+Once logged in, all the product listing are displayed along with wide range of filtering options.
 
-Once logged in, all the product listing are displayed over here along with wide range of filtering options.
 ![alt text](screenshot/Listing.png)
 
 ## Product Details
-User can view the preferred product details and also  wishlist any product they like.
+User can view the preferred product details and also wishlist any product they like.
 
 ![alt text](screenshot/ProductDetails.png)
 
+## Trade Request
+User can send buy request for the products they like.
 
+![alt text](<screenshot/BuyRequest.png>)
 
+Seller will recieve the request and can accept or reject the proposal.
 
+![alt text](screenshot/SellRequest.png)
 
+## Notification
+Users can also view all the requests messages in Notifictions section.
 
+![alt text](screenshot/Notifications.png)
 
+## Payment Transaction
+Once the seller accept the proposal, the user has to enter the shipping address.
 
+![alt text](screenshot/OrderShippingAddress.png)
 
+ The customer can initiate a payment using Stripe payment gateway.
 
+![alt text](screenshot/StripeCheckout.png)
 
+## Rating/Review
+Once the payment is successful. the user can leave a review/rating according to their convenience.
 
+![alt text](screenshot/SaveRatingOfTheProdcut.png)
+
+## Add Product
+Users can also sell their own products with easy to add form.
+
+![alt text](screenshot/AddProduct.png)
+
+## Profile Page
+Using profile section, user can view wishlisted products, purchase history, items sold by them and also the reviews published.
+
+![alt text](screenshot/ProfilePage.png)
+
+**1) Edit Profile:**
+![alt text](screenshot/EditProfile.png)
+
+**2) Wishlist:**
+![alt text](screenshot/Wishlist.png)
+
+**3) Purchase History:**
+![alt text](screenshot/PurchaseHistory.png)
+
+**4) Sold Items:**
+![alt text](screenshot/SoldItems.png)
+
+**5) Reviews:**
+![alt text](screenshot/Reviews.png)
+
+# Admin Moderation
+Admin can edit all the essential details and act as a customer support to help users out with their queries and also to check overall statistics.
+
+![alt text](screenshot/Sidebar.png)
+
+## Admin Dashboard
+Admin can view comprehensive statistics, compare metrics between the current and previous months, and analyze trends for better decision-making.
+
+![alt text](screenshot/AdminDashboard.png)
+
+## Order Moderation
+All the orders can be viewed at once and be edited whenever needed.
+
+![alt text](screenshot/OrderModeration.png)
+
+All the necessary fields can be edited and also the admin can refund a order in case of a scam.
+
+![alt text](<screenshot/Order11.png>)
+
+## User Moderation
+Admin can view all the users and edit any details if required.
+
+![alt text](screenshot/UserModeration.png)
+
+Admin can also delete and deactivate a certain account if it doesn't comply with the rules.
+
+![alt text](screenshot/UserEdit.png)
+
+## Product Moderation
+Admin can view all the products (including unlisted ones).
+
+![alt text](screenshot/ProductModeration.png)
+
+Admin can edit any details and also unlist any product which doesn't comply with company guidelines.
+
+![alt text](screenshot/ProductEdit.png)
+
+## Feedback Moderation
+Admin can view all feedback segregated based on products.
+
+![alt text](screenshot/FeedbackModeration.png)
+
+Admin cannot edit the feedback, but can delete it if the comment is offensive.
+
+![alt text](screenshot/Feedback.png)
+
+# Adherence to SOLID Principles
+## Single Responsibility Principle
+We have ensured that each class executes single functionality rather than managing mutiple things altogether
+
+![alt text](screenshot/S.png)
+
+## Open/Closed Principle
+We have ensured that all the class can be extended by adding new methods for new functionalities without modifying existing code. 
+
+For example, new methods can be added for additional product operations without altering the current methods.
+
+## Liskov Substitution Principle
+We have made sure that objects of a superclass is replaceable with objects of a subclass without affecting the functionality of the program.
+
+For example: 
+The Mapper interface can have multiple implementations (ProductMapperImpl, ProductModerationMapperImpl), and these implementations can be used interchangeably without affecting the functionality.
+
+![alt text](screenshot/Mapper.png)
+
+## Interface Segregation Principle
+Instead of having one large interface, we divided it into multiple smaller, specific-purpose interfaces. This way, clients only need to know about the methods that are of interest to them.
+
+![alt text](screenshot/Interface.png)
+
+## Dependency Inversion Principle
+
+While building the application, we ensured that high-level modules should not depend on low-level modules. Both should depend on abstractions.
+
+Using @Autowired in Spring to inject dependencies allows us to depend on abstractions rather than concrete implementations.
+
+![alt text](screenshot/DIP.png)
