@@ -41,7 +41,7 @@ DalExchange is a web-based thrift store platform specifically designed for Dalho
 | org.springframework.security  | Spring Security Config                                   | spring-security-config         | 6.3.0      |
 | com.cloudinary                | Cloudinary HTTP library                                  | cloudinary-http44              | 1.39.0     |
 | io.jsonwebtoken               | Java JWT: JSON Web Token for Java                        | jjwt-api                       | 0.11.5     |
-| io.jsonwebtoken               | Implementation of Java JWT                              | jjwt-impl                      | 0.11.5     |
+| io.jsonwebtoken               | Implementation of Java JWT                               | jjwt-impl                      | 0.11.5     |
 | io.jsonwebtoken               | Jackson support for Java JWT                             | jjwt-jackson                   | 0.11.5     |
 | org.mockito                   | Mocking framework for unit tests                         | mockito-core                   |            |
 | org.mockito                   | Mockito JUnit Jupiter                                    | mockito-junit-jupiter          |            |
@@ -104,6 +104,98 @@ Finally, the application backend will start running locally.
 | styled-components               | Visual primitives for the component age            | styled-components             | 6.1.12   |
 | tailwindcss                     | A utility-first CSS framework                      | tailwindcss                   | 3.4.4    |
 | tailwindcss-animate             | Tailwind CSS plugin for animations                 | tailwindcss-animate           | 1.0.7    |
+
+#  ![CI/CD Status](https://img.shields.io/badge/CI/CD-Passing-brightgreen) CI/CD
+GitLab CI/CD allows automating the testing, building, and deployment processes for Node.js frontend and SpringBoot Backend using a .gitlab-ci.yml file in the repository root.
+
+![alt text](screenshot/CI_CD.png)
+
+
+Docker provides a method to publish and deploy the server code onto a virtual machine (VM) Using Below Commands.
+
+## ![Docker](https://img.shields.io/badge/docker-ready-blue) Docker Setup
+docker build -t docker.io/<Docker_hub_Repositoy_Id>/backend .
+
+docker push docker.io/<Docker_hub_Repositoy_Id>/backend
+
+docker build -t docker.io/<Docker_hub_Repositoy_Id>/frontend .
+
+docker push docker.io/<Docker_hub_Repositoy_Id>/frontend
+
+docker run -d -p 8080:8080 --name backend docker.io/<Docker_hub_Repositoy_Id>/backend
+
+docker run -d -p 80:80 --name frontend docker.io/<Docker_hub_Repositoy_Id>/frontend
+
+
+# 🧪 Test
+We have used Junit for unit test cases and mockito, following are depdencies we have used for that
+
+```xml
+<dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <scope>test</scope>
+</dependency>
+<dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-junit-jupiter</artifactId>
+        <scope>test</scope>
+</dependency>
+<dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <scope>test</scope>
+</dependency>
+<dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <scope>test</scope>
+</dependency>
+```
+
+
+# Coverage
+Our current Service(Business Logic) class  line coverage is 100%, method coverage is 100%.
+
+![alt text](screenshot/TestCoverage.png)
+
+# TDD adherence
+Throughout the entire project, we strictly followed Test-Driven Development (TDD) methods. From the beginning of each feature until the end of its implementation, we started by creating thorough test cases that outlined the functionality and intended behavior. Every new addition and update was validated against predetermined criteria thanks to this methodical methodology. We attained 100% line coverage as a consequence of our stringent testing procedure, demonstrating the robustness and extensive testing of our software. Our dedication to TDD allowed us to consistently produce high-quality code and enabled the timely identification and fixing of possible problems, which in the end produced software that was more dependable and manageable.
+
+# Test best practices
+ We have adhered to recommended practices for testing, which include segmenting the structure, creating brief test cases, and testing one item at a time. and the naming is convincing sufficient to allow viewers to inspect understand what this test case is testing.
+# Adherence to SOLID Principles
+## Single Responsibility Principle
+We have ensured that each class executes single functionality rather than managing mutiple things altogether
+
+![alt text](screenshot/S.png)
+
+## Open/Closed Principle
+We have ensured that all the class can be extended by adding new methods for new functionalities without modifying existing code. 
+
+For example, new methods can be added for additional product operations without altering the current methods.
+
+## Liskov Substitution Principle
+We have made sure that objects of a superclass is replaceable with objects of a subclass without affecting the functionality of the program.
+
+For example: 
+The Mapper interface can have multiple implementations (ProductMapperImpl, ProductModerationMapperImpl), and these implementations can be used interchangeably without affecting the functionality.
+
+![alt text](screenshot/Mapper.png)
+
+## Interface Segregation Principle
+Instead of having one large interface, we divided it into multiple smaller, specific-purpose interfaces. This way, clients only need to know about the methods that are of interest to them.
+
+![alt text](screenshot/Interface.png)
+
+## Dependency Inversion Principle
+
+While building the application, we ensured that high-level modules should not depend on low-level modules. Both should depend on abstractions.
+
+Using @Autowired in Spring to inject dependencies allows us to depend on abstractions rather than concrete implementations.
+
+![alt text](screenshot/DIP.png)
+
 
 # Walkthrough
 
@@ -232,35 +324,3 @@ Admin can view all feedback segregated based on products.
 Admin cannot edit the feedback, but can delete it if the comment is offensive.
 
 ![alt text](screenshot/Feedback.png)
-
-# Adherence to SOLID Principles
-## Single Responsibility Principle
-We have ensured that each class executes single functionality rather than managing mutiple things altogether
-
-![alt text](screenshot/S.png)
-
-## Open/Closed Principle
-We have ensured that all the class can be extended by adding new methods for new functionalities without modifying existing code. 
-
-For example, new methods can be added for additional product operations without altering the current methods.
-
-## Liskov Substitution Principle
-We have made sure that objects of a superclass is replaceable with objects of a subclass without affecting the functionality of the program.
-
-For example: 
-The Mapper interface can have multiple implementations (ProductMapperImpl, ProductModerationMapperImpl), and these implementations can be used interchangeably without affecting the functionality.
-
-![alt text](screenshot/Mapper.png)
-
-## Interface Segregation Principle
-Instead of having one large interface, we divided it into multiple smaller, specific-purpose interfaces. This way, clients only need to know about the methods that are of interest to them.
-
-![alt text](screenshot/Interface.png)
-
-## Dependency Inversion Principle
-
-While building the application, we ensured that high-level modules should not depend on low-level modules. Both should depend on abstractions.
-
-Using @Autowired in Spring to inject dependencies allows us to depend on abstractions rather than concrete implementations.
-
-![alt text](screenshot/DIP.png)
