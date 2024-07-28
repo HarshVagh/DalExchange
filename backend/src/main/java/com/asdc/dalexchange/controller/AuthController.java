@@ -83,8 +83,8 @@ public class AuthController {
             user.setActive(true);
 
             userService.registerUser(user, profilePicture);
-            log.info("User registered successfully: {}", email);
-            return ResponseEntity.ok("User registered successfully. Please check your email for verification code.");
+            log.info("User temporarily registered: {}", email);
+            return ResponseEntity.ok("User temporarily registered. Please check your email for the verification code.");
         } catch (Exception e) {
             log.error("Error registering user: {}", email, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error registering user.");

@@ -17,8 +17,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -34,6 +36,7 @@ public class UserServiceImpl implements UserService {
     private EmailService emailService;
     private Mapper<User, UserDTO> userMapper;
     private CloudinaryUtil cloudinaryUtil;
+    final Map<String, User> temporaryUserStorage = new ConcurrentHashMap<>();
 
     /**
      * Returns the number of new customers who joined in the last 30 days.
@@ -213,21 +216,31 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * Verifies a user based on email and verification code.
-     *
-     * @param email the email of the user
-     * @param code  the verification code
-     * @return true if the verification is successful, false otherwise
-     */
+       * Verifies a user based on email and verification code.
+       *
+       * @param email the email of the user
+       * @param code  the verification code
+       * @return true if the verification is successful, false otherwise
+       */
+    @Override
     public boolean verifyUser(String email, String code) {
         log.info("Verifying user with email: {} and code: {}", email, code);
         Optional<VerificationCode> verificationCode = verificationCodeRepository.findByEmailAndCode(email, code);
         boolean isValid = verificationCode.isPresent() && verificationCode.get().getExpiryDate().isAfter(LocalDateTime.now());
+
         if (isValid) {
-            log.info("User verification successful for email: {}", email);
+            User user = temporaryUserStorage.remove(email);
+            if (user != null) {
+                userRepository.save(user);
+                log.info("User verification successful and user data saved for email: {}", email);
+            } else {
+                log.warn("No user found in temporary storage for email: {}", email);
+                return false;
+            }
         } else {
             log.warn("User verification failed for email: {}", email);
         }
+
         return isValid;
     }
 
@@ -260,13 +273,12 @@ public class UserServiceImpl implements UserService {
      * @param profilePicture the profile picture file
      * @return the registered user
      */
+    @Override
     public User registerUser(User user, MultipartFile profilePicture) {
         log.info("Registering new user with email: {}", user.getEmail());
 
         String profilePictureURL = cloudinaryUtil.uploadImage(profilePicture);
         user.setProfilePicture(profilePictureURL);
-
-        User registeredUser = userRepository.save(user);
 
         String verificationCode = generateVerificationCode();
         VerificationCode code = new VerificationCode();
@@ -279,7 +291,9 @@ public class UserServiceImpl implements UserService {
         String text = "Your verification code is " + verificationCode;
         emailService.sendEmail(user.getEmail(), subject, text);
 
-        log.info("User registered and verification email sent to: {}", user.getEmail());
-        return registeredUser;
+        temporaryUserStorage.put(user.getEmail(), user);
+
+        log.info("User temporarily registered and verification email sent to: {}", user.getEmail());
+        return user;
     }
 }
