@@ -8,8 +8,6 @@ import com.asdc.dalexchange.model.*;
 import com.asdc.dalexchange.repository.*;
 import com.asdc.dalexchange.service.TradeRequestService;
 import com.asdc.dalexchange.util.AuthUtil;
-import com.asdc.dalexchange.util.ResourceNotFoundException;
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

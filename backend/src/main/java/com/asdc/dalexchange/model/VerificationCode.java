@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @Entity
 public class VerificationCode {
     @Id
-
     private String email;
     private String code;
     private LocalDateTime expiryDate;
