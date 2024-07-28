@@ -213,7 +213,8 @@ public class TradeRequestServiceImpl implements TradeRequestService {
         Long userId = AuthUtil.getCurrentUserId(userRepository);
         Specification<TradeRequest> specification = Specification
                 .where(TradeRequestSpecification.hasProductId(productId))
-                .and(TradeRequestSpecification.hasBuyerId(userId));
+                .and(TradeRequestSpecification.hasBuyerId(userId)
+                .and(TradeRequestSpecification.hasRequestStatus("approved")));
 
         TradeRequest tradeRequest = tradeRequestRepository.findOne(specification).orElse(null);
         log.debug("Found trade request for productId: {} and userId: {}", productId, userId);

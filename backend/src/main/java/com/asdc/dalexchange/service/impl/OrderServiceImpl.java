@@ -290,9 +290,6 @@ public class OrderServiceImpl implements OrderService {
         }
 
         Product product = optionalProduct.get();
-        product.setSold(true);
-        productRepository.save(product);
-        log.info("Product with id {} marked as sold", productId);
 
         User user = userRepository.findByUserId(userId);
         if (user == null) {
@@ -302,7 +299,7 @@ public class OrderServiceImpl implements OrderService {
 
         Payment payment = new Payment();
         payment.setPaymentMethod("Card");
-        payment.setPaymentStatus(PaymentStatus.completed);
+        payment.setPaymentStatus(PaymentStatus.pending);
         payment.setAmount(amount);
         payment.setPaymentDate(LocalDateTime.now());
         Payment savedPayment = paymentRepository.save(payment);
