@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * A class representing an API response.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
