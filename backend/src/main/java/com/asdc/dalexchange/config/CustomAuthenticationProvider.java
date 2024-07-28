@@ -23,6 +23,13 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    /**
+     * Authenticates a user based on the provided authentication token.
+     *
+     * @param authentication the authentication request object.
+     * @return a fully authenticated object including credentials.
+     * @throws AuthenticationException if authentication fails.
+     */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
@@ -37,6 +44,12 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         }
     }
 
+    /**
+     * Returns true if this AuthenticationProvider supports the indicated Authentication object.
+     *
+     * @param authentication the class of the authentication object.
+     * @return true if the implementation can more closely evaluate the Authentication class.
+     */
     @Override
     public boolean supports(Class<?> authentication) {
         return authentication.equals(UsernamePasswordAuthenticationToken.class);
