@@ -5,7 +5,6 @@ import com.asdc.dalexchange.dto.ProductRatingDTO;
 import com.asdc.dalexchange.enums.ProductCondition;
 import com.asdc.dalexchange.enums.ShippingType;
 import com.asdc.dalexchange.mappers.Mapper;
-import com.asdc.dalexchange.mappers.impl.ProductRatingMapperImpl;
 import com.asdc.dalexchange.model.*;
 import com.asdc.dalexchange.repository.ProductRatingRepository;
 import com.asdc.dalexchange.repository.ProductRepository;
@@ -25,7 +24,6 @@ import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;

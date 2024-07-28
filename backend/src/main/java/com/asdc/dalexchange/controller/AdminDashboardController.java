@@ -6,7 +6,6 @@ import com.asdc.dalexchange.dto.ItemsSoldDTO;
 import com.asdc.dalexchange.dto.TopSellingCategoriesDTO;
 import com.asdc.dalexchange.service.AdminDashboardService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

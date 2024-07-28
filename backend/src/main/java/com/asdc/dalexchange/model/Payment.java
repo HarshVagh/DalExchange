@@ -16,7 +16,6 @@ public class Payment {
     @Column(name = "payment_id")
     private Long paymentId;
 
-
     @Column(name = "payment_method", nullable = false)
     private String paymentMethod;
 

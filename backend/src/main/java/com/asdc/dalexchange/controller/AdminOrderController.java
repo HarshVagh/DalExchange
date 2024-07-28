@@ -4,7 +4,6 @@ import com.asdc.dalexchange.dto.OrderDTO;
 import com.asdc.dalexchange.model.OrderDetails;
 import com.asdc.dalexchange.service.OrderService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 
