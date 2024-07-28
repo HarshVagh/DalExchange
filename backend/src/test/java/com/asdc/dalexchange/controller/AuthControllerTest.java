@@ -87,7 +87,7 @@ public class AuthControllerTest {
         );
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("User registered successfully. Please check your email for verification code.", response.getBody());
+        assertEquals("User temporarily registered. Please check your email for the verification code.", response.getBody());
     }
 
     @Test
