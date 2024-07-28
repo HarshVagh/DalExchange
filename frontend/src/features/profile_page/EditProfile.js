@@ -138,19 +138,6 @@ const EditProfile = () => {
                 )}
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 mb-2">Password</label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${errors.password ? 'border-red-500' : 'focus:ring-blue-500'}`}
-                />
-                {errors.password && (
-                  <span className="text-red-500 text-sm">{errors.password}</span>
-                )}
-              </div>
-              <div className="mb-4">
                 <label className="block text-gray-700 mb-2">Email</label>
                 <input
                   type="email"
