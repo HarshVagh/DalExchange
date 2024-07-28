@@ -245,7 +245,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    public void registerUserTest() {
+    public void testRegisterUser() {
         User user = new User();
         user.setEmail("test@dal.ca");
         user.setPassword("password");
@@ -269,7 +269,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    public void verifyUserTest() {
+    public void testVerifyUser() {
         String email = "test@dal.ca";
         String code = "123456";
 
@@ -287,7 +287,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    public void verifyUserTest_Failure() {
+    public void testVerifyUser_Failure() {
         String email = "test@dal.ca";
         String code = "123456";
 

@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;

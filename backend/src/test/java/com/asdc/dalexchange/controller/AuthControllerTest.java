@@ -68,7 +68,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    public void signupTest() throws IOException {
+    public void testSignup() throws IOException {
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
         MultipartFile profilePicture = mock(MultipartFile.class);
         doAnswer(invocation -> null).when(userService).registerUser(any(User.class), any(MultipartFile.class));
@@ -91,7 +91,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    public void signupTest_InvalidEmail() {
+    public void testSignup_InvalidEmail() {
         MultipartFile profilePicture = mock(MultipartFile.class);
         ResponseEntity<?> response = authController.signup(
                 "testuser",
@@ -109,7 +109,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    public void signupTest_Exception() {
+    public void testSignup_Exception() {
         when(passwordEncoder.encode(anyString())).thenThrow(new RuntimeException());
         MultipartFile profilePicture = mock(MultipartFile.class);
         ResponseEntity<?> response = authController.signup(
@@ -128,7 +128,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    public void loginTest() {
+    public void testLogin() {
         User user = new User();
         user.setEmail("test@dal.ca");
         user.setPassword("password");
@@ -145,7 +145,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    public void loginTest_InvalidCredentials() {
+    public void testLogin_InvalidCredentials() {
         User user = new User();
         user.setEmail("test@dal.ca");
         user.setPassword("password");
@@ -159,7 +159,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    public void verifyEmailTest() {
+    public void testVerifyEmail() {
         VerificationRequest request = new VerificationRequest();
         request.setEmail("test@dal.ca");
         request.setCode("123456");
@@ -173,7 +173,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    public void verifyEmailTest_InvalidCode() {
+    public void testVerifyEmail_InvalidCode() {
         VerificationRequest request = new VerificationRequest();
         request.setEmail("test@dal.ca");
         request.setCode("123456");
@@ -187,7 +187,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    public void verifyEmailTest_Exception() {
+    public void testVerifyEmail_Exception() {
         VerificationRequest request = new VerificationRequest();
         request.setEmail("test@dal.ca");
         request.setCode("123456");
@@ -201,7 +201,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    public void getCurrentUser_ShouldReturnUser_WhenUserIsLoggedIn() throws Exception {
+    public void testGetCurrentUsert() throws Exception {
         User mockUser = new User();
         mockUser.setUserId(1L);
         mockUser.setFullName("John Doe");
@@ -219,7 +219,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    public void getCurrentUser_ShouldReturnUnauthorized_WhenUserIsNotLoggedIn() throws Exception {
+    public void testGetCurrentUser_ShouldReturnUnauthorized_WhenUserIsNotLoggedIn() throws Exception {
         when(userService.getCurrentUser()).thenReturn(null);
 
         mockMvc.perform(get("/auth/current-user"))
