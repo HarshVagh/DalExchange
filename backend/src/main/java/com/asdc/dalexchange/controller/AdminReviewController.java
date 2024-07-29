@@ -3,7 +3,6 @@ package com.asdc.dalexchange.controller;
 import com.asdc.dalexchange.dto.ProductRatingAdminDTO;
 import com.asdc.dalexchange.service.ProductRatingService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 

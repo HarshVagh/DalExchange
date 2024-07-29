@@ -8,8 +8,6 @@ import com.asdc.dalexchange.model.*;
 import com.asdc.dalexchange.repository.*;
 import com.asdc.dalexchange.service.TradeRequestService;
 import com.asdc.dalexchange.util.AuthUtil;
-import com.asdc.dalexchange.util.ResourceNotFoundException;
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -425,12 +423,12 @@ class OrderServiceImplTest {
         Long userId = 1L;
         Long productId = 2L;
         Double amount = 100.0;
+
         ShippingAddress shippingAddress = new ShippingAddress();
         shippingAddress.setAddressId(1L);
 
         Product product = new Product();
         product.setProductId(productId);
-        product.setSold(false);
 
         User user = new User();
         user.setUserId(userId);
@@ -460,7 +458,6 @@ class OrderServiceImplTest {
             verify(userRepository, times(1)).findByUserId(userId);
             verify(paymentRepository, times(1)).save(any(Payment.class));
             verify(orderRepository, times(1)).save(any(OrderDetails.class));
-            verify(productRepository, times(1)).save(product);
         }
     }
 

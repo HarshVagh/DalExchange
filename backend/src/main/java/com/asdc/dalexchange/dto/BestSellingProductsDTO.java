@@ -1,6 +1,5 @@
 package com.asdc.dalexchange.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data

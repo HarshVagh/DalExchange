@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 public class OrderDTO {
     private Long orderId;
     private String fullName;
-    //private Long productId;
     private String productTitle;
     private double totalAmount;
     private OrderStatus orderStatus;

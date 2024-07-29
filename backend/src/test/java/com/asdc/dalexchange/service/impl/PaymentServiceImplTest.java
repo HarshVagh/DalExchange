@@ -83,27 +83,39 @@ class PaymentServiceImplTest {
     }
 
     @Test
-    void testSavePaymentSuccess() {
-        Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("orderId", 1L);
+    void testSavePayment_Success() {
+        Long orderId = 1L;
 
         OrderDetails order = new OrderDetails();
-        order.setOrderStatus(OrderStatus.Delivered);
-        when(orderRepository.findById(anyLong())).thenReturn(Optional.of(order));
+        order.setOrderId(orderId);
+        order.setOrderStatus(OrderStatus.Pending);
+
         Payment payment = new Payment();
-        payment.setPaymentStatus(PaymentStatus.completed);
-        when(paymentRepository.findAll(any(Specification.class))).thenReturn(List.of(payment));
-        when(paymentRepository.save(any(Payment.class))).thenReturn(payment);
+        payment.setPaymentId(orderId);
+        payment.setPaymentStatus(PaymentStatus.pending);
+
+        order.setPayment(payment);
+
         PaymentDTO paymentDTO = new PaymentDTO();
+        paymentDTO.setPaymentId(orderId);
+        paymentDTO.setPaymentStatus(PaymentStatus.completed);
+
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+        when(paymentRepository.findAll(any(Specification.class))).thenReturn(Collections.singletonList(payment));
+        when(paymentRepository.findById(orderId)).thenReturn(Optional.of(payment));
+        when(paymentRepository.save(any(Payment.class))).thenReturn(payment);
         when(paymentMapper.mapTo(any(Payment.class))).thenReturn(paymentDTO);
 
-        PaymentDTO result = paymentService.savePayment(requestBody);
+        PaymentDTO result = paymentService.savePayment(Collections.singletonMap("orderId", orderId));
 
         assertNotNull(result);
-        verify(orderRepository, times(1)).findById(anyLong());
-        verify(paymentRepository, times(1)).findAll(any(Specification.class));
-        verify(paymentRepository, times(1)).save(any(Payment.class));
+        assertEquals(orderId, result.getPaymentId());
+        assertEquals(PaymentStatus.completed, result.getPaymentStatus());
+        verify(orderRepository).save(order);
+        verify(paymentRepository).save(payment);
     }
+
+
 
     @Test
     public void testSavePaymentWhenOrderDoesNotExist() {

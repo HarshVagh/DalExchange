@@ -30,7 +30,7 @@ public class EmailControllerTest {
     }
 
     @Test
-    public void sendEmailTest() throws Exception {
+    public void testSendEmail() throws Exception {
         doNothing().when(emailService).sendEmail(anyString(), anyString(), anyString());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/sendEmail")

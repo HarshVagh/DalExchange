@@ -39,7 +39,7 @@ export default function PurchaseHistory() {
   }, []);
 
   return (
-    <div className="bg-gray-100 py-8 h-full h-screen max-h-100">
+    <div className="bg-gray-100 h-full h-screen max-h-100">
       <Header config={headerConfig} />
       <SubHeader title={"Purchase History"} backPath={"/profile"} />
       {isLoading && <Loader title={"Loading Profile Details..."} />}

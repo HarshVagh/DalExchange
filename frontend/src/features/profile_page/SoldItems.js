@@ -41,7 +41,7 @@ export default function SoldItems() {
 
   return (
     <>
-      <div className="bg-gray-100 py-8 h-screen max-h-100">
+      <div className="bg-gray-100 h-screen max-h-100">
         <Header config={headerConfig} />
         <SubHeader title={"Sold Items"} backPath={"/profile"} />
         {isLoading && <Loader title={"Loading Profile Details..."} />}

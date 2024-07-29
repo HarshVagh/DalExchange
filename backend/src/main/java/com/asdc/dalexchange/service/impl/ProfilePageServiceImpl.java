@@ -9,6 +9,7 @@ import com.asdc.dalexchange.util.AuthUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -23,6 +24,7 @@ import java.util.Optional;
 public class ProfilePageServiceImpl implements ProfilePageService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     private final EditProfileMapperImpl editProfileMapper;
     private final ModelMapper modelMapper;
 
@@ -41,6 +43,8 @@ public class ProfilePageServiceImpl implements ProfilePageService {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
+            String encodedPassword = passwordEncoder.encode(editProfileDTO.getPassword());
+            editProfileDTO.setPassword(encodedPassword);
             modelMapper.map(editProfileDTO, user);
             userRepository.save(user);
             log.info("User details updated successfully for userId: {}", userId);

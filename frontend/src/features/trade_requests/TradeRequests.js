@@ -129,15 +129,15 @@ const TradeRequests = () => {
                         <div className="flex mb-1">
                         <img
                             className="w-10 h-10 rounded-full border-2" alt=""
-                            src={tradeRequest.buyerImage ? tradeRequest.buyerImage : UserPlaceholder} />
+                            src={tradeRequest.sellerImage ? tradeRequest.sellerImage : UserPlaceholder} />
                           <div className="font-medium ml-2">
-                              <div>{tradeRequest.buyerName}</div>
-                              {tradeRequest.buyerJoiningDate && <div className="text-sm text-gray-500">
-                                Joined at {tradeRequest.buyerJoiningDate[2]}/{tradeRequest.buyerJoiningDate[1]}/{tradeRequest.buyerJoiningDate[0]}
+                              <div>{tradeRequest.sellerName}</div>
+                              {tradeRequest.sellerJoiningDate && <div className="text-sm text-gray-500">
+                                Joined at {tradeRequest.sellerJoiningDate[2]}/{tradeRequest.sellerJoiningDate[1]}/{tradeRequest.sellerJoiningDate[0]}
                               </div>}
                           </div>
                         </div>
-                        <StartRating totalStars={tradeRequest?.buyerRating || 0}></StartRating>
+                        <StartRating totalStars={tradeRequest?.sellerRating || 0}></StartRating>
                       </div>
                       <div className="text-xs font-medium ml-4">
                         <span className="bg-gray-100 text-gray-800 h-6 px-2 py-0.5 rounded-full border border-gray-400 mr-1">{tradeRequest.product.categoryName}</span>
@@ -209,15 +209,15 @@ const TradeRequests = () => {
                         <div className="flex mb-1">
                           <img
                             className="w-10 h-10 rounded-full border-2" alt=""
-                            src={tradeRequest.sellerImage ? tradeRequest.sellerImage : UserPlaceholder} />
+                            src={tradeRequest.buyerImage ? tradeRequest.buyerImage : UserPlaceholder} />
                           <div className="font-medium ml-2">
-                              <div>{tradeRequest.sellerName}</div>
-                              {tradeRequest.sellerJoiningDate && <div className="text-sm text-gray-500">
-                                Joined at {tradeRequest.sellerJoiningDate[2]}/{tradeRequest.sellerJoiningDate[1]}/{tradeRequest.sellerJoiningDate[0]}
+                              <div>{tradeRequest.buyerName}</div>
+                              {tradeRequest.buyerNameJoiningDate && <div className="text-sm text-gray-500">
+                                Joined at {tradeRequest.buyerNameJoiningDate[2]}/{tradeRequest.buyerNameJoiningDate[1]}/{tradeRequest.buyerNameJoiningDate[0]}
                               </div>}
                           </div>
                         </div>
-                        <StartRating totalStars={tradeRequest?.sellerRating || 0}></StartRating>
+                        <StartRating totalStars={tradeRequest?.buyerNameRating || 0}></StartRating>
                       </div>
                       <div className="text-xs font-medium ml-4">
                         <span className="bg-gray-100 text-gray-800 h-6 px-2 py-0.5 rounded-full border border-gray-400 mr-1">{tradeRequest.product.categoryName}</span>

@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -26,6 +27,9 @@ public class ProfilePageServiceImplTest {
     private EditProfileMapperImpl editProfileMapper;
 
     @Mock
+    private PasswordEncoder passwordEncoder;
+
+    @Mock
     private ModelMapper modelMapper;
 
     @InjectMocks
@@ -36,7 +40,7 @@ public class ProfilePageServiceImplTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    @Test
+    /*@Test
     void testEditUserDetails_Success() {
 
         Long userId = AuthUtil.getCurrentUserId(userRepository);
@@ -56,7 +60,42 @@ public class ProfilePageServiceImplTest {
         assertNotNull(updatedProfile);
         assertEquals(editProfileDTO.getUsername(), updatedProfile.getUsername());
         assertEquals(editProfileDTO.getEmail(), updatedProfile.getEmail());
+    }*/
+
+    @Test
+    void testEditUserDetails_Success() {
+        Long userId = 1L;
+        String newPassword = "newPassword";
+        String encodedPassword = "encodedPassword";
+
+        EditProfileDTO editProfileDTO = createEditProfileDTO();
+        editProfileDTO.setPassword(newPassword);
+        User user = createUser();
+        user.setPassword(encodedPassword);
+
+        try (MockedStatic<AuthUtil> authUtilMock = mockStatic(AuthUtil.class)) {
+            authUtilMock.when(() -> AuthUtil.getCurrentUserId(userRepository)).thenReturn(userId);
+
+            when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+            when(passwordEncoder.encode(newPassword)).thenReturn(encodedPassword);
+
+            when(modelMapper.map(editProfileDTO, User.class)).thenReturn(user);
+
+            when(userRepository.save(user)).thenReturn(user);
+
+            when(editProfileMapper.mapTo(user)).thenReturn(editProfileDTO);
+
+            EditProfileDTO updatedProfile = profilePageService.editUserDetails(editProfileDTO);
+
+            assertNotNull(updatedProfile);
+            assertEquals(editProfileDTO.getUsername(), updatedProfile.getUsername());
+            assertEquals(editProfileDTO.getEmail(), updatedProfile.getEmail());
+            assertEquals(encodedPassword, updatedProfile.getPassword());
+        }
     }
+
+
 
     @Test
     void testEditUserDetails_UserNotFound() {

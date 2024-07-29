@@ -40,6 +40,13 @@ public class SecurityConfig {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
+    /**
+     * Configures the security filter chain.
+     *
+     * @param http the HttpSecurity configuration.
+     * @return the configured SecurityFilterChain.
+     * @throws Exception if an error occurs.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
@@ -50,6 +57,11 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Configures the DaoAuthenticationProvider.
+     *
+     * @return the configured DaoAuthenticationProvider.
+     */
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -58,6 +70,11 @@ public class SecurityConfig {
         return provider;
     }
 
+    /**
+     * Configures the CORS filter.
+     *
+     * @return the configured CorsFilter.
+     */
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -70,6 +87,13 @@ public class SecurityConfig {
         return new CorsFilter(source);
     }
 
+    /**
+     * Configures the AuthenticationManager.
+     *
+     * @param authenticationConfiguration the AuthenticationConfiguration.
+     * @return the configured AuthenticationManager.
+     * @throws Exception if an error occurs.
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();

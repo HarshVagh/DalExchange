@@ -36,7 +36,7 @@ export default function Profile() {
 
   return (
     <>
-      <div className="bg-gray-100 pt-4 pb-4 h-screen max-h-100">
+      <div className="bg-gray-100 pb-4 h-screen max-h-100">
         <Header config={headerConfig} />
         <SubHeader title={'User Profile'} backPath={'/products'} />
         {isLoading && <Loader title={'Loading Profile Details...'} />}

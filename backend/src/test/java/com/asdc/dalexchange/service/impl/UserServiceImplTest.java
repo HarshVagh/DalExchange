@@ -13,12 +13,15 @@ import com.asdc.dalexchange.util.CloudinaryUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -245,7 +248,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    public void registerUserTest() {
+    public void testRegisterUser() {
         User user = new User();
         user.setEmail("test@dal.ca");
         user.setPassword("password");
@@ -255,21 +258,49 @@ class UserServiceImplTest {
             VerificationCode code = invocation.getArgument(0);
             code.setCode("123456");
             code.setExpiryDate(LocalDateTime.now().plusHours(1));
-            return code;
+            return null;
         }).when(verificationCodeRepository).save(any(VerificationCode.class));
+
+        doNothing().when(emailService).sendEmail(anyString(), anyString(), anyString());
 
         User registeredUser = userService.registerUser(user, productImage);
 
         assertNotNull(registeredUser);
         assertEquals(user.getEmail(), registeredUser.getEmail());
 
-        verify(userRepository, times(1)).save(any(User.class));
+        verify(userRepository, times(0)).save(any(User.class));
         verify(verificationCodeRepository, times(1)).save(any(VerificationCode.class));
         verify(emailService, times(1)).sendEmail(eq(user.getEmail()), eq("Verify your email"), anyString());
     }
 
     @Test
-    public void verifyUserTest() {
+    public void testVerifyUser() {
+        String email = "test@dal.ca";
+        String code = "123456";
+
+        Map<String, User> temporaryUserStorage = new ConcurrentHashMap<>();
+        ReflectionTestUtils.setField(userService, "temporaryUserStorage", temporaryUserStorage);
+
+        VerificationCode verificationCode = new VerificationCode();
+        verificationCode.setEmail(email);
+        verificationCode.setCode(code);
+        verificationCode.setExpiryDate(LocalDateTime.now().plusHours(1));
+
+        when(verificationCodeRepository.findByEmailAndCode(email, code)).thenReturn(Optional.of(verificationCode));
+
+        User user = new User();
+        user.setEmail(email);
+        temporaryUserStorage.put(user.getEmail(), user);
+
+        boolean isVerified = userService.verifyUser(email, code);
+
+        assertTrue(isVerified);
+        verify(userRepository, times(1)).save(user);
+        verify(verificationCodeRepository, times(1)).findByEmailAndCode(email, code);
+    }
+
+    @Test
+    public void testVerifyUser_UserNotFoundInTemporaryStorage() {
         String email = "test@dal.ca";
         String code = "123456";
 
@@ -278,16 +309,18 @@ class UserServiceImplTest {
         verificationCode.setCode(code);
         verificationCode.setExpiryDate(LocalDateTime.now().plusHours(1));
 
-        when(verificationCodeRepository.findByEmailAndCode(anyString(), anyString())).thenReturn(Optional.of(verificationCode));
+        when(verificationCodeRepository.findByEmailAndCode(email, code)).thenReturn(Optional.of(verificationCode));
 
         boolean isVerified = userService.verifyUser(email, code);
 
-        assertTrue(isVerified);
+        assertFalse(isVerified);
+        verify(userRepository, never()).save(any(User.class));
         verify(verificationCodeRepository, times(1)).findByEmailAndCode(email, code);
     }
 
+
     @Test
-    public void verifyUserTest_Failure() {
+    public void testVerifyUser_Failure() {
         String email = "test@dal.ca";
         String code = "123456";
 
