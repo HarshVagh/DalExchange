@@ -100,9 +100,10 @@ export default function OrderModeration() {
   };
 
   const formatDate = (dateArray) => {
-    if (Array.isArray(dateArray) && dateArray.length === 5) {
-      const [year, month, day, hour, minute] = dateArray;
-      return new Date(year, month - 1, day, hour, minute).toLocaleDateString();
+    if (Array.isArray(dateArray) && dateArray.length >= 3) {
+      const [year, month, day] = dateArray;
+      const date = new Date(year, month - 1, day);
+      return date.toLocaleDateString();
     }
     return "Invalid Date";
   };

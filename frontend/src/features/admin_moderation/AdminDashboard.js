@@ -238,48 +238,49 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
           <Card>
-            <CardHeader>
-              <CardTitle>Best Selling Products</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {bestSellingProductsData ? (
-                <Bar
-                  data={bestSellingProductsData}
-                  options={{
-                    maintainAspectRatio: false,
-                    scales: {
-                      y: {
-                        ticks: {
-                          stepSize: 1,
-                          callback: function(value) {
-                            return Math.floor(value);
-                          }
-                        }
-                      },
-                      x: {
-                        ticks: {
-                          callback: function(value, index) {
-                            return bestSellingProductsData.labels[index];
-                          },
-                          autoSkip: false,
-                          maxRotation: 0,
-                          minRotation: 0
-                        }
-                      }
-                    },
-                    plugins: {
-                      legend: {
-                        display: false
-                      }
-                    }
-                  }}
-                  height={400}
-                />
-              ) : (
-                <p>Loading...</p>
-              )}
-            </CardContent>
-          </Card>
+  <CardHeader>
+    <CardTitle>Best Selling Products</CardTitle>
+  </CardHeader>
+  <CardContent>
+    {bestSellingProductsData ? (
+      <Bar
+        data={bestSellingProductsData}
+        options={{
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              ticks: {
+                stepSize: 1,
+                callback: function(value) {
+                  return Math.floor(value);
+                }
+              }
+            },
+            x: {
+              ticks: {
+                autoSkip: false,
+                maxRotation: 90,
+                minRotation: 0,
+                callback: function(value, index) {
+                  return bestSellingProductsData.labels[index];
+                }
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }}
+        height={400}
+      />
+    ) : (
+      <p>Loading...</p>
+    )}
+  </CardContent>
+</Card>
+
         </div>
       </main>
     </div>
