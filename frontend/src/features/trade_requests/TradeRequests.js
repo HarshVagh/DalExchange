@@ -212,8 +212,8 @@ const TradeRequests = () => {
                             src={tradeRequest.buyerImage ? tradeRequest.buyerImage : UserPlaceholder} />
                           <div className="font-medium ml-2">
                               <div>{tradeRequest.buyerName}</div>
-                              {tradeRequest.buyerNameJoiningDate && <div className="text-sm text-gray-500">
-                                Joined at {tradeRequest.buyerNameJoiningDate[2]}/{tradeRequest.buyerNameJoiningDate[1]}/{tradeRequest.buyerNameJoiningDate[0]}
+                              {tradeRequest.buyerJoiningDate && <div className="text-sm text-gray-500">
+                                Joined at {tradeRequest.buyerJoiningDate[2]}/{tradeRequest.buyerJoiningDate[1]}/{tradeRequest.buyerJoiningDate[0]}
                               </div>}
                           </div>
                         </div>
